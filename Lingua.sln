@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lingua", "src\Lingua\Lingua.csproj", "{835F7E5D-80DB-40FC-9240-DE251FAE63DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnicodeScriptGenerator", "src\UnicodeScriptGenerator\UnicodeScriptGenerator.csproj", "{77954C87-8D00-40FA-9617-DFAF3499DE9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lingua.Tests", "tests\Lingua.Tests\Lingua.Tests.csproj", "{120D07F4-AAF1-4D00-BF86-48836F819C1F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{835F7E5D-80DB-40FC-9240-DE251FAE63DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{835F7E5D-80DB-40FC-9240-DE251FAE63DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{835F7E5D-80DB-40FC-9240-DE251FAE63DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{835F7E5D-80DB-40FC-9240-DE251FAE63DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77954C87-8D00-40FA-9617-DFAF3499DE9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77954C87-8D00-40FA-9617-DFAF3499DE9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77954C87-8D00-40FA-9617-DFAF3499DE9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77954C87-8D00-40FA-9617-DFAF3499DE9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{120D07F4-AAF1-4D00-BF86-48836F819C1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{120D07F4-AAF1-4D00-BF86-48836F819C1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{120D07F4-AAF1-4D00-BF86-48836F819C1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{120D07F4-AAF1-4D00-BF86-48836F819C1F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
