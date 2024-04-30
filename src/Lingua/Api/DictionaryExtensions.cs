@@ -2,7 +2,7 @@
 
 namespace Lingua.Api;
 
-public static class DictionaryExtensions
+internal static class DictionaryExtensions
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void IncrementCounter<TKey>(this Dictionary<TKey, int> dictionary, TKey key) where TKey : notnull

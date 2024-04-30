@@ -2,7 +2,7 @@
 
 namespace Lingua.Api;
 
-public static class EnumerableExtensions
+internal static class EnumerableExtensions
 {
     public static IndexedDictionary<TKey, TValue> ToIndexedDictionary<TKey, TValue>(
         this IEnumerable<KeyValuePair<TKey, TValue>> enumerable) where TKey : notnull

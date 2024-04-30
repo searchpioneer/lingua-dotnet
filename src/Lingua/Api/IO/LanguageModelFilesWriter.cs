@@ -101,10 +101,8 @@ public class LanguageModelFilesWriter : FilesWriter
     {
         var modelFilePath = Path.Combine(outputDirectoryPath, fileName);
         if (File.Exists(modelFilePath))
-        {
-            File.Delete(modelFilePath);
-        }
-        
+	        File.Delete(modelFilePath);
+
         File.WriteAllText(modelFilePath, model.ToJson());
     }
 }

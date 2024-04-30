@@ -14,49 +14,49 @@ public class LanguageDetector
     private static readonly Regex Punctuation = new("\\p{P}", RegexOptions.Compiled);
     private static readonly Dictionary<string, HashSet<Language>> CharsToLanguagesMapping = new()
     {
-        ["Ãã"] = [Language.PORTUGUESE, Language.VIETNAMESE],
-        ["ĄąĘę"] = [Language.LITHUANIAN, Language.POLISH],
-        ["Żż"] = [Language.POLISH, Language.ROMANIAN],
-        ["Îî"] = [Language.FRENCH, Language.ROMANIAN],
-        ["Ññ"] = [Language.BASQUE, Language.SPANISH],
-        ["ŇňŤť"] = [Language.CZECH, Language.SLOVAK],
-        ["Ăă"] = [Language.ROMANIAN, Language.VIETNAMESE],
-        ["İıĞğ"] = [Language.AZERBAIJANI, Language.TURKISH],
-        ["ЈјЉљЊњ"] = [Language.MACEDONIAN, Language.SERBIAN],
-        ["ẸẹỌọ"] = [Language.VIETNAMESE, Language.YORUBA],
-        ["ÐðÞþ"] = [Language.ICELANDIC, Language.TURKISH],
-        ["Ûû"] = [Language.FRENCH, Language.HUNGARIAN],
-        ["Ōō"] = [Language.MAORI, Language.YORUBA],
-        ["ĀāĒēĪī"] = [Language.LATVIAN, Language.MAORI, Language.YORUBA],
-        ["Şş"] = [Language.AZERBAIJANI, Language.ROMANIAN, Language.TURKISH],
-        ["Ďď"] = [Language.CZECH, Language.ROMANIAN, Language.SLOVAK],
-        ["Ćć"] = [Language.BOSNIAN, Language.CROATIAN, Language.POLISH],
-        ["Đđ"] = [Language.BOSNIAN, Language.CROATIAN, Language.VIETNAMESE],
-        ["Іі"] = [Language.BELARUSIAN, Language.KAZAKH, Language.UKRAINIAN],
-        ["Ìì"] = [Language.ITALIAN, Language.VIETNAMESE, Language.YORUBA],
-        ["Øø"] = [Language.BOKMAL, Language.DANISH, Language.NYNORSK],
-        ["Ūū"] = [Language.LATVIAN, Language.LITHUANIAN, Language.MAORI, Language.YORUBA],
-        ["Ëë"] = [Language.AFRIKAANS, Language.ALBANIAN, Language.DUTCH, Language.FRENCH],
-        ["ÈèÙù"] = [Language.FRENCH, Language.ITALIAN, Language.VIETNAMESE, Language.YORUBA],
-        ["Êê"] = [Language.AFRIKAANS, Language.FRENCH, Language.PORTUGUESE, Language.VIETNAMESE],
-        ["Õõ"] = [Language.ESTONIAN, Language.HUNGARIAN, Language.PORTUGUESE, Language.VIETNAMESE],
-        ["Ôô"] = [Language.FRENCH, Language.PORTUGUESE, Language.SLOVAK, Language.VIETNAMESE],
-        ["ЁёЫыЭэ"] = [Language.BELARUSIAN, Language.KAZAKH, Language.MONGOLIAN, Language.RUSSIAN],
-        ["ЩщЪъ"] = [Language.BULGARIAN, Language.KAZAKH, Language.MONGOLIAN, Language.RUSSIAN],
-        ["Òò"] = [Language.CATALAN, Language.ITALIAN, Language.VIETNAMESE, Language.YORUBA],
-        ["Ææ"] = [Language.BOKMAL, Language.DANISH, Language.ICELANDIC, Language.NYNORSK],
-        ["Åå"] = [Language.BOKMAL, Language.DANISH, Language.NYNORSK, Language.SWEDISH],
-        ["Ýý"] = [Language.CZECH, Language.ICELANDIC, Language.SLOVAK, Language.TURKISH, Language.VIETNAMESE],
-        ["Ää"] = [Language.ESTONIAN, Language.FINNISH, Language.GERMAN, Language.SLOVAK, Language.SWEDISH],
-        ["Àà"] = [Language.CATALAN, Language.FRENCH, Language.ITALIAN, Language.PORTUGUESE, Language.VIETNAMESE],
-        ["Ââ"] = [Language.FRENCH, Language.PORTUGUESE, Language.ROMANIAN, Language.TURKISH, Language.VIETNAMESE],
-        ["Üü"] = [Language.AZERBAIJANI, Language.CATALAN, Language.ESTONIAN, Language.GERMAN, Language.HUNGARIAN, Language.SPANISH, Language.TURKISH],
-        ["ČčŠšŽž"] = [Language.BOSNIAN, Language.CZECH, Language.CROATIAN, Language.LATVIAN, Language.LITHUANIAN, Language.SLOVAK, Language.SLOVENE],
-        ["Çç"] = [Language.ALBANIAN, Language.AZERBAIJANI, Language.BASQUE, Language.CATALAN, Language.FRENCH, Language.PORTUGUESE, Language.TURKISH],
-        ["Öö"] = [Language.AZERBAIJANI, Language.ESTONIAN, Language.FINNISH, Language.GERMAN, Language.HUNGARIAN, Language.ICELANDIC, Language.SWEDISH, Language.TURKISH],
-        ["Óó"] = [Language.CATALAN, Language.HUNGARIAN, Language.ICELANDIC, Language.IRISH, Language.POLISH, Language.PORTUGUESE, Language.SLOVAK, Language.SPANISH, Language.VIETNAMESE, Language.YORUBA],
-        ["ÁáÍíÚú"] = [Language.CATALAN, Language.CZECH, Language.ICELANDIC, Language.IRISH, Language.HUNGARIAN, Language.PORTUGUESE, Language.SLOVAK, Language.SPANISH, Language.VIETNAMESE, Language.YORUBA],
-        ["Éé"] = [Language.CATALAN, Language.CZECH, Language.FRENCH, Language.HUNGARIAN, Language.ICELANDIC, Language.IRISH, Language.ITALIAN, Language.PORTUGUESE, Language.SLOVAK, Language.SPANISH, Language.VIETNAMESE, Language.YORUBA],
+        ["Ãã"] = [Language.Portuguese, Language.Vietnamese],
+        ["ĄąĘę"] = [Language.Lithuanian, Language.Polish],
+        ["Żż"] = [Language.Polish, Language.Romanian],
+        ["Îî"] = [Language.French, Language.Romanian],
+        ["Ññ"] = [Language.Basque, Language.Spanish],
+        ["ŇňŤť"] = [Language.Czech, Language.Slovak],
+        ["Ăă"] = [Language.Romanian, Language.Vietnamese],
+        ["İıĞğ"] = [Language.Azerbaijani, Language.Turkish],
+        ["ЈјЉљЊњ"] = [Language.Macedonian, Language.Serbian],
+        ["ẸẹỌọ"] = [Language.Vietnamese, Language.Yoruba],
+        ["ÐðÞþ"] = [Language.Icelandic, Language.Turkish],
+        ["Ûû"] = [Language.French, Language.Hungarian],
+        ["Ōō"] = [Language.Maori, Language.Yoruba],
+        ["ĀāĒēĪī"] = [Language.Latvian, Language.Maori, Language.Yoruba],
+        ["Şş"] = [Language.Azerbaijani, Language.Romanian, Language.Turkish],
+        ["Ďď"] = [Language.Czech, Language.Romanian, Language.Slovak],
+        ["Ćć"] = [Language.Bosnian, Language.Croatian, Language.Polish],
+        ["Đđ"] = [Language.Bosnian, Language.Croatian, Language.Vietnamese],
+        ["Іі"] = [Language.Belarusian, Language.Kazakh, Language.Ukrainian],
+        ["Ìì"] = [Language.Italian, Language.Vietnamese, Language.Yoruba],
+        ["Øø"] = [Language.Bokmal, Language.Danish, Language.Nynorsk],
+        ["Ūū"] = [Language.Latvian, Language.Lithuanian, Language.Maori, Language.Yoruba],
+        ["Ëë"] = [Language.Afrikaans, Language.Albanian, Language.Dutch, Language.French],
+        ["ÈèÙù"] = [Language.French, Language.Italian, Language.Vietnamese, Language.Yoruba],
+        ["Êê"] = [Language.Afrikaans, Language.French, Language.Portuguese, Language.Vietnamese],
+        ["Õõ"] = [Language.Estonian, Language.Hungarian, Language.Portuguese, Language.Vietnamese],
+        ["Ôô"] = [Language.French, Language.Portuguese, Language.Slovak, Language.Vietnamese],
+        ["ЁёЫыЭэ"] = [Language.Belarusian, Language.Kazakh, Language.Mongolian, Language.Russian],
+        ["ЩщЪъ"] = [Language.Bulgarian, Language.Kazakh, Language.Mongolian, Language.Russian],
+        ["Òò"] = [Language.Catalan, Language.Italian, Language.Vietnamese, Language.Yoruba],
+        ["Ææ"] = [Language.Bokmal, Language.Danish, Language.Icelandic, Language.Nynorsk],
+        ["Åå"] = [Language.Bokmal, Language.Danish, Language.Nynorsk, Language.Swedish],
+        ["Ýý"] = [Language.Czech, Language.Icelandic, Language.Slovak, Language.Turkish, Language.Vietnamese],
+        ["Ää"] = [Language.Estonian, Language.Finnish, Language.German, Language.Slovak, Language.Swedish],
+        ["Àà"] = [Language.Catalan, Language.French, Language.Italian, Language.Portuguese, Language.Vietnamese],
+        ["Ââ"] = [Language.French, Language.Portuguese, Language.Romanian, Language.Turkish, Language.Vietnamese],
+        ["Üü"] = [Language.Azerbaijani, Language.Catalan, Language.Estonian, Language.German, Language.Hungarian, Language.Spanish, Language.Turkish],
+        ["ČčŠšŽž"] = [Language.Bosnian, Language.Czech, Language.Croatian, Language.Latvian, Language.Lithuanian, Language.Slovak, Language.Slovene],
+        ["Çç"] = [Language.Albanian, Language.Azerbaijani, Language.Basque, Language.Catalan, Language.French, Language.Portuguese, Language.Turkish],
+        ["Öö"] = [Language.Azerbaijani, Language.Estonian, Language.Finnish, Language.German, Language.Hungarian, Language.Icelandic, Language.Swedish, Language.Turkish],
+        ["Óó"] = [Language.Catalan, Language.Hungarian, Language.Icelandic, Language.Irish, Language.Polish, Language.Portuguese, Language.Slovak, Language.Spanish, Language.Vietnamese, Language.Yoruba],
+        ["ÁáÍíÚú"] = [Language.Catalan, Language.Czech, Language.Icelandic, Language.Irish, Language.Hungarian, Language.Portuguese, Language.Slovak, Language.Spanish, Language.Vietnamese, Language.Yoruba],
+        ["Éé"] = [Language.Catalan, Language.Czech, Language.French, Language.Hungarian, Language.Icelandic, Language.Irish, Language.Italian, Language.Portuguese, Language.Slovak, Language.Spanish, Language.Vietnamese, Language.Yoruba],
     };
 
     internal static readonly Dictionary<Language, Dictionary<string, float>> UnigramLanguageModels = new();
@@ -75,9 +75,9 @@ public class LanguageDetector
 
     public LanguageDetector(
         HashSet<Language> languages,
-        double minimumRelativeDistance,
-        bool isEveryLanguageModelPreloaded,
-        bool isLowAccuracyModeEnabled)
+        double minimumRelativeDistance = 0,
+        bool isEveryLanguageModelPreloaded = false,
+        bool isLowAccuracyModeEnabled = false)
     {
         _languages = languages;
         _minimumRelativeDistance = minimumRelativeDistance;
@@ -128,12 +128,12 @@ public class LanguageDetector
     /// Detects the language of the given input text.
     /// </summary>
     /// <param name="text">The input text to detect the language for.</param>
-    /// <returns>The identified language or <see cref="Language.UNKNOWN"/></returns>
+    /// <returns>The identified language or <see cref="Language.Unknown"/></returns>
     public Language DetectLanguageOf(string text)
     {
         var confidenceValues = ComputeLanguageConfidenceValues(text);
         if (confidenceValues.Count == 0)
-            return Language.UNKNOWN;
+            return Language.Unknown;
 
         var mostLikelyLanguage = confidenceValues.First().Key;
         if (confidenceValues.Count == 1)
@@ -143,9 +143,9 @@ public class LanguageDetector
         var secondMostLikelyLanguageProbability = confidenceValues.ElementAt(1).Value;
 
         return mostLikelyLanguageProbability.Equals(secondMostLikelyLanguageProbability)
-            ? Language.UNKNOWN
+            ? Language.Unknown
             : (mostLikelyLanguageProbability - secondMostLikelyLanguageProbability) < _minimumRelativeDistance
-                ? Language.UNKNOWN
+                ? Language.Unknown
                 : mostLikelyLanguage;
     }
 
@@ -176,7 +176,7 @@ public class LanguageDetector
         var words = SplitTextIntoWords(cleanedUpText);
         var languageDetectedByRules = DetectLanguageWithRules(words);
 
-        if (languageDetectedByRules != Language.UNKNOWN)
+        if (languageDetectedByRules != Language.Unknown)
         {
             values[languageDetectedByRules] = 1;
             return values;
@@ -493,15 +493,15 @@ public class LanguageDetector
 
                 if (!isMatch)
                 {
-                    if (Alphabet.HAN.Matches(ch))
+                    if (Alphabet.Han.Matches(ch))
                     {
-                        wordLanguageCounts.IncrementCounter(Language.CHINESE);
+                        wordLanguageCounts.IncrementCounter(Language.Chinese);
                     }
                     else if (IsJapaneseAlphabet(ch))
                     {
-                        wordLanguageCounts.IncrementCounter(Language.JAPANESE);
+                        wordLanguageCounts.IncrementCounter(Language.Japanese);
                     }
-                    else if (Alphabet.LATIN.Matches(ch) || Alphabet.CYRILLIC.Matches(ch) || Alphabet.DEVANAGARI.Matches(ch))
+                    else if (Alphabet.Latin.Matches(ch) || Alphabet.Cyrillic.Matches(ch) || Alphabet.Devanagari.Matches(ch))
                     {
                         foreach (var language in _languagesWithUniqueCharacters.Where(l => l.UniqueCharacters()?.Contains(ch) ?? false))
                         {
@@ -514,12 +514,12 @@ public class LanguageDetector
             switch (wordLanguageCounts.Count)
             {
                 case 0:
-                    totalLanguageCounts.IncrementCounter(Language.UNKNOWN);
+                    totalLanguageCounts.IncrementCounter(Language.Unknown);
                     break;
                 case 1:
                 {
                     var language = wordLanguageCounts.Single().Key;
-                    totalLanguageCounts.IncrementCounter(_languages.Contains(language) ? language : Language.UNKNOWN);
+                    totalLanguageCounts.IncrementCounter(_languages.Contains(language) ? language : Language.Unknown);
                     break;
                 }
                 default:
@@ -533,7 +533,7 @@ public class LanguageDetector
                     if (firstCharCount > secondCharCount && _languages.Contains(mostFrequentLanguage)) {
                         totalLanguageCounts.IncrementCounter(mostFrequentLanguage);
                     } else {
-                        totalLanguageCounts.IncrementCounter(Language.UNKNOWN);
+                        totalLanguageCounts.IncrementCounter(Language.Unknown);
                     }
 
                     break;
@@ -541,22 +541,22 @@ public class LanguageDetector
             }
         }
 
-        totalLanguageCounts.TryGetValue(Language.UNKNOWN, out var unknownLanguageCount);
+        totalLanguageCounts.TryGetValue(Language.Unknown, out var unknownLanguageCount);
         if (unknownLanguageCount < (0.5 * words.Count))
         {
-            totalLanguageCounts.Remove(Language.UNKNOWN);
+            totalLanguageCounts.Remove(Language.Unknown);
         }
 
         switch (totalLanguageCounts.Count)
         {
             case 0:
-                return Language.UNKNOWN;
+                return Language.Unknown;
             case 1:
                 return totalLanguageCounts.Keys.Single();
             case 2 when
-                totalLanguageCounts.ContainsKey(Language.CHINESE) &&
-                totalLanguageCounts.ContainsKey(Language.JAPANESE):
-                return Language.JAPANESE;
+                totalLanguageCounts.ContainsKey(Language.Chinese) &&
+                totalLanguageCounts.ContainsKey(Language.Japanese):
+                return Language.Japanese;
         }
 
         using var sortedTotalLanguageCounts = totalLanguageCounts
@@ -568,7 +568,7 @@ public class LanguageDetector
         sortedTotalLanguageCounts.MoveNext();
         var (_, secondTotalCharCount) = sortedTotalLanguageCounts.Current;
 
-        return firstTotalCharCount == secondTotalCharCount ? Language.UNKNOWN : mostFrequentTotalLanguage;
+        return firstTotalCharCount == secondTotalCharCount ? Language.Unknown : mostFrequentTotalLanguage;
     }
 
     private bool IsJapaneseAlphabet(char ch) =>
@@ -637,133 +637,4 @@ public class LanguageDetector
         hashCode.Add(_isLowAccuracyModeEnabled);
         return hashCode.ToHashCode();
     }
-}
-
-public class LanguageDetectorBuilder
-{
-    private readonly HashSet<Language> _languages;
-    private double _minimumRelativeDistance;
-    private bool _isEveryLanguageModelPreloaded;
-    private bool _isLowAccuracyModeEnabled;
-
-    private LanguageDetectorBuilder(HashSet<Language> languages) => _languages = languages;
-
-    public static LanguageDetectorBuilder FromAllLanguages() =>
-        new(LanguageExtensions.All().ToHashSet());
-
-    public static LanguageDetectorBuilder FromAllSpokenLanguages() =>
-        new(LanguageExtensions.AllSpokenOnes().ToHashSet());
-
-    public static LanguageDetectorBuilder FromAllLanguagesWithArabicScript() =>
-        new(LanguageExtensions.AllWithArabicScript().ToHashSet());
-
-    public static LanguageDetectorBuilder FromAllLanguagesWithCyrillicScript() =>
-        new(LanguageExtensions.AllWithCyrillicScript().ToHashSet());
-
-    public static LanguageDetectorBuilder FromAllLanguagesWithDevangariScript() =>
-        new(LanguageExtensions.AllWithDevangariScript().ToHashSet());
-
-    public static LanguageDetectorBuilder FromAllLanguagesWithLatinScript() =>
-        new(LanguageExtensions.AllWithLatinScript().ToHashSet());
-
-    public static LanguageDetectorBuilder FromAllLanguagesExcept(params Language[] languages)
-    {
-        var languagesToLoad = Enum.GetValues<Language>().ToHashSet();
-        languagesToLoad.RemoveWhere(language => language == Language.UNKNOWN || languages.Contains(language));
-        if (languagesToLoad.Count < 2)
-        {
-            throw new ArgumentException("LanguageDetector needs at least 2 languages to choose from");
-        }
-        return new LanguageDetectorBuilder(languagesToLoad);
-    }
-
-    public static LanguageDetectorBuilder FromLanguages(params Language[] languages)
-    {
-        var languagesToLoad = languages.ToHashSet();
-        languagesToLoad.Remove(Language.UNKNOWN);
-
-        if (languagesToLoad.Count < 2)
-        {
-            throw new ArgumentException("LanguageDetector needs at least 2 languages to choose from");
-        }
-
-        return new LanguageDetectorBuilder(languagesToLoad);
-    }
-
-    /// <summary>
-    /// Sets the desired value for the minimum relative distance measure.
-    /// <para />
-    /// By default, *Lingua* returns the most likely language for a given
-    /// input text. However, there are certain words that are spelled the
-    /// same in more than one language. The word *prologue*, for instance,
-    /// is both a valid English and French word. Lingua would output either
-    /// English or French which might be wrong in the given context.
-    /// For cases like that, it is possible to specify a minimum relative
-    /// distance that the logarithmized and summed up probabilities for
-    /// each possible language have to satisfy.
-    /// <para />
-    /// Be aware that the distance between the language probabilities is
-    /// dependent on the length of the input text. The longer the input
-    /// text, the larger the distance between the languages. So if you
-    /// want to classify very short text phrases, do not set the minimum
-    /// relative distance too high. Otherwise you will get most results
-    /// returned as <see cref="Language.UNKNOWN"/> which is the return value for cases
-    /// where language detection is not reliably possible.
-    /// </summary>
-    /// <param name="distance">distance A value between 0.0 and 0.99. Defaults to 0.0.</param>
-    /// <exception cref="ArgumentException">if <paramref name="distance"/> is not between 0.0 and 0.99</exception>
-    public LanguageDetectorBuilder WithMinimumRelativeDistance(double distance)
-    {
-        if (distance is < 0 or > 0.99)
-        {
-            throw new ArgumentException("minimum relative distance must lie in between 0.0 and 0.99");
-        }
-
-        _minimumRelativeDistance = distance;
-        return this;
-    }
-
-    /// <summary>
-    /// Preloads all language models when creating the instance of <see cref="LanguageDetector"/>.
-    /// <para />
-    /// By default, *Lingua* uses lazy-loading to load only those language models
-    /// on demand which are considered relevant by the rule-based filter engine.
-    /// For web services, for instance, it is rather beneficial to preload all language
-    /// models into memory to avoid unexpected latency while waiting for the
-    /// service response. This method allows to switch between these two loading modes.
-    /// </summary>
-    public LanguageDetectorBuilder WithPreloadedLanguageModels()
-    {
-        _isEveryLanguageModelPreloaded = true;
-        return this;
-    }
-
-    /// <summary>
-    /// Disables the high accuracy mode in order to save memory and increase performance.
-    /// <para />
-    /// By default, *Lingua's* high detection accuracy comes at the cost of
-    /// loading large language models into memory which might not be feasible
-    /// for systems running low on resources.
-    /// <para />
-    /// This method disables the high accuracy mode so that only a small subset
-    /// of language models is loaded into memory. The downside of this approach
-    /// is that detection accuracy for short texts consisting of less than 120
-    /// characters will drop significantly. However, detection accuracy for texts
-    /// which are longer than 120 characters will remain mostly unaffected.
-    /// </summary>
-    public LanguageDetectorBuilder WithLowAccuracyMode()
-    {
-        _isLowAccuracyModeEnabled = true;
-        return this;
-    }
-
-    /// <summary>
-    /// Builds a new instance of <see cref="LanguageDetector"/>.
-    /// </summary>
-    /// <returns>a new instance of <see cref="LanguageDetector"/></returns>
-    public LanguageDetector Build() =>
-        new(_languages,
-            _minimumRelativeDistance,
-            _isEveryLanguageModelPreloaded,
-            _isLowAccuracyModeEnabled);
 }

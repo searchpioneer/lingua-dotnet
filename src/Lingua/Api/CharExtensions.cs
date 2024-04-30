@@ -1,11 +1,17 @@
 ﻿namespace Lingua.Api;
 
-public static class CharExtensions
+internal static class CharExtensions
 {
-    private static readonly HashSet<Alphabet> ScriptsWithLogograms = LanguageExtensions.LanguagesSupportingLogograms
+    private static readonly HashSet<Alphabet> AlphabetsWithLogograms = LanguageExtensions.LanguagesSupportingLogograms
         .SelectMany(l => l.Alphabets())
         .ToHashSet();
-    
-    public static bool IsLogogram(this char ch) => 
-        !char.IsWhiteSpace(ch) && ScriptsWithLogograms.Any(a => a.Matches(ch));
+
+    public static bool IsLogogram(this char ch)
+    {
+	    if (char.IsWhiteSpace(ch))
+		    return false;
+
+	    var charScript = ch.GetScript();
+	    return AlphabetsWithLogograms.Any(a => a.Matches(charScript));
+    }
 }

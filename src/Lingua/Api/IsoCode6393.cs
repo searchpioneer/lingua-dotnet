@@ -1,404 +1,267 @@
 ﻿namespace Lingua.Api;
 
+/// <summary>
+/// Three-character codes which serves as identifiers for individual languages from the world.
+/// It extends the ISO 639-2 alpha-3 codes with an aim to cover all known natural languages.
+/// </summary>
 public enum IsoCode6393
 {
-    /**
-     * The ISO 639-3 code for [Afrikaans][Language.AFRIKAANS].
-     */
-    AFR,
-
-    /**
-     * The ISO 639-3 code for [Amharic][Language.AMHARIC].
-     */
-    AMH,
-
-    /**
-     * The ISO 639-3 code for [Arabic][Language.ARABIC].
-     */
-    ARA,
-
-    /**
-     * The ISO 639-3 code for [Azerbaijani][Language.AZERBAIJANI].
-     */
-    AZE,
-
-    /**
-     * The ISO 639-3 code for [Belarusian][Language.BELARUSIAN].
-     */
-    BEL,
-
-    /**
-     * The ISO 639-3 code for [Bengali][Language.BENGALI].
-     */
-    BEN,
-
-    /**
-     * The ISO 639-3 code for [Bosnian][Language.BOSNIAN].
-     */
-    BOS,
-
-    /**
-     * The ISO 639-3 code for [Bulgarian][Language.BULGARIAN].
-     */
-    BUL,
-
-    /**
-     * The ISO 639-3 code for [Catalan][Language.CATALAN].
-     */
-    CAT,
-
-    /**
-     * The ISO 639-3 code for [Czech][Language.CZECH].
-     */
-    CES,
-
-    /**
-     * The ISO 639-3 code for [Welsh][Language.WELSH].
-     */
-    CYM,
-
-    /**
-     * The ISO 639-3 code for [Danish][Language.DANISH].
-     */
-    DAN,
-
-    /**
-     * The ISO 639-3 code for [German][Language.GERMAN].
-     */
-    DEU,
-
-    /**
-     * The ISO 639-3 code for [Greek][Language.GREEK].
-     */
-    ELL,
-
-    /**
-     * The ISO 639-3 code for [English][Language.ENGLISH].
-     */
-    ENG,
-
-    /**
-     * The ISO 639-3 code for [Esperanto][Language.ESPERANTO].
-     */
-    EPO,
-
-    /**
-     * The ISO 639-3 code for [Estonian][Language.ESTONIAN].
-     */
-    EST,
-
-    /**
-     * The ISO 639-3 code for [Basque][Language.BASQUE].
-     */
-    EUS,
-
-    /**
-     * The ISO 639-3 code for [Persian][Language.PERSIAN].
-     */
-    FAS,
-
-    /**
-     * The ISO 639-3 code for [Finnish][Language.FINNISH].
-     */
-    FIN,
-
-    /**
-     * The ISO 639-3 code for [French][Language.FRENCH].
-     */
-    FRA,
-
-    /**
-     * The ISO 639-3 code for [Irish][Language.IRISH].
-     */
-    GLE,
-
-    /**
-     * The ISO 639-3 code for [Gujarati][Language.GUJARATI].
-     */
-    GUJ,
-
-    /**
-     * The ISO 639-3 code for [Hebrew][Language.HEBREW].
-     */
-    HEB,
-
-    /**
-     * The ISO 639-3 code for [Hindi][Language.HINDI].
-     */
-    HIN,
-
-    /**
-     * The ISO 639-3 code for [Croatian][Language.CROATIAN].
-     */
-    HRV,
-
-    /**
-     * The ISO 639-3 code for [Hungarian][Language.HUNGARIAN].
-     */
-    HUN,
-
-    /**
-     * The ISO 639-3 code for [Armenian][Language.ARMENIAN].
-     */
-    HYE,
-
-    /**
-     * The ISO 639-3 code for [Indonesian][Language.INDONESIAN].
-     */
-    IND,
-
-    /**
-     * The ISO 639-3 code for [Icelandic][Language.ICELANDIC].
-     */
-    ISL,
-
-    /**
-     * The ISO 639-3 code for [Italian][Language.ITALIAN].
-     */
-    ITA,
-
-    /**
-     * The ISO 639-3 code for [Japanese][Language.JAPANESE].
-     */
-    JPN,
-
-    /**
-     * The ISO 639-3 code for [Georgian][Language.GEORGIAN].
-     */
-    KAT,
-
-    /**
-     * The ISO 639-3 code for [Kazakh][Language.KAZAKH].
-     */
-    KAZ,
-
-    /**
-     * The ISO 639-3 code for [Korean][Language.KOREAN].
-     */
-    KOR,
-
-    /**
-     * The ISO 639-3 code for [Latin][Language.LATIN].
-     */
-    LAT,
-
-    /**
-     * The ISO 639-3 code for [Latvian][Language.LATVIAN].
-     */
-    LAV,
-
-    /**
-     * The ISO 639-3 code for [Lithuanian][Language.LITHUANIAN].
-     */
-    LIT,
-
-    /**
-     * The ISO 639-3 code for [Ganda][Language.GANDA].
-     */
-    LUG,
-
-    /**
-     * The ISO 639-3 code for [Marathi][Language.MARATHI].
-     */
-    MAR,
-
-    /**
-     * The ISO 639-3 code for [Macedonian][Language.MACEDONIAN].
-     */
-    MKD,
-
-    /**
-     * The ISO 639-3 code for [Mongolian][Language.MONGOLIAN].
-     */
-    MON,
-
-    /**
-     * The ISO 639-3 code for [Maori][Language.MAORI].
-     */
-    MRI,
-
-    /**
-     * The ISO 639-3 code for [Malay][Language.MALAY].
-     */
-    MSA,
-
-    /**
-     * The ISO 639-3 code for [Dutch][Language.DUTCH].
-     */
-    NLD,
-
-    /**
-     * The ISO 639-3 code for [Norwegian Nynorsk][Language.NYNORSK].
-     */
-    NNO,
-
-    /**
-     * The ISO 639-3 code for [Norwegian Bokmal][Language.BOKMAL].
-     */
-    NOB,
-
-    /**
-     * The ISO 639-3 code for [Oromo][Language.OROMO].
-     */
-    ORM,
-
-    /**
-     * The ISO 639-3 code for [Punjabi][Language.PUNJABI].
-     */
-    PAN,
-
-    /**
-     * The ISO 639-3 code for [Polish][Language.POLISH].
-     */
-    POL,
-
-    /**
-     * The ISO 639-3 code for [Portuguese][Language.PORTUGUESE].
-     */
-    POR,
-
-    /**
-     * The ISO 639-3 code for [Romanian][Language.ROMANIAN].
-     */
-    RON,
-
-    /**
-     * The ISO 639-3 code for [Russian][Language.RUSSIAN].
-     */
-    RUS,
-
-    /**
-     * The ISO 639-3 code for [Sinhala][Language.SINHALA].
-     */
-    SIN,
-
-    /**
-     * The ISO 639-3 code for [Slovak][Language.SLOVAK].
-     */
-    SLK,
-
-    /**
-     * The ISO 639-3 code for [Slovene][Language.SLOVENE].
-     */
-    SLV,
-
-    /**
-     * The ISO 639-3 code for [Shona][Language.SHONA].
-     */
-    SNA,
-
-    /**
-     * The ISO 639-3 code for [Somali][Language.SOMALI].
-     */
-    SOM,
-
-    /**
-     * The ISO 639-3 code for [Southern Sotho][Language.SOTHO].
-     */
-    SOT,
-
-    /**
-     * The ISO 639-3 code for [Spanish][Language.SPANISH].
-     */
-    SPA,
-
-    /**
-     * The ISO 639-3 code for [Albanian][Language.ALBANIAN].
-     */
-    SQI,
-
-    /**
-     * The ISO 639-3 code for [Serbian][Language.SERBIAN].
-     */
-    SRP,
-
-    /**
-     * The ISO 639-3 code for [Swahili][Language.SWAHILI].
-     */
-    SWA,
-
-    /**
-     * The ISO 639-3 code for [Swedish][Language.SWEDISH].
-     */
-    SWE,
-
-    /**
-     * The ISO 639-3 code for [Tamil][Language.TAMIL].
-     */
-    TAM,
-
-    /**
-     * The ISO 639-3 code for [Telugu][Language.TELUGU].
-     */
-    TEL,
-
-    /**
-     * The ISO 639-3 code for [Tagalog][Language.TAGALOG].
-     */
-    TGL,
-
-    /**
-     * The ISO 639-3 code for [Thai][Language.THAI].
-     */
-    THA,
-
-    /**
-     * The ISO 639-3 code for [Tigrinya][Language.TIGRINYA].
-     */
-    TIR,
-
-    /**
-     * The ISO 639-3 code for [Tswana][Language.TSWANA].
-     */
-    TSN,
-
-    /**
-     * The ISO 639-3 code for [Tsonga][Language.TSONGA].
-     */
-    TSO,
-
-    /**
-     * The ISO 639-3 code for [Turkish][Language.TURKISH].
-     */
-    TUR,
-
-    /**
-     * The ISO 639-3 code for [Ukrainian][Language.UKRAINIAN].
-     */
-    UKR,
-
-    /**
-     * The ISO 639-3 code for [Urdu][Language.URDU].
-     */
-    URD,
-
-    /**
-     * The ISO 639-3 code for [Vietnamese][Language.VIETNAMESE].
-     */
-    VIE,
-
-    /**
-     * The ISO 639-3 code for [Xhosa][Language.XHOSA].
-     */
-    XHO,
-
-    /**
-     * The ISO 639-3 code for [Yoruba][Language.YORUBA].
-     */
-    YOR,
-
-    /**
-     * The ISO 639-3 code for [Chinese][Language.CHINESE].
-     */
-    ZHO,
-
-    /**
-     * The ISO 639-3 code for [Zulu][Language.ZULU].
-     */
-    ZUL,
-
-    /**
-     * The ISO 639-3 code for [the imaginary unknown language][Language.UNKNOWN].
-     */
-    NONE,
+	/// <summary>The ISO 639-3 code for <see cref="Language.Afrikaans"/>.</summary>
+	Afr,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Amharic"/>.</summary>
+	Amh,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Arabic"/>.</summary>
+	Ara,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Azerbaijani"/>.</summary>
+	Aze,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Belarusian"/>.</summary>
+	Bel,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Bengali"/>.</summary>
+	Ben,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Bosnian"/>.</summary>
+	Bos,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Bulgarian"/>.</summary>
+	Bul,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Catalan"/>.</summary>
+	Cat,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Czech"/>.</summary>
+	Ces,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Welsh"/>.</summary>
+	Cym,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Danish"/>.</summary>
+	Dan,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.German"/>.</summary>
+	Deu,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Greek"/>.</summary>
+	Ell,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.English"/>.</summary>
+	Eng,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Esperanto"/>.</summary>
+	Epo,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Estonian"/>.</summary>
+	Est,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Basque"/>.</summary>
+	Eus,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Persian"/>.</summary>
+	Fas,
+
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Finnish"/>.</summary>
+	Fin,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.French"/>.</summary>
+	Fra,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Irish"/>.</summary>
+	Gle,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Gujarati"/>.</summary>
+	Guj,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Hebrew"/>.</summary>
+	Heb,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Hindi"/>.</summary>
+	Hin,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Croatian"/>.</summary>
+	Hrv,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Hungarian"/>.</summary>
+	Hun,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Armenian"/>.</summary>
+	Hye,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Indonesian"/>.</summary>
+	Ind,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Icelandic"/>.</summary>
+	Isl,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Italian"/>.</summary>
+	Ita,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Japanese"/>.</summary>
+	Jpn,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Georgian"/>.</summary>
+	Kat,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Kazakh"/>.</summary>
+	Kaz,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Korean"/>.</summary>
+	Kor,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Latin"/>.</summary>
+	Lat,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Latvian"/>.</summary>
+	Lav,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Lithuanian"/>.</summary>
+	Lit,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Ganda"/>.</summary>
+	Lug,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Marathi"/>.</summary>
+	Mar,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Macedonian"/>.</summary>
+	Mkd,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Mongolian"/>.</summary>
+	Mon,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Maori"/>.</summary>
+	Mri,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Malay"/>.</summary>
+	Msa,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Dutch"/>.</summary>
+	Nld,
+
+	/// <summary>The ISO 639-3 code for Norwegian <see cref="Language.Nynorsk"/>.</summary>
+	Nno,
+
+	/// <summary>The ISO 639-3 code for Norwegian <see cref="Language.Bokmal"/>.</summary>
+	Nob,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Oromo"/>.</summary>
+	Orm,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Punjabi"/>.</summary>
+	Pan,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Polish"/>.</summary>
+	Pol,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Portuguese"/>.</summary>
+	Por,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Romanian"/>.</summary>
+	Ron,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Russian"/>.</summary>
+	Rus,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Sinhala"/>.</summary>
+	Sin,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Slovak"/>.</summary>
+	Slk,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Slovene"/>.</summary>
+	Slv,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Shona"/>.</summary>
+	Sna,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Somali"/>.</summary>
+	Som,
+
+	/// <summary>The ISO 639-3 code for Southern <see cref="Language.Sotho"/>.</summary>
+	Sot,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Spanish"/>.</summary>
+	Spa,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Albanian"/>.</summary>
+	Sqi,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Serbian"/>.</summary>
+	Srp,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Swahili"/>.</summary>
+	Swa,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Swedish"/>.</summary>
+	Swe,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Tamil"/>.</summary>
+	Tam,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Telugu"/>.</summary>
+	Tel,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Tagalog"/>.</summary>
+	Tgl,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Thai"/>.</summary>
+	Tha,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Tigrinya"/>.</summary>
+	Tir,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Tswana"/>.</summary>
+	Tsn,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Tsonga"/>.</summary>
+	Tso,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Turkish"/>.</summary>
+	Tur,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Ukrainian"/>.</summary>
+	Ukr,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Urdu"/>.</summary>
+	Urd,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Vietnamese"/>.</summary>
+	Vie,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Xhosa"/>.</summary>
+	Xho,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Yoruba"/>.</summary>
+	Yor,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Chinese"/>.</summary>
+	Zho,
+
+	/// <summary>The ISO 639-3 code for <see cref="Language.Zulu"/>.</summary>
+	Zul,
+
+	/// <summary>The ISO 639-3 code for imaginary <see cref="Language.Unknown"/>.</summary>
+	None,
 }

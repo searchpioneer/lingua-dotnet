@@ -101,7 +101,7 @@ public class LanguageDetectorTests : IDisposable
     };
 
     private readonly LanguageDetector _detectorForEnglishAndGerman = new(
-        [ENGLISH, GERMAN],
+        [English, German],
         0,
         false,
         false);
@@ -178,16 +178,16 @@ public class LanguageDetectorTests : IDisposable
     }
 
     [Theory]
-    [InlineData(ENGLISH, "a", 0.01)]
-    [InlineData(ENGLISH, "lt", 0.12)]
-    [InlineData(ENGLISH, "ter", 0.21)]
-    [InlineData(ENGLISH, "alte", 0.25)]
-    [InlineData(ENGLISH, "alter", 0.29)]
-    [InlineData(GERMAN, "t", 0.08)]
-    [InlineData(GERMAN, "er", 0.18)]
-    [InlineData(GERMAN, "alt", 0.22)]
-    [InlineData(GERMAN, "lter", 0.28)]
-    [InlineData(GERMAN, "alter", 0.30)]
+    [InlineData(English, "a", 0.01)]
+    [InlineData(English, "lt", 0.12)]
+    [InlineData(English, "ter", 0.21)]
+    [InlineData(English, "alte", 0.25)]
+    [InlineData(English, "alter", 0.29)]
+    [InlineData(German, "t", 0.08)]
+    [InlineData(German, "er", 0.18)]
+    [InlineData(German, "alt", 0.22)]
+    [InlineData(German, "lter", 0.28)]
+    [InlineData(German, "alter", 0.30)]
     public void NgramProbabilityLookupWorksCorrectly(Language language, string ngram, float expectedProbability) =>
         _detectorForEnglishAndGerman.LookupNgramProbability(language, new Ngram(ngram)).Should()
             .Be(expectedProbability);
@@ -196,7 +196,7 @@ public class LanguageDetectorTests : IDisposable
     public void NgramProbabilityLookupThrowsForZerogram()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
-                _detectorForEnglishAndGerman.LookupNgramProbability(ENGLISH, new Ngram("")));
+                _detectorForEnglishAndGerman.LookupNgramProbability(English, new Ngram("")));
 
         exception.Message.Should().Be("Zerogram detected");
     }
@@ -225,7 +225,7 @@ public class LanguageDetectorTests : IDisposable
     [Theory]
     [MemberData(nameof(NgramProbabilityProvider))]
     public void SumOfNgramProbabilitiesComputedCorrectly(HashSet<Ngram> ngrams, float expectedSumOfProbabilities) =>
-        _detectorForEnglishAndGerman.ComputeSumOfNgramProbabilities(ENGLISH, ngrams)
+        _detectorForEnglishAndGerman.ComputeSumOfNgramProbabilities(English, ngrams)
             .Should()
             .Be(expectedSumOfProbabilities);
 
@@ -236,8 +236,8 @@ public class LanguageDetectorTests : IDisposable
             UnigramTestDataLanguageModel,
             new Dictionary<Language, float>
             {
-                [ENGLISH] = (float)(Math.Log(0.01F) + Math.Log(0.02F) + Math.Log(0.03F) + Math.Log(0.04F) + Math.Log(0.05F)),
-                [GERMAN] = (float)(Math.Log(0.06F) + Math.Log(0.07F) + Math.Log(0.08F) + Math.Log(0.09F) + Math.Log(0.1F)),
+                [English] = (float)(Math.Log(0.01F) + Math.Log(0.02F) + Math.Log(0.03F) + Math.Log(0.04F) + Math.Log(0.05F)),
+                [German] = (float)(Math.Log(0.06F) + Math.Log(0.07F) + Math.Log(0.08F) + Math.Log(0.09F) + Math.Log(0.1F)),
             }
         ];
 
@@ -246,8 +246,8 @@ public class LanguageDetectorTests : IDisposable
             TrigramTestDataLanguageModel,
             new Dictionary<Language, float>
             {
-                [ENGLISH] = (float)(Math.Log(0.19F) + Math.Log(0.2F) + Math.Log(0.21F)),
-                [GERMAN] = (float)(Math.Log(0.22F) + Math.Log(0.23F) + Math.Log(0.24F)),
+                [English] = (float)(Math.Log(0.19F) + Math.Log(0.2F) + Math.Log(0.21F)),
+                [German] = (float)(Math.Log(0.22F) + Math.Log(0.23F) + Math.Log(0.24F)),
             }
         ];
 
@@ -256,8 +256,8 @@ public class LanguageDetectorTests : IDisposable
             QuadrigramTestDataLanguageModel,
             new Dictionary<Language, float>
             {
-                [ENGLISH] = (float)(Math.Log(0.25F) + Math.Log(0.26F)),
-                [GERMAN] = (float)(Math.Log(0.27F) + Math.Log(0.28F)),
+                [English] = (float)(Math.Log(0.25F) + Math.Log(0.26F)),
+                [German] = (float)(Math.Log(0.27F) + Math.Log(0.28F)),
             }
         ];
     }
@@ -270,123 +270,123 @@ public class LanguageDetectorTests : IDisposable
             .Should().BeEquivalentTo(expectedProbabilities);
 
     [Theory]
-    [InlineData("məhərrəm", AZERBAIJANI)]
-    [InlineData("substituïts", CATALAN)]
-    [InlineData("rozdělit", CZECH)]
-    [InlineData("tvořen", CZECH)]
-    [InlineData("subjektů", CZECH)]
-    [InlineData("nesufiĉecon", ESPERANTO)]
-    [InlineData("intermiksiĝis", ESPERANTO)]
-    [InlineData("monaĥinoj", ESPERANTO)]
-    [InlineData("kreitaĵoj", ESPERANTO)]
-    [InlineData("ŝpinante", ESPERANTO)]
-    [InlineData("apenaŭ", ESPERANTO)]
-    [InlineData("groß", GERMAN)]
-    [InlineData("σχέδια", GREEK)]
-    [InlineData("fekvő", HUNGARIAN)]
-    [InlineData("meggyűrűzni", HUNGARIAN)]
-    [InlineData("ヴェダイヤモンド", JAPANESE)]
-    [InlineData("әлем", KAZAKH)]
-    [InlineData("шаруашылығы", KAZAKH)]
-    [InlineData("ақын", KAZAKH)]
-    [InlineData("оның", KAZAKH)]
-    [InlineData("шұрайлы", KAZAKH)]
-    [InlineData("teoloģiska", LATVIAN)]
-    [InlineData("blaķene", LATVIAN)]
-    [InlineData("ceļojumiem", LATVIAN)]
-    [InlineData("numuriņu", LATVIAN)]
-    [InlineData("mergelės", LITHUANIAN)]
-    [InlineData("įrengus", LITHUANIAN)]
-    [InlineData("slegiamų", LITHUANIAN)]
-    [InlineData("припаѓа", MACEDONIAN)]
-    [InlineData("ѕидови", MACEDONIAN)]
-    [InlineData("ќерка", MACEDONIAN)]
-    [InlineData("џамиите", MACEDONIAN)]
-    [InlineData("मिळते", MARATHI)]
-    [InlineData("үндсэн", MONGOLIAN)]
-    [InlineData("дөхөж", MONGOLIAN)]
-    [InlineData("zmieniły", POLISH)]
-    [InlineData("państwowych", POLISH)]
-    [InlineData("mniejszości", POLISH)]
-    [InlineData("groźne", POLISH)]
-    [InlineData("ialomiţa", ROMANIAN)]
-    [InlineData("наслеђивања", SERBIAN)]
-    [InlineData("неисквареношћу", SERBIAN)]
-    [InlineData("podĺa", SLOVAK)]
-    [InlineData("pohľade", SLOVAK)]
-    [InlineData("mŕtvych", SLOVAK)]
-    [InlineData("ґрунтовому", UKRAINIAN)]
-    [InlineData("пропонує", UKRAINIAN)]
-    [InlineData("пристрої", UKRAINIAN)]
-    [InlineData("cằm", VIETNAMESE)]
-    [InlineData("thần", VIETNAMESE)]
-    [InlineData("chẳng", VIETNAMESE)]
-    [InlineData("quẩy", VIETNAMESE)]
-    [InlineData("sẵn", VIETNAMESE)]
-    [InlineData("nhẫn", VIETNAMESE)]
-    [InlineData("dắt", VIETNAMESE)]
-    [InlineData("chất", VIETNAMESE)]
-    [InlineData("đạp", VIETNAMESE)]
-    [InlineData("mặn", VIETNAMESE)]
-    [InlineData("hậu", VIETNAMESE)]
-    [InlineData("hiền", VIETNAMESE)]
-    [InlineData("lẻn", VIETNAMESE)]
-    [InlineData("biểu", VIETNAMESE)]
-    [InlineData("kẽm", VIETNAMESE)]
-    [InlineData("diễm", VIETNAMESE)]
-    [InlineData("phế", VIETNAMESE)]
-    [InlineData("việc", VIETNAMESE)]
-    [InlineData("chỉnh", VIETNAMESE)]
-    [InlineData("trĩ", VIETNAMESE)]
-    [InlineData("ravị", VIETNAMESE)]
-    [InlineData("thơ", VIETNAMESE)]
-    [InlineData("nguồn", VIETNAMESE)]
-    [InlineData("thờ", VIETNAMESE)]
-    [InlineData("sỏi", VIETNAMESE)]
-    [InlineData("tổng", VIETNAMESE)]
-    [InlineData("nhở", VIETNAMESE)]
-    [InlineData("mỗi", VIETNAMESE)]
-    [InlineData("bỡi", VIETNAMESE)]
-    [InlineData("tốt", VIETNAMESE)]
-    [InlineData("giới", VIETNAMESE)]
-    [InlineData("một", VIETNAMESE)]
-    [InlineData("hợp", VIETNAMESE)]
-    [InlineData("hưng", VIETNAMESE)]
-    [InlineData("từng", VIETNAMESE)]
-    [InlineData("của", VIETNAMESE)]
-    [InlineData("sử", VIETNAMESE)]
-    [InlineData("cũng", VIETNAMESE)]
-    [InlineData("những", VIETNAMESE)]
-    [InlineData("chức", VIETNAMESE)]
-    [InlineData("dụng", VIETNAMESE)]
-    [InlineData("thực", VIETNAMESE)]
-    [InlineData("kỳ", VIETNAMESE)]
-    [InlineData("kỷ", VIETNAMESE)]
-    [InlineData("mỹ", VIETNAMESE)]
-    [InlineData("mỵ", VIETNAMESE)]
-    [InlineData("aṣiwèrè", YORUBA)]
-    [InlineData("ṣaaju", YORUBA)]
-    [InlineData("والموضوع", UNKNOWN)]
-    [InlineData("сопротивление", UNKNOWN)]
-    [InlineData("house", UNKNOWN)]
+    [InlineData("məhərrəm", Azerbaijani)]
+    [InlineData("substituïts", Catalan)]
+    [InlineData("rozdělit", Czech)]
+    [InlineData("tvořen", Czech)]
+    [InlineData("subjektů", Czech)]
+    [InlineData("nesufiĉecon", Esperanto)]
+    [InlineData("intermiksiĝis", Esperanto)]
+    [InlineData("monaĥinoj", Esperanto)]
+    [InlineData("kreitaĵoj", Esperanto)]
+    [InlineData("ŝpinante", Esperanto)]
+    [InlineData("apenaŭ", Esperanto)]
+    [InlineData("groß", German)]
+    [InlineData("σχέδια", Greek)]
+    [InlineData("fekvő", Hungarian)]
+    [InlineData("meggyűrűzni", Hungarian)]
+    [InlineData("ヴェダイヤモンド", Japanese)]
+    [InlineData("әлем", Kazakh)]
+    [InlineData("шаруашылығы", Kazakh)]
+    [InlineData("ақын", Kazakh)]
+    [InlineData("оның", Kazakh)]
+    [InlineData("шұрайлы", Kazakh)]
+    [InlineData("teoloģiska", Latvian)]
+    [InlineData("blaķene", Latvian)]
+    [InlineData("ceļojumiem", Latvian)]
+    [InlineData("numuriņu", Latvian)]
+    [InlineData("mergelės", Lithuanian)]
+    [InlineData("įrengus", Lithuanian)]
+    [InlineData("slegiamų", Lithuanian)]
+    [InlineData("припаѓа", Macedonian)]
+    [InlineData("ѕидови", Macedonian)]
+    [InlineData("ќерка", Macedonian)]
+    [InlineData("џамиите", Macedonian)]
+    [InlineData("मिळते", Marathi)]
+    [InlineData("үндсэн", Mongolian)]
+    [InlineData("дөхөж", Mongolian)]
+    [InlineData("zmieniły", Polish)]
+    [InlineData("państwowych", Polish)]
+    [InlineData("mniejszości", Polish)]
+    [InlineData("groźne", Polish)]
+    [InlineData("ialomiţa", Romanian)]
+    [InlineData("наслеђивања", Serbian)]
+    [InlineData("неисквареношћу", Serbian)]
+    [InlineData("podĺa", Slovak)]
+    [InlineData("pohľade", Slovak)]
+    [InlineData("mŕtvych", Slovak)]
+    [InlineData("ґрунтовому", Ukrainian)]
+    [InlineData("пропонує", Ukrainian)]
+    [InlineData("пристрої", Ukrainian)]
+    [InlineData("cằm", Vietnamese)]
+    [InlineData("thần", Vietnamese)]
+    [InlineData("chẳng", Vietnamese)]
+    [InlineData("quẩy", Vietnamese)]
+    [InlineData("sẵn", Vietnamese)]
+    [InlineData("nhẫn", Vietnamese)]
+    [InlineData("dắt", Vietnamese)]
+    [InlineData("chất", Vietnamese)]
+    [InlineData("đạp", Vietnamese)]
+    [InlineData("mặn", Vietnamese)]
+    [InlineData("hậu", Vietnamese)]
+    [InlineData("hiền", Vietnamese)]
+    [InlineData("lẻn", Vietnamese)]
+    [InlineData("biểu", Vietnamese)]
+    [InlineData("kẽm", Vietnamese)]
+    [InlineData("diễm", Vietnamese)]
+    [InlineData("phế", Vietnamese)]
+    [InlineData("việc", Vietnamese)]
+    [InlineData("chỉnh", Vietnamese)]
+    [InlineData("trĩ", Vietnamese)]
+    [InlineData("ravị", Vietnamese)]
+    [InlineData("thơ", Vietnamese)]
+    [InlineData("nguồn", Vietnamese)]
+    [InlineData("thờ", Vietnamese)]
+    [InlineData("sỏi", Vietnamese)]
+    [InlineData("tổng", Vietnamese)]
+    [InlineData("nhở", Vietnamese)]
+    [InlineData("mỗi", Vietnamese)]
+    [InlineData("bỡi", Vietnamese)]
+    [InlineData("tốt", Vietnamese)]
+    [InlineData("giới", Vietnamese)]
+    [InlineData("một", Vietnamese)]
+    [InlineData("hợp", Vietnamese)]
+    [InlineData("hưng", Vietnamese)]
+    [InlineData("từng", Vietnamese)]
+    [InlineData("của", Vietnamese)]
+    [InlineData("sử", Vietnamese)]
+    [InlineData("cũng", Vietnamese)]
+    [InlineData("những", Vietnamese)]
+    [InlineData("chức", Vietnamese)]
+    [InlineData("dụng", Vietnamese)]
+    [InlineData("thực", Vietnamese)]
+    [InlineData("kỳ", Vietnamese)]
+    [InlineData("kỷ", Vietnamese)]
+    [InlineData("mỹ", Vietnamese)]
+    [InlineData("mỵ", Vietnamese)]
+    [InlineData("aṣiwèrè", Yoruba)]
+    [InlineData("ṣaaju", Yoruba)]
+    [InlineData("والموضوع", Unknown)]
+    [InlineData("сопротивление", Unknown)]
+    [InlineData("house", Unknown)]
     public void LanguageOfSingleWordWithUniqueCharactersCanBeUnambiguouslyIdentifiedWithRules(
         string word,
         Language expectedLanguage) =>
         _detectorForAllLanguages.DetectLanguageWithRules([word]).Should().Be(expectedLanguage);
 
     [Theory]
-    [InlineData("ունենա", ARMENIAN)]
-    [InlineData("জানাতে", BENGALI)]
-    [InlineData("გარეუბან", GEORGIAN)]
-    [InlineData("σταμάτησε", GREEK)]
-    [InlineData("ઉપકરણોની", GUJARATI)]
-    [InlineData("בתחרויות", HEBREW)]
-    [InlineData("びさ", JAPANESE)]
-    [InlineData("대결구도가", KOREAN)]
-    [InlineData("ਮੋਟਰਸਾਈਕਲਾਂ", PUNJABI)]
-    [InlineData("துன்பங்களை", TAMIL)]
-    [InlineData("కృష్ణదేవరాయలు", TELUGU)]
-    [InlineData("ในทางหลวงหมายเลข", THAI)]
+    [InlineData("ունենա", Armenian)]
+    [InlineData("জানাতে", Bengali)]
+    [InlineData("გარეუბან", Georgian)]
+    [InlineData("σταμάτησε", Greek)]
+    [InlineData("ઉપકરણોની", Gujarati)]
+    [InlineData("בתחרויות", Hebrew)]
+    [InlineData("びさ", Japanese)]
+    [InlineData("대결구도가", Korean)]
+    [InlineData("ਮੋਟਰਸਾਈਕਲਾਂ", Punjabi)]
+    [InlineData("துன்பங்களை", Tamil)]
+    [InlineData("కృష్ణదేవరాయలు", Telugu)]
+    [InlineData("ในทางหลวงหมายเลข", Thai)]
     public void LanguageOfSingleWordWithUniqueAlphabetCanBeUnambiguouslyIdentifiedWithRules(
         string word,
         Language expectedLanguage) =>
@@ -397,304 +397,304 @@ public class LanguageDetectorTests : IDisposable
         yield return
         [
             "والموضوع",
-            new HashSet<Language> { ARABIC, PERSIAN, URDU }
+            new HashSet<Language> { Arabic, Persian, Urdu }
         ];
         yield return
         [
             "сопротивление",
-            new HashSet<Language> { BELARUSIAN, BULGARIAN, KAZAKH, MACEDONIAN, MONGOLIAN, RUSSIAN, SERBIAN, UKRAINIAN }
+            new HashSet<Language> { Belarusian, Bulgarian, Kazakh, Macedonian, Mongolian, Russian, Serbian, Ukrainian }
         ];
         yield return
         [
             "раскрывае",
-            new HashSet<Language> { BELARUSIAN, KAZAKH, MONGOLIAN, RUSSIAN }
+            new HashSet<Language> { Belarusian, Kazakh, Mongolian, Russian }
         ];
         yield return
         [
             "этот",
-            new HashSet<Language> { BELARUSIAN, KAZAKH, MONGOLIAN, RUSSIAN }
+            new HashSet<Language> { Belarusian, Kazakh, Mongolian, Russian }
         ];
         yield return
         [
             "огнём",
-            new HashSet<Language> { BELARUSIAN, KAZAKH, MONGOLIAN, RUSSIAN }
+            new HashSet<Language> { Belarusian, Kazakh, Mongolian, Russian }
         ];
         yield return
         [
             "плаваща",
-            new HashSet<Language> { BULGARIAN, KAZAKH, MONGOLIAN, RUSSIAN }
+            new HashSet<Language> { Bulgarian, Kazakh, Mongolian, Russian }
         ];
         yield return
         [
             "довършат",
-            new HashSet<Language> { BULGARIAN, KAZAKH, MONGOLIAN, RUSSIAN }
+            new HashSet<Language> { Bulgarian, Kazakh, Mongolian, Russian }
         ];
         yield return
         [
             "павінен",
-            new HashSet<Language> { BELARUSIAN, KAZAKH, UKRAINIAN }
+            new HashSet<Language> { Belarusian, Kazakh, Ukrainian }
         ];
         yield return
         [
             "затоплување",
-            new HashSet<Language> { MACEDONIAN, SERBIAN }
+            new HashSet<Language> { Macedonian, Serbian }
         ];
         yield return
         [
             "ректасцензија",
-            new HashSet<Language> { MACEDONIAN, SERBIAN }
+            new HashSet<Language> { Macedonian, Serbian }
         ];
         yield return
         [
             "набљудувач",
-            new HashSet<Language> { MACEDONIAN, SERBIAN }
+            new HashSet<Language> { Macedonian, Serbian }
         ];
         yield return
         [
             "aizklātā",
-            new HashSet<Language> { LATVIAN, MAORI, YORUBA }
+            new HashSet<Language> { Latvian, Maori, Yoruba }
         ];
         yield return
         [
             "sistēmas",
-            new HashSet<Language> { LATVIAN, MAORI, YORUBA }
+            new HashSet<Language> { Latvian, Maori, Yoruba }
         ];
         yield return
         [
             "palīdzi",
-            new HashSet<Language> { LATVIAN, MAORI, YORUBA }
+            new HashSet<Language> { Latvian, Maori, Yoruba }
         ];
         yield return
         [
             "nhẹn",
-            new HashSet<Language> { VIETNAMESE, YORUBA }
+            new HashSet<Language> { Vietnamese, Yoruba }
         ];
         yield return
         [
             "chọn",
-            new HashSet<Language> { VIETNAMESE, YORUBA }
+            new HashSet<Language> { Vietnamese, Yoruba }
         ];
         yield return
         [
             "prihvaćanju",
-            new HashSet<Language> { BOSNIAN, CROATIAN, POLISH }
+            new HashSet<Language> { Bosnian, Croatian, Polish }
         ];
         yield return
         [
             "nađete",
-            new HashSet<Language> { BOSNIAN, CROATIAN, VIETNAMESE }
+            new HashSet<Language> { Bosnian, Croatian, Vietnamese }
         ];
         yield return
         [
             "visão",
-            new HashSet<Language> { PORTUGUESE, VIETNAMESE }
+            new HashSet<Language> { Portuguese, Vietnamese }
         ];
         yield return
         [
             "wystąpią",
-            new HashSet<Language> { LITHUANIAN, POLISH }
+            new HashSet<Language> { Lithuanian, Polish }
         ];
         yield return
         [
             "budowę",
-            new HashSet<Language> { LITHUANIAN, POLISH }
+            new HashSet<Language> { Lithuanian, Polish }
         ];
         yield return
         [
             "nebūsime",
-            new HashSet<Language> { LATVIAN, LITHUANIAN, MAORI, YORUBA }
+            new HashSet<Language> { Latvian, Lithuanian, Maori, Yoruba }
         ];
         yield return
         [
             "afişate",
-            new HashSet<Language> { AZERBAIJANI, ROMANIAN, TURKISH }
+            new HashSet<Language> { Azerbaijani, Romanian, Turkish }
         ];
         yield return
         [
             "kradzieżami",
-            new HashSet<Language> { POLISH, ROMANIAN }
+            new HashSet<Language> { Polish, Romanian }
         ];
         yield return
         [
             "înviat",
-            new HashSet<Language> { FRENCH, ROMANIAN }
+            new HashSet<Language> { French, Romanian }
         ];
         yield return
         [
             "venerdì",
-            new HashSet<Language> { ITALIAN, VIETNAMESE, YORUBA }
+            new HashSet<Language> { Italian, Vietnamese, Yoruba }
         ];
         yield return
         [
             "años",
-            new HashSet<Language> { BASQUE, SPANISH }
+            new HashSet<Language> { Basque, Spanish }
         ];
         yield return
         [
             "rozohňuje",
-            new HashSet<Language> { CZECH, SLOVAK }
+            new HashSet<Language> { Czech, Slovak }
         ];
         yield return
         [
             "rtuť",
-            new HashSet<Language> { CZECH, SLOVAK }
+            new HashSet<Language> { Czech, Slovak }
         ];
         yield return
         [
             "pregătire",
-            new HashSet<Language> { ROMANIAN, VIETNAMESE }
+            new HashSet<Language> { Romanian, Vietnamese }
         ];
         yield return
         [
             "jeďte",
-            new HashSet<Language> { CZECH, ROMANIAN, SLOVAK }
+            new HashSet<Language> { Czech, Romanian, Slovak }
         ];
         yield return
         [
             "minjaverðir",
-            new HashSet<Language> { ICELANDIC, TURKISH }
+            new HashSet<Language> { Icelandic, Turkish }
         ];
         yield return
         [
             "þagnarskyldu",
-            new HashSet<Language> { ICELANDIC, TURKISH }
+            new HashSet<Language> { Icelandic, Turkish }
         ];
         yield return
         [
             "nebûtu",
-            new HashSet<Language> { FRENCH, HUNGARIAN }
+            new HashSet<Language> { French, Hungarian }
         ];
         yield return
         [
             "hashemidëve",
-            new HashSet<Language> { AFRIKAANS, ALBANIAN, DUTCH, FRENCH }
+            new HashSet<Language> { Afrikaans, Albanian, Dutch, French }
         ];
         yield return
         [
             "forêt",
-            new HashSet<Language> { AFRIKAANS, FRENCH, PORTUGUESE, VIETNAMESE }
+            new HashSet<Language> { Afrikaans, French, Portuguese, Vietnamese }
         ];
         yield return
         [
             "succèdent",
-            new HashSet<Language> { FRENCH, ITALIAN, VIETNAMESE, YORUBA }
+            new HashSet<Language> { French, Italian, Vietnamese, Yoruba }
         ];
         yield return
         [
             "où",
-            new HashSet<Language> { FRENCH, ITALIAN, VIETNAMESE, YORUBA }
+            new HashSet<Language> { French, Italian, Vietnamese, Yoruba }
         ];
         yield return
         [
             "tõeliseks",
-            new HashSet<Language> { ESTONIAN, HUNGARIAN, PORTUGUESE, VIETNAMESE }
+            new HashSet<Language> { Estonian, Hungarian, Portuguese, Vietnamese }
         ];
         yield return
         [
             "viòiem",
-            new HashSet<Language> { CATALAN, ITALIAN, VIETNAMESE, YORUBA }
+            new HashSet<Language> { Catalan, Italian, Vietnamese, Yoruba }
         ];
         yield return
         [
             "contrôle",
-            new HashSet<Language> { FRENCH, PORTUGUESE, SLOVAK, VIETNAMESE }
+            new HashSet<Language> { French, Portuguese, Slovak, Vietnamese }
         ];
         yield return
         [
             "direktør",
-            new HashSet<Language> { BOKMAL, DANISH, NYNORSK }
+            new HashSet<Language> { Bokmal, Danish, Nynorsk }
         ];
         yield return
         [
             "vývoj",
-            new HashSet<Language> { CZECH, ICELANDIC, SLOVAK, TURKISH, VIETNAMESE }
+            new HashSet<Language> { Czech, Icelandic, Slovak, Turkish, Vietnamese }
         ];
         yield return
         [
             "päralt",
-            new HashSet<Language> { ESTONIAN, FINNISH, GERMAN, SLOVAK, SWEDISH }
+            new HashSet<Language> { Estonian, Finnish, German, Slovak, Swedish }
         ];
         yield return
         [
             "labâk",
-            new HashSet<Language> { FRENCH, PORTUGUESE, ROMANIAN, TURKISH, VIETNAMESE }
+            new HashSet<Language> { French, Portuguese, Romanian, Turkish, Vietnamese }
         ];
         yield return
         [
             "pràctiques",
-            new HashSet<Language> { CATALAN, FRENCH, ITALIAN, PORTUGUESE, VIETNAMESE }
+            new HashSet<Language> { Catalan, French, Italian, Portuguese, Vietnamese }
         ];
         yield return
         [
             "überrascht",
-            new HashSet<Language> { AZERBAIJANI, CATALAN, ESTONIAN, GERMAN, HUNGARIAN, SPANISH, TURKISH }
+            new HashSet<Language> { Azerbaijani, Catalan, Estonian, German, Hungarian, Spanish, Turkish }
         ];
         yield return
         [
             "indebærer",
-            new HashSet<Language> { BOKMAL, DANISH, ICELANDIC, NYNORSK }
+            new HashSet<Language> { Bokmal, Danish, Icelandic, Nynorsk }
         ];
         yield return
         [
             "måned",
-            new HashSet<Language> { BOKMAL, DANISH, NYNORSK, SWEDISH }
+            new HashSet<Language> { Bokmal, Danish, Nynorsk, Swedish }
         ];
         yield return
         [
             "zaručen",
-            new HashSet<Language> { BOSNIAN, CZECH, CROATIAN, LATVIAN, LITHUANIAN, SLOVAK, SLOVENE }
+            new HashSet<Language> { Bosnian, Czech, Croatian, Latvian, Lithuanian, Slovak, Slovene }
         ];
         yield return
         [
             "zkouškou",
-            new HashSet<Language> { BOSNIAN, CZECH, CROATIAN, LATVIAN, LITHUANIAN, SLOVAK, SLOVENE }
+            new HashSet<Language> { Bosnian, Czech, Croatian, Latvian, Lithuanian, Slovak, Slovene }
         ];
         yield return
         [
             "navržen",
-            new HashSet<Language> { BOSNIAN, CZECH, CROATIAN, LATVIAN, LITHUANIAN, SLOVAK, SLOVENE }
+            new HashSet<Language> { Bosnian, Czech, Croatian, Latvian, Lithuanian, Slovak, Slovene }
         ];
         yield return
         [
             "façonnage",
-            new HashSet<Language> { ALBANIAN, AZERBAIJANI, BASQUE, CATALAN, FRENCH, PORTUGUESE, TURKISH }
+            new HashSet<Language> { Albanian, Azerbaijani, Basque, Catalan, French, Portuguese, Turkish }
         ];
         yield return
         [
             "höher",
-            new HashSet<Language> { AZERBAIJANI, ESTONIAN, FINNISH, GERMAN, HUNGARIAN, ICELANDIC, SWEDISH, TURKISH }
+            new HashSet<Language> { Azerbaijani, Estonian, Finnish, German, Hungarian, Icelandic, Swedish, Turkish }
         ];
         yield return
         [
             "catedráticos",
             new HashSet<Language>
-                { CATALAN, CZECH, ICELANDIC, IRISH, HUNGARIAN, PORTUGUESE, SLOVAK, SPANISH, VIETNAMESE, YORUBA }
+                { Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish, Vietnamese, Yoruba }
         ];
         yield return
         [
             "política",
             new HashSet<Language>
-                { CATALAN, CZECH, ICELANDIC, IRISH, HUNGARIAN, PORTUGUESE, SLOVAK, SPANISH, VIETNAMESE, YORUBA }
+                { Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish, Vietnamese, Yoruba }
         ];
         yield return
         [
             "música",
             new HashSet<Language>
-                { CATALAN, CZECH, ICELANDIC, IRISH, HUNGARIAN, PORTUGUESE, SLOVAK, SPANISH, VIETNAMESE, YORUBA }
+                { Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish, Vietnamese, Yoruba }
         ];
         yield return
         [
             "contradicció",
             new HashSet<Language>
-                { CATALAN, HUNGARIAN, ICELANDIC, IRISH, POLISH, PORTUGUESE, SLOVAK, SPANISH, VIETNAMESE, YORUBA }
+                { Catalan, Hungarian, Icelandic, Irish, Polish, Portuguese, Slovak, Spanish, Vietnamese, Yoruba }
         ];
         yield return
         [
             "només",
             new HashSet<Language>
             {
-                CATALAN, CZECH, FRENCH, HUNGARIAN, ICELANDIC, IRISH, ITALIAN, PORTUGUESE, SLOVAK, SPANISH,
-                VIETNAMESE, YORUBA
+                Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Portuguese, Slovak, Spanish,
+                Vietnamese, Yoruba
             }
         ];
         yield return
@@ -702,11 +702,11 @@ public class LanguageDetectorTests : IDisposable
             "house",
             new HashSet<Language>
             {
-                AFRIKAANS, ALBANIAN, AZERBAIJANI, BASQUE, BOKMAL, BOSNIAN, CATALAN, CROATIAN, CZECH, DANISH,
-                DUTCH, ENGLISH, ESPERANTO, ESTONIAN, FINNISH, FRENCH, GANDA, GERMAN, HUNGARIAN, ICELANDIC,
-                INDONESIAN, IRISH, ITALIAN, LATIN, LATVIAN, LITHUANIAN, MALAY, MAORI, NYNORSK, OROMO, POLISH,
-                PORTUGUESE, ROMANIAN, SHONA, SLOVAK, SLOVENE, SOMALI, SOTHO, SPANISH, SWAHILI, SWEDISH,
-                TAGALOG, TSONGA, TSWANA, TURKISH, VIETNAMESE, WELSH, XHOSA, YORUBA, ZULU
+                Afrikaans, Albanian, Azerbaijani, Basque, Bokmal, Bosnian, Catalan, Croatian, Czech, Danish,
+                Dutch, English, Esperanto, Estonian, Finnish, French, Ganda, German, Hungarian, Icelandic,
+                Indonesian, Irish, Italian, Latin, Latvian, Lithuanian, Malay, Maori, Nynorsk, Oromo, Polish,
+                Portuguese, Romanian, Shona, Slovak, Slovene, Somali, Sotho, Spanish, Swahili, Swedish,
+                Tagalog, Tsonga, Tswana, Turkish, Vietnamese, Welsh, Xhosa, Yoruba, Zulu
             }
         ];
     }
@@ -721,11 +721,11 @@ public class LanguageDetectorTests : IDisposable
     [InlineData(" \n  \t;")]
     [InlineData("3<856%)§")]
     public void StringsWithoutLettersReturnUnknownLanguages(string invalidString) =>
-        _detectorForAllLanguages.DetectLanguageOf(invalidString).Should().Be(UNKNOWN);
+        _detectorForAllLanguages.DetectLanguageOf(invalidString).Should().Be(Unknown);
 
     [Fact]
     public void LanguageOfGermanNounAlterCanBeDetectedCorrectly() =>
-        _detectorForEnglishAndGerman.DetectLanguageOf("Alter").Should().Be(GERMAN);
+        _detectorForEnglishAndGerman.DetectLanguageOf("Alter").Should().Be(German);
 
     [Fact]
     public void LanguageConfidenceValuesComputedCorrectly()
@@ -760,11 +760,11 @@ public class LanguageDetectorTests : IDisposable
 
         var confidenceValues = _detectorForEnglishAndGerman.ComputeLanguageConfidenceValues("Alter");
 
-        confidenceValues.First().Key.Should().Be(GERMAN);
-        confidenceValues.Last().Key.Should().Be(ENGLISH);
+        confidenceValues.First().Key.Should().Be(German);
+        confidenceValues.Last().Key.Should().Be(English);
 
-        confidenceValues[GERMAN].Should().Be(1.0);
-        confidenceValues[ENGLISH].Should().BeApproximately(
+        confidenceValues[German].Should().Be(1.0);
+        confidenceValues[English].Should().BeApproximately(
             (totalProbabilityForGerman / totalProbabilityForEnglish),
             0.000001
         );
@@ -772,7 +772,7 @@ public class LanguageDetectorTests : IDisposable
 
     [Fact]
     public void UnknownLanguageReturnedWhenNoNgramProbabilitiesAvailable() =>
-        _detectorForEnglishAndGerman.DetectLanguageOf("проарплап").Should().Be(UNKNOWN);
+        _detectorForEnglishAndGerman.DetectLanguageOf("проарплап").Should().Be(Unknown);
 
     [Fact]
     public void NoConfidenceValuesReturnedWhenNoNgramProbabilitiesAvailable() =>
@@ -783,7 +783,7 @@ public class LanguageDetectorTests : IDisposable
         yield return
         [
             "ام وی با نیکی میناج تیزر داشت؟؟؟؟؟؟ i vote for bts ( _ ) as the _ via ( _ )",
-            new[] { ENGLISH, URDU }
+            new[] { English, Urdu }
         ];
 
         yield return
@@ -791,7 +791,7 @@ public class LanguageDetectorTests : IDisposable
             "Az elmúlt hétvégén 12-re emelkedett az elhunyt koronavírus-fertőzöttek száma Szlovákiában. " +
             "Mindegyik szociális otthon dolgozóját letesztelik, " +
             "Matovič szerint az ingázóknak még várniuk kellene a teszteléssel",
-            new[] { HUNGARIAN, SLOVAK }
+            new[] { Hungarian, Slovak }
         ];
     }
 
@@ -848,7 +848,7 @@ public class LanguageDetectorTests : IDisposable
         AssertThatAllLanguageModelsAreUnloaded();
 
         var detector = LanguageDetectorBuilder
-            .FromLanguages(ENGLISH, GERMAN)
+            .FromLanguages(English, German)
             .WithPreloadedLanguageModels()
             .WithLowAccuracyMode()
             .Build();
@@ -870,15 +870,15 @@ public class LanguageDetectorTests : IDisposable
         RemoveLanguageModelsFromDetector();
 
         var detector = LanguageDetectorBuilder
-            .FromLanguages(ENGLISH, GERMAN)
+            .FromLanguages(English, German)
             .WithPreloadedLanguageModels()
             .WithLowAccuracyMode()
             .Build();
 
-        detector.DetectLanguageOf("bed").Should().NotBe(UNKNOWN);
-        detector.DetectLanguageOf("be").Should().Be(UNKNOWN);
-        detector.DetectLanguageOf("b").Should().Be(UNKNOWN);
-        detector.DetectLanguageOf("").Should().Be(UNKNOWN);
+        detector.DetectLanguageOf("bed").Should().NotBe(Unknown);
+        detector.DetectLanguageOf("be").Should().Be(Unknown);
+        detector.DetectLanguageOf("b").Should().Be(Unknown);
+        detector.DetectLanguageOf("").Should().Be(Unknown);
 
         AddLanguageModelsToDetector();
     }
@@ -912,20 +912,20 @@ public class LanguageDetectorTests : IDisposable
 
     private void AddLanguageModelsToDetector()
     {
-        LanguageDetector.UnigramLanguageModels[ENGLISH] = UnigramLanguageModelForEnglish;
-        LanguageDetector.UnigramLanguageModels[GERMAN] = UnigramLanguageModelForGerman;
+        LanguageDetector.UnigramLanguageModels[English] = UnigramLanguageModelForEnglish;
+        LanguageDetector.UnigramLanguageModels[German] = UnigramLanguageModelForGerman;
 
-        LanguageDetector.BigramLanguageModels[ENGLISH] = BigramLanguageModelForEnglish;
-        LanguageDetector.BigramLanguageModels[GERMAN] = BigramLanguageModelForGerman;
+        LanguageDetector.BigramLanguageModels[English] = BigramLanguageModelForEnglish;
+        LanguageDetector.BigramLanguageModels[German] = BigramLanguageModelForGerman;
 
-        LanguageDetector.TrigramLanguageModels[ENGLISH] = TrigramLanguageModelForEnglish;
-        LanguageDetector.TrigramLanguageModels[GERMAN] = TrigramLanguageModelForGerman;
+        LanguageDetector.TrigramLanguageModels[English] = TrigramLanguageModelForEnglish;
+        LanguageDetector.TrigramLanguageModels[German] = TrigramLanguageModelForGerman;
 
-        LanguageDetector.QuadrigramLanguageModels[ENGLISH] = QuadrigramLanguageModelForEnglish;
-        LanguageDetector.QuadrigramLanguageModels[GERMAN] = QuadrigramLanguageModelForGerman;
+        LanguageDetector.QuadrigramLanguageModels[English] = QuadrigramLanguageModelForEnglish;
+        LanguageDetector.QuadrigramLanguageModels[German] = QuadrigramLanguageModelForGerman;
 
-        LanguageDetector.FivegramLanguageModels[ENGLISH] = FivegramLanguageModelForEnglish;
-        LanguageDetector.FivegramLanguageModels[GERMAN] = FivegramLanguageModelForGerman;
+        LanguageDetector.FivegramLanguageModels[English] = FivegramLanguageModelForEnglish;
+        LanguageDetector.FivegramLanguageModels[German] = FivegramLanguageModelForGerman;
     }
 
     private void RemoveLanguageModelsFromDetector()

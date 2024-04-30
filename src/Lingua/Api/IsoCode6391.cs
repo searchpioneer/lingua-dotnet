@@ -1,404 +1,324 @@
 ﻿namespace Lingua.Api;
 
-public enum IsoCode6391 
+/// <summary>
+/// Two-character codes which serves as identifiers for major (macro) languages from the world,
+/// as well as some ancient languages.
+/// </summary>
+public enum IsoCode6391
 {
-    /**
-     * The ISO 639-1 code for [Afrikaans][Language.AFRIKAANS].
-     */
-    AF,
-
-    /**
-     * The ISO 639-1 code for [Amharic][Language.AMHARIC].
-     */
-    AM,
-
-    /**
-     * The ISO 639-1 code for [Arabic][Language.ARABIC].
-     */
-    AR,
-
-    /**
-     * The ISO 639-1 code for [Azerbaijani][Language.AZERBAIJANI].
-     */
-    AZ,
-
-    /**
-     * The ISO 639-1 code for [Belarusian][Language.BELARUSIAN].
-     */
-    BE,
-
-    /**
-     * The ISO 639-1 code for [Bulgarian][Language.BULGARIAN].
-     */
-    BG,
-
-    /**
-     * The ISO 639-1 code for [Bengali][Language.BENGALI].
-     */
-    BN,
-
-    /**
-     * The ISO 639-1 code for [Bosnian][Language.BOSNIAN].
-     */
-    BS,
-
-    /**
-     * The ISO 639-1 code for [Catalan][Language.CATALAN].
-     */
-    CA,
-
-    /**
-     * The ISO 639-1 code for [Czech][Language.CZECH].
-     */
-    CS,
-
-    /**
-     * The ISO 639-1 code for [Welsh][Language.WELSH].
-     */
-    CY,
-
-    /**
-     * The ISO 639-1 code for [Danish][Language.DANISH].
-     */
-    DA,
-
-    /**
-     * The ISO 639-1 code for [German][Language.GERMAN].
-     */
-    DE,
-
-    /**
-     * The ISO 639-1 code for [Greek][Language.GREEK].
-     */
-    EL,
-
-    /**
-     * The ISO 639-1 code for [English][Language.ENGLISH].
-     */
-    EN,
-
-    /**
-     * The ISO 639-1 code for [Esperanto][Language.ESPERANTO].
-     */
-    EO,
-
-    /**
-     * The ISO 639-1 code for [Spanish][Language.SPANISH].
-     */
-    ES,
-
-    /**
-     * The ISO 639-1 code for [Estonian][Language.ESTONIAN].
-     */
-    ET,
-
-    /**
-     * The ISO 639-1 code for [Basque][Language.BASQUE].
-     */
-    EU,
-
-    /**
-     * The ISO 639-1 code for [Persian][Language.PERSIAN].
-     */
-    FA,
-
-    /**
-     * The ISO 639-1 code for [Finnish][Language.FINNISH].
-     */
-    FI,
-
-    /**
-     * The ISO 639-1 code for [French][Language.FRENCH].
-     */
-    FR,
-
-    /**
-     * The ISO 639-1 code for [Irish][Language.IRISH].
-     */
-    GA,
-
-    /**
-     * The ISO 639-1 code for [Gujarati][Language.GUJARATI].
-     */
-    GU,
-
-    /**
-     * The ISO 639-1 code for [Hebrew][Language.HEBREW].
-     */
-    HE,
-
-    /**
-     * The ISO 639-1 code for [Hindi][Language.HINDI].
-     */
-    HI,
-
-    /**
-     * The ISO 639-1 code for [Croatian][Language.CROATIAN].
-     */
-    HR,
-
-    /**
-     * The ISO 639-1 code for [Hungarian][Language.HUNGARIAN].
-     */
-    HU,
-
-    /**
-     * The ISO 639-1 code for [Armenian][Language.ARMENIAN].
-     */
-    HY,
-
-    /**
-     * The ISO 639-1 code for [Indonesian][Language.INDONESIAN].
-     */
-    ID,
-
-    /**
-     * The ISO 639-1 code for [Icelandic][Language.ICELANDIC].
-     */
-    IS,
-
-    /**
-     * The ISO 639-1 code for [Italian][Language.ITALIAN].
-     */
-    IT,
-
-    /**
-     * The ISO 639-1 code for [Japanese][Language.JAPANESE].
-     */
-    JA,
-
-    /**
-     * The ISO 639-1 code for [Georgian][Language.GEORGIAN].
-     */
-    KA,
-
-    /**
-     * The ISO 639-1 code for [Kazakh][Language.KAZAKH].
-     */
-    KK,
-
-    /**
-     * The ISO 639-1 code for [Korean][Language.KOREAN].
-     */
-    KO,
-
-    /**
-     * The ISO 639-1 code for [Latin][Language.LATIN].
-     */
-    LA,
-
-    /**
-     * The ISO 639-1 code for [Ganda][Language.GANDA].
-     */
-    LG,
-
-    /**
-     * The ISO 639-1 code for [Lithuanian][Language.LITHUANIAN].
-     */
-    LT,
-
-    /**
-     * The ISO 639-1 code for [Latvian][Language.LATVIAN].
-     */
-    LV,
-
-    /**
-     * The ISO 639-1 code for [Maori][Language.MAORI].
-     */
-    MI,
-
-    /**
-     * The ISO 639-1 code for [Macedonian][Language.MACEDONIAN].
-     */
-    MK,
-
-    /**
-     * The ISO 639-1 code for [Mongolian][Language.MONGOLIAN].
-     */
-    MN,
-
-    /**
-     * The ISO 639-1 code for [Marathi][Language.MARATHI].
-     */
-    MR,
-
-    /**
-     * The ISO 639-1 code for [Malay][Language.MALAY].
-     */
-    MS,
-
-    /**
-     * The ISO 639-1 code for [Norwegian Bokmal][Language.BOKMAL].
-     */
-    NB,
-
-    /**
-     * The ISO 639-1 code for [Dutch][Language.DUTCH].
-     */
-    NL,
-
-    /**
-     * The ISO 639-1 code for [Norwegian Nynorsk][Language.NYNORSK].
-     */
-    NN,
-
-    /**
-     * The ISO 639-1 code for [Oromo][Language.OROMO].
-     */
-    OM,
-
-    /**
-     * The ISO 639-1 code for [Punjabi][Language.PUNJABI].
-     */
-    PA,
-
-    /**
-     * The ISO 639-1 code for [Polish][Language.POLISH].
-     */
-    PL,
-
-    /**
-     * The ISO 639-1 code for [Portuguese][Language.PORTUGUESE].
-     */
-    PT,
-
-    /**
-     * The ISO 639-1 code for [Romanian][Language.ROMANIAN].
-     */
-    RO,
-
-    /**
-     * The ISO 639-1 code for [Russian][Language.RUSSIAN].
-     */
-    RU,
-
-    /**
-     * The ISO 639-1 code for [Sinhala][Language.SINHALA].
-     */
-    SI,
-
-    /**
-     * The ISO 639-1 code for [Slovak][Language.SLOVAK].
-     */
-    SK,
-
-    /**
-     * The ISO 639-1 code for [Slovene][Language.SLOVENE].
-     */
-    SL,
-
-    /**
-     * The ISO 639-1 code for [Shona][Language.SHONA].
-     */
-    SN,
-
-    /**
-     * The ISO 639-1 code for [Somali][Language.SOMALI].
-     */
-    SO,
-
-    /**
-     * The ISO 639-1 code for [Albanian][Language.ALBANIAN].
-     */
-    SQ,
-
-    /**
-     * The ISO 639-1 code for [Serbian][Language.SERBIAN].
-     */
-    SR,
-
-    /**
-     * The ISO 639-1 code for [Southern Sotho][Language.SOTHO].
-     */
-    ST,
-
-    /**
-     * The ISO 639-1 code for [Swedish][Language.SWEDISH].
-     */
-    SV,
-
-    /**
-     * The ISO 639-1 code for [Swahili][Language.SWAHILI].
-     */
-    SW,
-
-    /**
-     * The ISO 639-1 code for [Tamil][Language.TAMIL].
-     */
-    TA,
-
-    /**
-     * The ISO 639-1 code for [Telugu][Language.TELUGU].
-     */
-    TE,
-
-    /**
-     * The ISO 639-1 code for [Thai][Language.THAI].
-     */
-    TH,
-
-    /**
-     * The ISO 639-1 code for [Tigrinya][Language.TIGRINYA].
-     */
-    TI,
-
-    /**
-     * The ISO 639-1 code for [Tagalog][Language.TAGALOG].
-     */
-    TL,
-
-    /**
-     * The ISO 639-1 code for [Tswana][Language.TSWANA].
-     */
-    TN,
-
-    /**
-     * The ISO 639-1 code for [Turkish][Language.TURKISH].
-     */
-    TR,
-
-    /**
-     * The ISO 639-1 code for [Tsonga][Language.TSONGA].
-     */
-    TS,
-
-    /**
-     * The ISO 639-1 code for [Ukrainian][Language.UKRAINIAN].
-     */
-    UK,
-
-    /**
-     * The ISO 639-1 code for [Urdu][Language.URDU].
-     */
-    UR,
-
-    /**
-     * The ISO 639-1 code for [Vietnamese][Language.VIETNAMESE].
-     */
-    VI,
-
-    /**
-     * The ISO 639-1 code for [Xhosa][Language.XHOSA].
-     */
-    XH,
-
-    /**
-     * The ISO 639-1 code for [Yoruba][Language.YORUBA].
-     */
-    YO,
-
-    /**
-     * The ISO 639-1 code for [Chinese][Language.CHINESE].
-     */
-    ZH,
-
-    /**
-     * The ISO 639-1 code for [Zulu][Language.ZULU].
-     */
-    ZU,
-
-    /**
-     * The ISO 639-1 code for [the imaginary unknown language][Language.UNKNOWN].
-     */
-    NONE,
+	/// <summary>The ISO 639-1 code for <see cref="Language.Afrikaans"/>.</summary>
+	Af,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Amharic"/>.</summary>
+	Am,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Arabic"/>.</summary>
+	Ar,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Azerbaijani"/>.</summary>
+	Az,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Belarusian"/>.</summary>
+	Be,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Bulgarian"/>.</summary>
+	Bg,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Bengali"/>.</summary>
+	Bn,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Bosnian"/>.</summary>
+	Bs,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Catalan"/>.</summary>
+	Ca,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Czech"/>.</summary>
+	Cs,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Welsh"/>.</summary>
+	Cy,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Danish"/>.</summary>
+	Da,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.German"/>.</summary>
+	De,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Greek"/>.</summary>
+	El,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.English"/>.</summary>
+	En,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Esperanto"/>.</summary>
+	Eo,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Spanish"/>.</summary>
+	Es,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Estonian"/>.</summary>
+	Et,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Basque"/>.</summary>
+	Eu,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Persian"/>.</summary>
+	Fa,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Finnish"/>.</summary>
+	Fi,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.French"/>.</summary>
+	Fr,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Irish"/>.</summary>
+	Ga,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Gujarati"/>.</summary>
+	Gu,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Hebrew"/>.</summary>
+	He,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Hindi"/>.</summary>
+	Hi,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Croatian"/>.</summary>
+	Hr,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Hungarian"/>.</summary>
+	Hu,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Armenian"/>.</summary>
+	Hy,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Indonesian"/>.</summary>
+	Id,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Icelandic"/>.</summary>
+	Is,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Italian"/>.</summary>
+	It,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Japanese"/>.</summary>
+	Ja,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Georgian"/>.</summary>
+	Ka,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Kazakh"/>.</summary>
+	Kk,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Korean"/>.</summary>
+	Ko,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Latin"/>.</summary>
+	La,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Ganda"/>.</summary>
+	Lg,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Lithuanian"/>.</summary>
+	Lt,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Latvian"/>.</summary>
+	Lv,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Maori"/>.</summary>
+	Mi,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Macedonian"/>.</summary>
+	Mk,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Mongolian"/>.</summary>
+	Mn,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Marathi"/>.</summary>
+	Mr,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Malay"/>.</summary>
+	Ms,
+
+
+	/// <summary>The ISO 639-1 code for Norwegian <see cref="Language.Bokmal"/>.</summary>
+	Nb,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Dutch"/>.</summary>
+	Nl,
+
+
+	/// <summary>The ISO 639-1 code for Norwegian <see cref="Language.Nynorsk"/>.</summary>
+	Nn,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Oromo"/>.</summary>
+	Om,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Punjabi"/>.</summary>
+	Pa,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Polish"/>.</summary>
+	Pl,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Portuguese"/>.</summary>
+	Pt,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Romanian"/>.</summary>
+	Ro,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Russian"/>.</summary>
+	Ru,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Sinhala"/>.</summary>
+	Si,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Slovak"/>.</summary>
+	Sk,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Slovene"/>.</summary>
+	Sl,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Shona"/>.</summary>
+	Sn,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Somali"/>.</summary>
+	So,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Albanian"/>.</summary>
+	Sq,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Serbian"/>.</summary>
+	Sr,
+
+
+	/// <summary>The ISO 639-1 code for Southern <see cref="Language.Sotho"/>.</summary>
+	St,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Swedish"/>.</summary>
+	Sv,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Swahili"/>.</summary>
+	Sw,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Tamil"/>.</summary>
+	Ta,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Telugu"/>.</summary>
+	Te,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Thai"/>.</summary>
+	Th,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Tigrinya"/>.</summary>
+	Ti,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Tagalog"/>.</summary>
+	Tl,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Tswana"/>.</summary>
+	Tn,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Turkish"/>.</summary>
+	Tr,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Tsonga"/>.</summary>
+	Ts,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Ukrainian"/>.</summary>
+	Uk,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Urdu"/>.</summary>
+	Ur,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Vietnamese"/>.</summary>
+	Vi,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Xhosa"/>.</summary>
+	Xh,
+
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Yoruba"/>.</summary>
+	Yo,
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Chinese"/>.</summary>
+	Zh,
+
+	/// <summary>The ISO 639-1 code for <see cref="Language.Zulu"/>.</summary>
+	Zu,
+
+	/// <summary>The ISO 639-1 code for the imaginary <see cref="Language.Unknown"/>.</summary>
+	None
 }
