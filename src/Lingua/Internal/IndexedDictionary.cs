@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿// from https://gist.github.com/tommyettinger/b657147b2d0aaea35ee4409abc3da403, with modifications
+
+using System.Collections;
 
 namespace Lingua.Internal;
 

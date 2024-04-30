@@ -2,29 +2,29 @@
 
 namespace Lingua.Internal;
 
-public struct Ngram : IComparable<Ngram>, IEquatable<Ngram>
+public readonly struct Ngram : IEquatable<Ngram>
 {
     private readonly string _value;
 
     public Ngram(string value)
     {
         if (value.Length > 5)
-        {
-            throw new ArgumentException($"length of ngram '{value}' is not in range 0..5");
-        }
+	        throw new ArgumentException($"length of ngram '{value}' is not in range 0..5");
 
         _value = value;
     }
 
-    public int CompareTo(Ngram other) => _value.Length.CompareTo(other._value.Length);
+    public static readonly Ngram Zerogram = new("");
 
     public bool IsEmpty => _value.Length == 0;
+
+    public int Length => _value.Length;
 
     public Ngram Dec() =>
 	    _value.Length switch
 	    {
 		    0 => throw new Exception("Zerogram is ngram type of lowest order and can not be decremented"),
-		    1 => new Ngram(""),
+		    1 => Zerogram,
 		    _ => new Ngram(_value.Substring(0, _value.Length - 1))
 	    };
 
@@ -56,10 +56,8 @@ public class NgramEnumerable : IEnumerable<Ngram>
 
     public NgramEnumerable(Ngram start, Ngram endInclusive)
     {
-        if (start.CompareTo(endInclusive) < 0)
-        {
-            throw new ArgumentException($"'{start}' must be of higher order than '{endInclusive}'");
-        }
+        if (endInclusive.Length > start.Length)
+	        throw new ArgumentException($"'{start}' must be of higher order than '{endInclusive}'");
 
         _start = start;
     }
@@ -83,6 +81,9 @@ public class NgramEnumerator : IEnumerator<Ngram>
             _current = _start;
             return true;
         }
+
+        if (_current.Value.IsEmpty)
+	        return false;
 
         _current = _current.Value.Dec();
         return !_current.Value.IsEmpty;

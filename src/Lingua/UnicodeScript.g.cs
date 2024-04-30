@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Lingua;
 
 ///<summary>Unicode script information, version 15.1.0</summary>
@@ -3662,13 +3664,24 @@ public static class CharExtensions
     ///<summary>Gets the Unicode Script for the given character</summary>
     public static UnicodeScript GetScript(this char ch)
     {
+		if (!IsValidCodePoint(ch))
+			throw new ArgumentException($"Not a valid Unicode code point '{ch}'");
+
+		var category = char.GetUnicodeCategory(ch);
+        if (category == UnicodeCategory.OtherNotAssigned)
+            return UnicodeScript.Unknown;
+
         var index = Array.BinarySearch(ScriptStarts, (int)ch);
         if (index < 0)
-        {
             index = -index - 2;
-        }
 
         return Scripts[index];
+    }
+
+    private static bool IsValidCodePoint(int codePoint)
+    {
+        int plane = codePoint >>> 16;
+        return plane < ((0x10FFFF + 1) >>> 16);
     }
 }
 
