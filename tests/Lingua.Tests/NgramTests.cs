@@ -43,7 +43,7 @@ public class NgramTests
 		var zerogram = unigram.Dec();
 		zerogram.Should().Be(Zerogram);
 
-		var exception = Assert.Throws<Exception>(() => zerogram.Dec());
+		var exception = Assert.Throws<InvalidOperationException>(() => zerogram.Dec());
 		exception.Message.Should().Be("Zerogram is ngram type of lowest order and can not be decremented");
 	}
 

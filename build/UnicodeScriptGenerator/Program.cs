@@ -23,6 +23,7 @@ internal partial class Program
 		var firstLine = File.ReadLines(fileName).First();
 		var version = VersionRegex().Match(firstLine).Groups[1].Value;
 		var builder = new StringBuilder($@"using System.Globalization;
+using static Lingua.UnicodeScript;
 
 namespace Lingua;
 
@@ -56,7 +57,7 @@ public static class CharExtensions
 		for (var i = 0; i < orderedScripts.Count; i++)
 		{
 			builder.AppendLine(
-				$"        0x{orderedScripts[i].CodePointRange.Start.ToString("X4")}, // {orderedScripts[i].CodePointRange.Start.ToString("X4")}..{orderedScripts[i].CodePointRange.End.ToString("X4")}; {orderedScripts[i].Name}");
+				$"        0x{orderedScripts[i].CodePointRange.Start.ToString("X4")}, // {orderedScripts[i].CodePointRange.ToString()}; {orderedScripts[i].Name}");
 		}
 
 		builder.AppendLine(@"    };
@@ -67,7 +68,7 @@ public static class CharExtensions
 		for (var i = 0; i < orderedScripts.Count; i++)
 		{
 			builder.AppendLine(
-				$"        UnicodeScript.{orderedScripts[i].Name.Replace("_", "")},\t// {orderedScripts[i].CodePointRange.Start.ToString("X4")}..{orderedScripts[i].CodePointRange.End.ToString("X4")}");
+				$"        {orderedScripts[i].Name.Replace("_", "")},\t// {orderedScripts[i].CodePointRange.ToString()}");
 		}
 
 		builder.AppendLine(@"    };
@@ -118,18 +119,18 @@ public static class CharExtensions
 			$"Could not find solution root directory from the current directory {startDir}");
 	}
 
-	private static List<((int Start, int End)[] CodePointRanges, string Name)> ReadUnicodeScriptsFromFile(
+	private static List<(CodePointRange[] CodePointRanges, string Name)> ReadUnicodeScriptsFromFile(
 		string fileName)
 	{
 		using var stream = File.OpenRead(fileName);
 		using var reader = new UnicodeDataFileReader(stream, ';');
-		var unicodeScripts = new List<((int, int)[], string)>();
-		var unicodePointRanges = new List<(int, int)>(100);
+		var unicodeScripts = new List<(CodePointRange[], string)>();
+		var unicodePointRanges = new List<CodePointRange>(100);
 		string? name = null;
 
 		while (reader.MoveToNextLine())
 		{
-			var unicodeCodePointRange = ParseCodepointRange(reader.ReadField());
+			var unicodeCodePointRange = ParseCodepointRange(reader.ReadField()!);
 			var currentName = reader.ReadTrimmedField();
 			if (name == null || name.Equals(currentName, StringComparison.OrdinalIgnoreCase))
 			{
@@ -149,7 +150,7 @@ public static class CharExtensions
 		return unicodeScripts;
 	}
 
-	private static (int, int) ParseCodepointRange(string range)
+	private static CodePointRange ParseCodepointRange(string range)
 	{
 		int start, end;
 		var rangeSeparatorOffset = range.IndexOf("..", StringComparison.InvariantCulture);
@@ -166,18 +167,18 @@ public static class CharExtensions
 				break;
 		}
 
-		return (start, end);
+		return new(start, end);
 	}
 
-	private static List<((int Start, int End) CodePointRange, string Name)> CreateCollapsedOrderedRange(
-		List<((int Start, int End)[] CodePointRanges, string Name)> unicodeScripts)
+	private static List<(CodePointRange CodePointRange, string Name)> CreateCollapsedOrderedRange(
+		List<(CodePointRange[] CodePointRanges, string Name)> unicodeScripts)
 	{
-		List<((int Start, int End) CodePointRange, string Name)> orderedScripts = unicodeScripts
+		List<(CodePointRange CodePointRange, string Name)> orderedScripts = unicodeScripts
 			.SelectMany(s => s.CodePointRanges.Select(range => (range, s.Name)))
 			.OrderBy(v => v.range.Start)
 			.ToList();
 
-		List<((int Start, int End) CodePointRange, string Name)> orderedScriptsWithUnknownInsertions =
+		List<(CodePointRange CodePointRange, string Name)> orderedScriptsWithUnknownInsertions =
 			new(orderedScripts.Count);
 		var currentRangeStart = orderedScripts[0].CodePointRange.Start;
 		var currentRangeEnd = orderedScripts[0].CodePointRange.End;
@@ -199,11 +200,11 @@ public static class CharExtensions
 			else
 			{
 				// Add the current collapsed range to the result
-				orderedScriptsWithUnknownInsertions.Add(((currentRangeStart, currentRangeEnd), currentScriptName));
+				orderedScriptsWithUnknownInsertions.Add((new(currentRangeStart, currentRangeEnd), currentScriptName));
 
 				// If there's a gap between the current range's end and the next range's start, add an Unknown range
 				if (nextRangeStart > currentRangeEnd + 1)
-					orderedScriptsWithUnknownInsertions.Add(((currentRangeEnd + 1, nextRangeStart - 1), "Unknown"));
+					orderedScriptsWithUnknownInsertions.Add((new(currentRangeEnd + 1, nextRangeStart - 1), "Unknown"));
 
 				// Update currentRangeStart and currentRangeEnd
 				currentRangeStart = nextRangeStart;
@@ -214,12 +215,19 @@ public static class CharExtensions
 
 		// Add the last collapsed range to the result
 		orderedScriptsWithUnknownInsertions
-			.Add(((currentRangeStart, currentRangeEnd), currentScriptName));
+			.Add((new(currentRangeStart, currentRangeEnd), currentScriptName));
 
 		// Add Unknown to cover the remaining range
 		orderedScriptsWithUnknownInsertions
-			.Add(((orderedScripts[^1].CodePointRange.End + 1, 0x10FFFF), "Unknown"));
+			.Add((new(orderedScripts[^1].CodePointRange.End + 1, 0x10FFFF), "Unknown"));
 
 		return orderedScriptsWithUnknownInsertions;
 	}
+}
+
+public readonly record struct CodePointRange(int Start, int End)
+{
+	public override string ToString() => Start == End
+		? Start.ToString("X4")
+		: $"{Start:X4}..{End:X4}";
 }

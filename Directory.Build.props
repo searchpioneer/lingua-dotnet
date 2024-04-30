@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <Authors>Russ Cam and Contributors</Authors>
+    <Copyright>Russ Cam</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/russcam/lingua-dotnet</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/russcam/lingua-dotnet</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/russcam/lingua-dotnet/releases</PackageReleaseNotes>
+    <PackageTags>lingua, language detection</PackageTags>
+    <SolutionRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Lingua.sln))</SolutionRoot>
+<!--    <AssemblyOriginatorKeyFile>$(SolutionRoot)build\keys\keypair.snk</AssemblyOriginatorKeyFile>-->
+<!--    <PublicKey>97ab15215fab2a5d</PublicKey>-->
+    <LangVersion>latest</LangVersion>
+<!--    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+    <IsPackable>False</IsPackable>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="4.3.0" PrivateAssets="all"/>
+  </ItemGroup>
+
+</Project>
