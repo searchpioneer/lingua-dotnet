@@ -84,7 +84,7 @@ public sealed partial class LanguageDetector
     private readonly Dictionary<Alphabet, Language> _oneLanguageAlphabets;
     private readonly IEnumerable<Language> _languagesWithUniqueCharacters;
 
-    public LanguageDetector(
+    internal LanguageDetector(
         HashSet<Language> languages,
         double minimumRelativeDistance = 0,
         bool isEveryLanguageModelPreloaded = false,
@@ -126,7 +126,7 @@ public sealed partial class LanguageDetector
 
         return mostLikelyLanguageProbability.Equals(secondMostLikelyLanguageProbability)
             ? Unknown
-            : (mostLikelyLanguageProbability - secondMostLikelyLanguageProbability) < _minimumRelativeDistance
+            : mostLikelyLanguageProbability - secondMostLikelyLanguageProbability < _minimumRelativeDistance
                 ? Unknown
                 : mostLikelyLanguage;
     }
@@ -263,7 +263,7 @@ public sealed partial class LanguageDetector
 	    }
     }
 
-    private Dictionary<Language, float> SumUpProbabilities(
+    private static Dictionary<Language, float> SumUpProbabilities(
         List<Dictionary<Language,float>> probabilities,
         Dictionary<Language,int> unigramCountsOfInputText,
         HashSet<Language> filteredLanguages)
@@ -286,7 +286,7 @@ public sealed partial class LanguageDetector
         return summedUpProbabilities.Where(p => p.Value != 0).ToDictionary();
     }
 
-    private Dictionary<Language,int> CountUnigramsOfInputText(TestDataLanguageModel unigramLanguageModel, HashSet<Language> filteredLanguages)
+    private static Dictionary<Language,int> CountUnigramsOfInputText(TestDataLanguageModel unigramLanguageModel, HashSet<Language> filteredLanguages)
     {
         var unigramCounts = new Dictionary<Language, int>();
         foreach (var language in filteredLanguages)
@@ -302,7 +302,7 @@ public sealed partial class LanguageDetector
         return unigramCounts;
     }
 
-    internal Dictionary<Language, float> ComputeLanguageProbabilities(TestDataLanguageModel testDataModel, IReadOnlySet<Language> filteredLanguages)
+    internal static Dictionary<Language, float> ComputeLanguageProbabilities(TestDataLanguageModel testDataModel, IReadOnlySet<Language> filteredLanguages)
     {
         var probabilities = new Dictionary<Language, float>();
         foreach (var language in filteredLanguages)
@@ -311,7 +311,7 @@ public sealed partial class LanguageDetector
         return probabilities.Where(p => p.Value < 0).ToDictionary();
     }
 
-    internal float ComputeSumOfNgramProbabilities(Language language, HashSet<Ngram> ngrams)
+    internal static float ComputeSumOfNgramProbabilities(Language language, HashSet<Ngram> ngrams)
     {
         var probabilitiesSum = 0d;
         foreach (var ngram in ngrams)
@@ -330,7 +330,7 @@ public sealed partial class LanguageDetector
         return (float)probabilitiesSum;
     }
 
-    internal float LookupNgramProbability(Language language, Ngram ngram)
+    internal static float LookupNgramProbability(Language language, Ngram ngram)
     {
         var ngramLength = ngram.ToString().Length;
         var languageModels = ngramLength switch
@@ -381,7 +381,7 @@ public sealed partial class LanguageDetector
 	    });
     }
 
-    private Dictionary<string, float> LoadLanguageModels(Dictionary<Language, Dictionary<string, float>> languageModels, Language language, int ngramLength)
+    private static Dictionary<string, float> LoadLanguageModels(Dictionary<Language, Dictionary<string, float>> languageModels, Language language, int ngramLength)
     {
         lock (languageModels)
         {
@@ -397,7 +397,7 @@ public sealed partial class LanguageDetector
         }
     }
 
-    private Dictionary<string,float> LoadLanguageModel(Language language, int ngramLength)
+    private static Dictionary<string,float> LoadLanguageModel(Language language, int ngramLength)
     {
         var file = $"Lingua.LanguageModels.{language.IsoCode6391().ToString().ToLowerInvariant()}.{Ngram.GetNgramNameByLength(ngramLength)}s.json";
         using var stream = typeof(LanguageDetector).Assembly.GetManifestResourceStream(file);
@@ -516,11 +516,14 @@ public sealed partial class LanguageDetector
                 }
                 default:
                 {
-                    var sortedWordLanguageCounts = wordLanguageCounts
+                    using var sortedWordLanguageCounts = wordLanguageCounts
                         .OrderByDescending(a => a.Value)
-                        .ToList();
-                    var (mostFrequentLanguage, firstCharCount) = sortedWordLanguageCounts[0];
-                    var (_, secondCharCount) = sortedWordLanguageCounts[1];
+                        .GetEnumerator();
+
+                    sortedWordLanguageCounts.MoveNext();
+                    var (mostFrequentLanguage, firstCharCount) = sortedWordLanguageCounts.Current;
+                    sortedWordLanguageCounts.MoveNext();
+                    var (_, secondCharCount) = sortedWordLanguageCounts.Current;
 
                     if (firstCharCount > secondCharCount && _languages.Contains(mostFrequentLanguage))
 	                    totalLanguageCounts.IncrementCounter(mostFrequentLanguage);
@@ -560,10 +563,10 @@ public sealed partial class LanguageDetector
         return firstTotalCharCount == secondTotalCharCount ? Unknown : mostFrequentTotalLanguage;
     }
 
-    private bool IsJapaneseAlphabet(char ch) =>
+    private static bool IsJapaneseAlphabet(char ch) =>
         ch.GetScript() is UnicodeScript.Hiragana or UnicodeScript.Katakana or UnicodeScript.Han;
 
-    internal List<string> SplitTextIntoWords(string text)
+    internal static List<string> SplitTextIntoWords(string text)
     {
         var words = new List<string>();
         var nextWordStart = 0;
@@ -593,7 +596,7 @@ public sealed partial class LanguageDetector
         return words;
     }
 
-    internal string CleanUpInputText(string text) =>
+    internal static string CleanUpInputText(string text) =>
         MultipleWhitespace().Replace(
             Numbers().Replace(
                 Punctuation().Replace(text.Trim().ToLowerInvariant(), ""), ""), " ");

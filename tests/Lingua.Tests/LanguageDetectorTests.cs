@@ -142,7 +142,7 @@ public class LanguageDetectorTests : IDisposable
 
     [Fact]
     public void TextIsCleanedUpProperly() =>
-	    _detectorForAllLanguages.CleanUpInputText(
+	    LanguageDetector.CleanUpInputText(
 		    """
 		    Weltweit    gibt es ungefähr 6.000 Sprachen,
 		    wobei laut Schätzungen zufolge ungefähr 90  Prozent davon
@@ -155,21 +155,21 @@ public class LanguageDetectorTests : IDisposable
     [Fact]
     public void TextIsSplitIntoWordsCorrectly()
     {
-        _detectorForAllLanguages.SplitTextIntoWords("this is a sentence")
+        LanguageDetector.SplitTextIntoWords("this is a sentence")
             .Should()
             .BeEquivalentTo(new List<string>
             {
                 "this", "is", "a", "sentence"
             });
 
-        _detectorForAllLanguages.SplitTextIntoWords("sentence")
+        LanguageDetector.SplitTextIntoWords("sentence")
             .Should()
             .BeEquivalentTo(new List<string>
             {
                 "sentence"
             });
 
-        _detectorForAllLanguages.SplitTextIntoWords("上海大学是一个好大学 this is a sentence")
+        LanguageDetector.SplitTextIntoWords("上海大学是一个好大学 this is a sentence")
             .Should()
             .BeEquivalentTo(new List<string>
             {
@@ -189,14 +189,14 @@ public class LanguageDetectorTests : IDisposable
     [InlineData(German, "lter", 0.28)]
     [InlineData(German, "alter", 0.30)]
     public void NgramProbabilityLookupWorksCorrectly(Language language, string ngram, float expectedProbability) =>
-        _detectorForEnglishAndGerman.LookupNgramProbability(language, new Ngram(ngram)).Should()
+        LanguageDetector.LookupNgramProbability(language, new Ngram(ngram)).Should()
             .Be(expectedProbability);
 
     [Fact]
     public void NgramProbabilityLookupThrowsForZerogram()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
-                _detectorForEnglishAndGerman.LookupNgramProbability(English, new Ngram("")));
+                LanguageDetector.LookupNgramProbability(English, new Ngram("")));
 
         exception.Message.Should().Be("Zerogram detected");
     }
@@ -225,7 +225,7 @@ public class LanguageDetectorTests : IDisposable
     [Theory]
     [MemberData(nameof(NgramProbabilityProvider))]
     public void SumOfNgramProbabilitiesComputedCorrectly(HashSet<Ngram> ngrams, float expectedSumOfProbabilities) =>
-        _detectorForEnglishAndGerman.ComputeSumOfNgramProbabilities(English, ngrams)
+        LanguageDetector.ComputeSumOfNgramProbabilities(English, ngrams)
             .Should()
             .Be(expectedSumOfProbabilities);
 
@@ -266,7 +266,7 @@ public class LanguageDetectorTests : IDisposable
     [MemberData(nameof(LanguageProbabilitiesProvider))]
     public void LanguageProbabilitiesComputedCorrectly(TestDataLanguageModel model,
         Dictionary<Language, float> expectedProbabilities) =>
-        _detectorForEnglishAndGerman.ComputeLanguageProbabilities(model, _detectorForEnglishAndGerman.Languages)
+        LanguageDetector.ComputeLanguageProbabilities(model, _detectorForEnglishAndGerman.Languages)
             .Should().BeEquivalentTo(expectedProbabilities);
 
     [Theory]
