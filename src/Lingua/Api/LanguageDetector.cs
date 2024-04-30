@@ -9,13 +9,22 @@ namespace Lingua.Api;
 /// Detects language of given input text, and computes confidence values for every language considered possible
 /// for given input text.
 /// </summary>
-public sealed class LanguageDetector
+public sealed partial class LanguageDetector
 {
     private const int HighAccuracyModeMaxTextLength = 120;
-    private static readonly Regex MultipleWhitespace = new("\\s+", RegexOptions.Compiled);
-    private static readonly Regex NoLetter = new("^[^\\p{L}]+$", RegexOptions.Compiled);
-    private static readonly Regex Numbers = new("\\p{N}", RegexOptions.Compiled);
-    private static readonly Regex Punctuation = new("\\p{P}", RegexOptions.Compiled);
+
+    [GeneratedRegex("\\s+")]
+    private static partial Regex MultipleWhitespace();
+
+    [GeneratedRegex("^[^\\p{L}]+$")]
+    private static partial Regex NoLetter();
+
+    [GeneratedRegex("\\p{N}")]
+    private static partial Regex Numbers();
+
+    [GeneratedRegex("\\p{P}")]
+    private static partial Regex Punctuation();
+
     private static readonly Dictionary<string, HashSet<Language>> CharsToLanguagesMapping = new()
     {
         ["Ãã"] = [Portuguese, Vietnamese],
@@ -143,7 +152,7 @@ public sealed class LanguageDetector
         var values = new IndexedDictionary<Language, double>();
         var cleanedUpText = CleanUpInputText(text);
 
-        if (cleanedUpText.Length == 0 || NoLetter.IsMatch(cleanedUpText))
+        if (cleanedUpText.Length == 0 || NoLetter().IsMatch(cleanedUpText))
             return values;
 
         var words = SplitTextIntoWords(cleanedUpText);
@@ -585,9 +594,9 @@ public sealed class LanguageDetector
     }
 
     internal string CleanUpInputText(string text) =>
-        MultipleWhitespace.Replace(
-            Numbers.Replace(
-                Punctuation.Replace(text.Trim().ToLowerInvariant(), ""), ""), " ");
+        MultipleWhitespace().Replace(
+            Numbers().Replace(
+                Punctuation().Replace(text.Trim().ToLowerInvariant(), ""), ""), " ");
 
     private bool Equals(LanguageDetector other) =>
         _languages.SetEquals(other._languages)
