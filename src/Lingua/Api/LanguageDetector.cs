@@ -1,11 +1,15 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using Lingua.Internal;
+using static Lingua.Api.Language;
 
 namespace Lingua.Api;
 
-public class LanguageDetector
+/// <summary>
+/// Detects language of given input text, and computes confidence values for every language considered possible
+/// for given input text.
+/// </summary>
+public sealed class LanguageDetector
 {
     private const int HighAccuracyModeMaxTextLength = 120;
     private static readonly Regex MultipleWhitespace = new("\\s+", RegexOptions.Compiled);
@@ -14,49 +18,49 @@ public class LanguageDetector
     private static readonly Regex Punctuation = new("\\p{P}", RegexOptions.Compiled);
     private static readonly Dictionary<string, HashSet<Language>> CharsToLanguagesMapping = new()
     {
-        ["Ãã"] = [Language.Portuguese, Language.Vietnamese],
-        ["ĄąĘę"] = [Language.Lithuanian, Language.Polish],
-        ["Żż"] = [Language.Polish, Language.Romanian],
-        ["Îî"] = [Language.French, Language.Romanian],
-        ["Ññ"] = [Language.Basque, Language.Spanish],
-        ["ŇňŤť"] = [Language.Czech, Language.Slovak],
-        ["Ăă"] = [Language.Romanian, Language.Vietnamese],
-        ["İıĞğ"] = [Language.Azerbaijani, Language.Turkish],
-        ["ЈјЉљЊњ"] = [Language.Macedonian, Language.Serbian],
-        ["ẸẹỌọ"] = [Language.Vietnamese, Language.Yoruba],
-        ["ÐðÞþ"] = [Language.Icelandic, Language.Turkish],
-        ["Ûû"] = [Language.French, Language.Hungarian],
-        ["Ōō"] = [Language.Maori, Language.Yoruba],
-        ["ĀāĒēĪī"] = [Language.Latvian, Language.Maori, Language.Yoruba],
-        ["Şş"] = [Language.Azerbaijani, Language.Romanian, Language.Turkish],
-        ["Ďď"] = [Language.Czech, Language.Romanian, Language.Slovak],
-        ["Ćć"] = [Language.Bosnian, Language.Croatian, Language.Polish],
-        ["Đđ"] = [Language.Bosnian, Language.Croatian, Language.Vietnamese],
-        ["Іі"] = [Language.Belarusian, Language.Kazakh, Language.Ukrainian],
-        ["Ìì"] = [Language.Italian, Language.Vietnamese, Language.Yoruba],
-        ["Øø"] = [Language.Bokmal, Language.Danish, Language.Nynorsk],
-        ["Ūū"] = [Language.Latvian, Language.Lithuanian, Language.Maori, Language.Yoruba],
-        ["Ëë"] = [Language.Afrikaans, Language.Albanian, Language.Dutch, Language.French],
-        ["ÈèÙù"] = [Language.French, Language.Italian, Language.Vietnamese, Language.Yoruba],
-        ["Êê"] = [Language.Afrikaans, Language.French, Language.Portuguese, Language.Vietnamese],
-        ["Õõ"] = [Language.Estonian, Language.Hungarian, Language.Portuguese, Language.Vietnamese],
-        ["Ôô"] = [Language.French, Language.Portuguese, Language.Slovak, Language.Vietnamese],
-        ["ЁёЫыЭэ"] = [Language.Belarusian, Language.Kazakh, Language.Mongolian, Language.Russian],
-        ["ЩщЪъ"] = [Language.Bulgarian, Language.Kazakh, Language.Mongolian, Language.Russian],
-        ["Òò"] = [Language.Catalan, Language.Italian, Language.Vietnamese, Language.Yoruba],
-        ["Ææ"] = [Language.Bokmal, Language.Danish, Language.Icelandic, Language.Nynorsk],
-        ["Åå"] = [Language.Bokmal, Language.Danish, Language.Nynorsk, Language.Swedish],
-        ["Ýý"] = [Language.Czech, Language.Icelandic, Language.Slovak, Language.Turkish, Language.Vietnamese],
-        ["Ää"] = [Language.Estonian, Language.Finnish, Language.German, Language.Slovak, Language.Swedish],
-        ["Àà"] = [Language.Catalan, Language.French, Language.Italian, Language.Portuguese, Language.Vietnamese],
-        ["Ââ"] = [Language.French, Language.Portuguese, Language.Romanian, Language.Turkish, Language.Vietnamese],
-        ["Üü"] = [Language.Azerbaijani, Language.Catalan, Language.Estonian, Language.German, Language.Hungarian, Language.Spanish, Language.Turkish],
-        ["ČčŠšŽž"] = [Language.Bosnian, Language.Czech, Language.Croatian, Language.Latvian, Language.Lithuanian, Language.Slovak, Language.Slovene],
-        ["Çç"] = [Language.Albanian, Language.Azerbaijani, Language.Basque, Language.Catalan, Language.French, Language.Portuguese, Language.Turkish],
-        ["Öö"] = [Language.Azerbaijani, Language.Estonian, Language.Finnish, Language.German, Language.Hungarian, Language.Icelandic, Language.Swedish, Language.Turkish],
-        ["Óó"] = [Language.Catalan, Language.Hungarian, Language.Icelandic, Language.Irish, Language.Polish, Language.Portuguese, Language.Slovak, Language.Spanish, Language.Vietnamese, Language.Yoruba],
-        ["ÁáÍíÚú"] = [Language.Catalan, Language.Czech, Language.Icelandic, Language.Irish, Language.Hungarian, Language.Portuguese, Language.Slovak, Language.Spanish, Language.Vietnamese, Language.Yoruba],
-        ["Éé"] = [Language.Catalan, Language.Czech, Language.French, Language.Hungarian, Language.Icelandic, Language.Irish, Language.Italian, Language.Portuguese, Language.Slovak, Language.Spanish, Language.Vietnamese, Language.Yoruba],
+        ["Ãã"] = [Portuguese, Vietnamese],
+        ["ĄąĘę"] = [Lithuanian, Polish],
+        ["Żż"] = [Polish, Romanian],
+        ["Îî"] = [French, Romanian],
+        ["Ññ"] = [Basque, Spanish],
+        ["ŇňŤť"] = [Czech, Slovak],
+        ["Ăă"] = [Romanian, Vietnamese],
+        ["İıĞğ"] = [Azerbaijani, Turkish],
+        ["ЈјЉљЊњ"] = [Macedonian, Serbian],
+        ["ẸẹỌọ"] = [Vietnamese, Yoruba],
+        ["ÐðÞþ"] = [Icelandic, Turkish],
+        ["Ûû"] = [French, Hungarian],
+        ["Ōō"] = [Maori, Yoruba],
+        ["ĀāĒēĪī"] = [Latvian, Maori, Yoruba],
+        ["Şş"] = [Azerbaijani, Romanian, Turkish],
+        ["Ďď"] = [Czech, Romanian, Slovak],
+        ["Ćć"] = [Bosnian, Croatian, Polish],
+        ["Đđ"] = [Bosnian, Croatian, Vietnamese],
+        ["Іі"] = [Belarusian, Kazakh, Ukrainian],
+        ["Ìì"] = [Italian, Vietnamese, Yoruba],
+        ["Øø"] = [Bokmal, Danish, Nynorsk],
+        ["Ūū"] = [Latvian, Lithuanian, Maori, Yoruba],
+        ["Ëë"] = [Afrikaans, Albanian, Dutch, French],
+        ["ÈèÙù"] = [French, Italian, Vietnamese, Yoruba],
+        ["Êê"] = [Afrikaans, French, Portuguese, Vietnamese],
+        ["Õõ"] = [Estonian, Hungarian, Portuguese, Vietnamese],
+        ["Ôô"] = [French, Portuguese, Slovak, Vietnamese],
+        ["ЁёЫыЭэ"] = [Belarusian, Kazakh, Mongolian, Russian],
+        ["ЩщЪъ"] = [Bulgarian, Kazakh, Mongolian, Russian],
+        ["Òò"] = [Catalan, Italian, Vietnamese, Yoruba],
+        ["Ææ"] = [Bokmal, Danish, Icelandic, Nynorsk],
+        ["Åå"] = [Bokmal, Danish, Nynorsk, Swedish],
+        ["Ýý"] = [Czech, Icelandic, Slovak, Turkish, Vietnamese],
+        ["Ää"] = [Estonian, Finnish, German, Slovak, Swedish],
+        ["Àà"] = [Catalan, French, Italian, Portuguese, Vietnamese],
+        ["Ââ"] = [French, Portuguese, Romanian, Turkish, Vietnamese],
+        ["Üü"] = [Azerbaijani, Catalan, Estonian, German, Hungarian, Spanish, Turkish],
+        ["ČčŠšŽž"] = [Bosnian, Czech, Croatian, Latvian, Lithuanian, Slovak, Slovene],
+        ["Çç"] = [Albanian, Azerbaijani, Basque, Catalan, French, Portuguese, Turkish],
+        ["Öö"] = [Azerbaijani, Estonian, Finnish, German, Hungarian, Icelandic, Swedish, Turkish],
+        ["Óó"] = [Catalan, Hungarian, Icelandic, Irish, Polish, Portuguese, Slovak, Spanish, Vietnamese, Yoruba],
+        ["ÁáÍíÚú"] = [Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish, Vietnamese, Yoruba],
+        ["Éé"] = [Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Portuguese, Slovak, Spanish, Vietnamese, Yoruba],
     };
 
     internal static readonly Dictionary<Language, Dictionary<string, float>> UnigramLanguageModels = new();
@@ -70,8 +74,6 @@ public class LanguageDetector
     private readonly bool _isLowAccuracyModeEnabled;
     private readonly Dictionary<Alphabet, Language> _oneLanguageAlphabets;
     private readonly IEnumerable<Language> _languagesWithUniqueCharacters;
-
-    public IReadOnlySet<Language> Languages => _languages;
 
     public LanguageDetector(
         HashSet<Language> languages,
@@ -87,42 +89,13 @@ public class LanguageDetector
         _languagesWithUniqueCharacters = languages.Where(l => !string.IsNullOrWhiteSpace(l.UniqueCharacters()));
 
         if (isEveryLanguageModelPreloaded)
-        {
-            PreloadLanguageModels();
-        }
+	        PreloadLanguageModels();
     }
 
-    private void PreloadLanguageModels()
-    {
-        var range = _isLowAccuracyModeEnabled
-            ? Enumerable.Range(3, 1)
-            : Enumerable.Range(1, 5);
-
-        var languagesAndRange = _languages.SelectMany(language => range.Select(ngramLength => (language, ngramLength)));
-
-        Parallel.ForEach(languagesAndRange, li =>
-        {
-            var (language, ngramLength) = li;
-            switch (ngramLength)
-            {
-                case 1:
-                    LoadLanguageModels(UnigramLanguageModels, language, ngramLength);
-                    break;
-                case 2:
-                    LoadLanguageModels(BigramLanguageModels, language, ngramLength);
-                    break;
-                case 3:
-                    LoadLanguageModels(TrigramLanguageModels, language, ngramLength);
-                    break;
-                case 4:
-                    LoadLanguageModels(QuadrigramLanguageModels, language, ngramLength);
-                    break;
-                case 5:
-                    LoadLanguageModels(FivegramLanguageModels, language, ngramLength);
-                    break;
-            }
-        });
-    }
+    /// <summary>
+    /// Gets the set of languages that can be detected.
+    /// </summary>
+    public IReadOnlySet<Language> Languages => _languages;
 
     /// <summary>
     /// Detects the language of the given input text.
@@ -133,7 +106,7 @@ public class LanguageDetector
     {
         var confidenceValues = ComputeLanguageConfidenceValues(text);
         if (confidenceValues.Count == 0)
-            return Language.Unknown;
+            return Unknown;
 
         var mostLikelyLanguage = confidenceValues.First().Key;
         if (confidenceValues.Count == 1)
@@ -143,9 +116,9 @@ public class LanguageDetector
         var secondMostLikelyLanguageProbability = confidenceValues.ElementAt(1).Value;
 
         return mostLikelyLanguageProbability.Equals(secondMostLikelyLanguageProbability)
-            ? Language.Unknown
+            ? Unknown
             : (mostLikelyLanguageProbability - secondMostLikelyLanguageProbability) < _minimumRelativeDistance
-                ? Language.Unknown
+                ? Unknown
                 : mostLikelyLanguage;
     }
 
@@ -176,7 +149,7 @@ public class LanguageDetector
         var words = SplitTextIntoWords(cleanedUpText);
         var languageDetectedByRules = DetectLanguageWithRules(words);
 
-        if (languageDetectedByRules != Language.Unknown)
+        if (languageDetectedByRules != Unknown)
         {
             values[languageDetectedByRules] = 1;
             return values;
@@ -191,9 +164,7 @@ public class LanguageDetector
         }
 
         if (_isLowAccuracyModeEnabled && cleanedUpText.Length < 3)
-        {
-            return values;
-        }
+	        return values;
 
         var ngramSizeRange = cleanedUpText.Length >= HighAccuracyModeMaxTextLength || _isLowAccuracyModeEnabled
             ? Enumerable.Range(3, 1)
@@ -226,9 +197,7 @@ public class LanguageDetector
         var summedUpProbabilities = SumUpProbabilities(allProbabilities, unigramCounts, filteredLanguages);
 
         if (summedUpProbabilities.Count == 0)
-        {
-            return new Dictionary<Language, double>();
-        }
+	        return new Dictionary<Language, double>();
 
         var highestProbability = summedUpProbabilities.Max(p => p.Value);
         var confidenceValues = summedUpProbabilities.ToDictionary(
@@ -239,6 +208,50 @@ public class LanguageDetector
             .OrderByDescending(c => c.Value)
             .ThenBy(c => c.Key)
             .ToIndexedDictionary();
+    }
+
+    /// <summary>
+    /// Unloads all language models loaded by this <see cref="LanguageDetector"/> instance
+    /// and frees associated resources.
+    /// <para />
+    /// This will be useful if the library is used within a web application inside
+    /// an application server. By calling this method prior to undeploying the
+    /// web application, the language models are removed and memory is freed.
+    /// </summary>
+    public void UnloadLanguageModels()
+    {
+	    lock (TrigramLanguageModels)
+	    {
+		    foreach (var language in _languages)
+			    TrigramLanguageModels.Remove(language);
+	    }
+
+	    if (!_isLowAccuracyModeEnabled)
+	    {
+		    lock (UnigramLanguageModels)
+		    {
+			    foreach (var language in _languages)
+				    UnigramLanguageModels.Remove(language);
+		    }
+
+		    lock (BigramLanguageModels)
+		    {
+			    foreach (var language in _languages)
+				    BigramLanguageModels.Remove(language);
+		    }
+
+		    lock (QuadrigramLanguageModels)
+		    {
+			    foreach (var language in _languages)
+				    QuadrigramLanguageModels.Remove(language);
+		    }
+
+		    lock (FivegramLanguageModels)
+		    {
+			    foreach (var language in _languages)
+				    FivegramLanguageModels.Remove(language);
+		    }
+	    }
     }
 
     private Dictionary<Language, float> SumUpProbabilities(
@@ -258,9 +271,7 @@ public class LanguageDetector
 
             summedUpProbabilities[language] = sum;
             if (unigramCountsOfInputText.TryGetValue(language, out var count))
-            {
-                summedUpProbabilities[language] /= count;
-            }
+	            summedUpProbabilities[language] /= count;
         }
 
         return summedUpProbabilities.Where(p => p.Value != 0).ToDictionary();
@@ -275,9 +286,7 @@ public class LanguageDetector
             {
                 var probability = LookupNgramProbability(language, unigram);
                 if (probability > 0)
-                {
-                    unigramCounts.IncrementCounter(language);
-                }
+	                unigramCounts.IncrementCounter(language);
             }
         }
 
@@ -288,9 +297,8 @@ public class LanguageDetector
     {
         var probabilities = new Dictionary<Language, float>();
         foreach (var language in filteredLanguages)
-        {
-            probabilities[language] = ComputeSumOfNgramProbabilities(language, testDataModel.Ngrams);
-        }
+	        probabilities[language] = ComputeSumOfNgramProbabilities(language, testDataModel.Ngrams);
+
         return probabilities.Where(p => p.Value < 0).ToDictionary();
     }
 
@@ -331,14 +339,45 @@ public class LanguageDetector
         return model.GetValueOrDefault(ngram.ToString(), 0);
     }
 
+    private void PreloadLanguageModels()
+    {
+	    var range = _isLowAccuracyModeEnabled
+		    ? Enumerable.Range(3, 1)
+		    : Enumerable.Range(1, 5);
+
+	    var languagesAndRange =
+		    _languages.SelectMany(language => range.Select(ngramLength => (language, ngramLength)));
+
+	    Parallel.ForEach(languagesAndRange, li =>
+	    {
+		    var (language, ngramLength) = li;
+		    switch (ngramLength)
+		    {
+			    case 1:
+				    LoadLanguageModels(UnigramLanguageModels, language, ngramLength);
+				    break;
+			    case 2:
+				    LoadLanguageModels(BigramLanguageModels, language, ngramLength);
+				    break;
+			    case 3:
+				    LoadLanguageModels(TrigramLanguageModels, language, ngramLength);
+				    break;
+			    case 4:
+				    LoadLanguageModels(QuadrigramLanguageModels, language, ngramLength);
+				    break;
+			    case 5:
+				    LoadLanguageModels(FivegramLanguageModels, language, ngramLength);
+				    break;
+		    }
+	    });
+    }
+
     private Dictionary<string, float> LoadLanguageModels(Dictionary<Language, Dictionary<string, float>> languageModels, Language language, int ngramLength)
     {
         lock (languageModels)
         {
             if (languageModels.TryGetValue(language, out var value))
-            {
-                return value;
-            }
+	            return value;
         }
 
         var model = LoadLanguageModel(language, ngramLength);
@@ -356,50 +395,6 @@ public class LanguageDetector
         return stream == null
             ? new Dictionary<string, float>()
             : TrainingDataLanguageModel.FromJson(stream);
-    }
-
-    /// <summary>
-    /// Unloads all language models loaded by this [LanguageDetector] instance
-    /// and frees associated resources.
-    /// <para />
-    /// This will be useful if the library is used within a web application inside
-    /// an application server. By calling this method prior to undeploying the
-    /// web application, the language models are removed and memory is freed.
-    /// </summary>
-    public void UnloadLanguageModels()
-    {
-        lock (TrigramLanguageModels)
-        {
-            foreach (var language in _languages)
-                TrigramLanguageModels.Remove(language);
-        }
-
-        if (!_isLowAccuracyModeEnabled)
-        {
-            lock (UnigramLanguageModels)
-            {
-                foreach (var language in _languages)
-                    UnigramLanguageModels.Remove(language);
-            }
-
-            lock (BigramLanguageModels)
-            {
-                foreach (var language in _languages)
-                    BigramLanguageModels.Remove(language);
-            }
-
-            lock (QuadrigramLanguageModels)
-            {
-                foreach (var language in _languages)
-                    QuadrigramLanguageModels.Remove(language);
-            }
-
-            lock (FivegramLanguageModels)
-            {
-                foreach (var language in _languages)
-                    FivegramLanguageModels.Remove(language);
-            }
-        }
     }
 
     internal HashSet<Language> FilterLanguagesByRules(List<string> words)
@@ -425,14 +420,10 @@ public class LanguageDetector
             {
                 var distinctAlphabets = new HashSet<int>();
                 foreach (var count in detectedAlphabets.Values)
-                {
-                    distinctAlphabets.Add(count);
-                }
+	                distinctAlphabets.Add(count);
 
                 if (distinctAlphabets.Count == 1)
-                {
-                    return _languages;
-                }
+	                return _languages;
 
                 break;
             }
@@ -454,9 +445,7 @@ public class LanguageDetector
                     if (word.Contains(ch))
                     {
                         foreach (var language in relevantLanguages)
-                        {
-                            languageCounts.IncrementCounter(language);
-                        }
+	                        languageCounts.IncrementCounter(language);
                     }
                 }
             }
@@ -485,7 +474,7 @@ public class LanguageDetector
                 {
                     if (alphabet.Matches(ch))
                     {
-                        wordLanguageCounts.IncrementCounter(language);;
+                        wordLanguageCounts.IncrementCounter(language);
                         isMatch = true;
                         break;
                     }
@@ -494,19 +483,13 @@ public class LanguageDetector
                 if (!isMatch)
                 {
                     if (Alphabet.Han.Matches(ch))
-                    {
-                        wordLanguageCounts.IncrementCounter(Language.Chinese);
-                    }
+	                    wordLanguageCounts.IncrementCounter(Chinese);
                     else if (IsJapaneseAlphabet(ch))
-                    {
-                        wordLanguageCounts.IncrementCounter(Language.Japanese);
-                    }
+	                    wordLanguageCounts.IncrementCounter(Japanese);
                     else if (Alphabet.Latin.Matches(ch) || Alphabet.Cyrillic.Matches(ch) || Alphabet.Devanagari.Matches(ch))
                     {
                         foreach (var language in _languagesWithUniqueCharacters.Where(l => l.UniqueCharacters()?.Contains(ch) ?? false))
-                        {
-                            wordLanguageCounts.IncrementCounter(language);
-                        }
+	                        wordLanguageCounts.IncrementCounter(language);
                     }
                 }
             }
@@ -514,12 +497,12 @@ public class LanguageDetector
             switch (wordLanguageCounts.Count)
             {
                 case 0:
-                    totalLanguageCounts.IncrementCounter(Language.Unknown);
+                    totalLanguageCounts.IncrementCounter(Unknown);
                     break;
                 case 1:
                 {
                     var language = wordLanguageCounts.Single().Key;
-                    totalLanguageCounts.IncrementCounter(_languages.Contains(language) ? language : Language.Unknown);
+                    totalLanguageCounts.IncrementCounter(_languages.Contains(language) ? language : Unknown);
                     break;
                 }
                 default:
@@ -530,33 +513,30 @@ public class LanguageDetector
                     var (mostFrequentLanguage, firstCharCount) = sortedWordLanguageCounts[0];
                     var (_, secondCharCount) = sortedWordLanguageCounts[1];
 
-                    if (firstCharCount > secondCharCount && _languages.Contains(mostFrequentLanguage)) {
-                        totalLanguageCounts.IncrementCounter(mostFrequentLanguage);
-                    } else {
-                        totalLanguageCounts.IncrementCounter(Language.Unknown);
-                    }
+                    if (firstCharCount > secondCharCount && _languages.Contains(mostFrequentLanguage))
+	                    totalLanguageCounts.IncrementCounter(mostFrequentLanguage);
+                    else
+	                    totalLanguageCounts.IncrementCounter(Unknown);
 
                     break;
                 }
             }
         }
 
-        totalLanguageCounts.TryGetValue(Language.Unknown, out var unknownLanguageCount);
-        if (unknownLanguageCount < (0.5 * words.Count))
-        {
-            totalLanguageCounts.Remove(Language.Unknown);
-        }
+        totalLanguageCounts.TryGetValue(Unknown, out var unknownLanguageCount);
+        if (unknownLanguageCount < 0.5 * words.Count)
+	        totalLanguageCounts.Remove(Unknown);
 
         switch (totalLanguageCounts.Count)
         {
             case 0:
-                return Language.Unknown;
+                return Unknown;
             case 1:
                 return totalLanguageCounts.Keys.Single();
             case 2 when
-                totalLanguageCounts.ContainsKey(Language.Chinese) &&
-                totalLanguageCounts.ContainsKey(Language.Japanese):
-                return Language.Japanese;
+                totalLanguageCounts.ContainsKey(Chinese) &&
+                totalLanguageCounts.ContainsKey(Japanese):
+                return Japanese;
         }
 
         using var sortedTotalLanguageCounts = totalLanguageCounts
@@ -568,7 +548,7 @@ public class LanguageDetector
         sortedTotalLanguageCounts.MoveNext();
         var (_, secondTotalCharCount) = sortedTotalLanguageCounts.Current;
 
-        return firstTotalCharCount == secondTotalCharCount ? Language.Unknown : mostFrequentTotalLanguage;
+        return firstTotalCharCount == secondTotalCharCount ? Unknown : mostFrequentTotalLanguage;
     }
 
     private bool IsJapaneseAlphabet(char ch) =>
@@ -584,18 +564,14 @@ public class LanguageDetector
             if (ch == ' ')
             {
                 if (nextWordStart != i)
-                {
-                    words.Add(text.Substring(nextWordStart, i - nextWordStart));
-                }
+	                words.Add(text.Substring(nextWordStart, i - nextWordStart));
 
                 nextWordStart = i + 1;
             }
             else if (ch.IsLogogram())
             {
                 if (nextWordStart != i)
-                {
-                    words.Add(text.Substring(nextWordStart, i - nextWordStart));
-                }
+	                words.Add(text.Substring(nextWordStart, i - nextWordStart));
 
                 words.Add(text[i].ToString());
                 nextWordStart = i + 1;
@@ -603,9 +579,7 @@ public class LanguageDetector
         }
 
         if (nextWordStart != text.Length)
-        {
-            words.Add(text.Substring(nextWordStart));
-        }
+	        words.Add(text.Substring(nextWordStart));
 
         return words;
     }
@@ -615,7 +589,7 @@ public class LanguageDetector
             Numbers.Replace(
                 Punctuation.Replace(text.Trim().ToLowerInvariant(), ""), ""), " ");
 
-    protected bool Equals(LanguageDetector other) =>
+    private bool Equals(LanguageDetector other) =>
         _languages.SetEquals(other._languages)
         && _minimumRelativeDistance.Equals(other._minimumRelativeDistance)
         && _isLowAccuracyModeEnabled == other._isLowAccuracyModeEnabled;
