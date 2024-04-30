@@ -35,7 +35,7 @@ public struct Utf8Buffer : IDisposable
 
     private byte[] _buffer;
 
-    public int Length { get; private set; }
+    private int Length { get; set; }
 
     private Utf8Buffer(byte[] buffer)
     {

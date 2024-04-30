@@ -24,32 +24,22 @@
 
 namespace UnicodeScriptGenerator;
 
-public class UnicodeDataFileReader : IDisposable
+public class UnicodeDataFileReader(Stream stream, char fieldSeparator, bool leaveOpen = false) : IDisposable
 {
-	private readonly Stream _stream;
-	private readonly byte[] _byteBuffer;
+	private readonly byte[] _byteBuffer = new byte[8192];
 	private int _index;
 	private int _length;
-	private readonly char _fieldSeparator;
 	private bool _hasField;
-	private readonly bool _leaveOpen;
-
-	public UnicodeDataFileReader(Stream stream, char fieldSeparator, bool leaveOpen = false)
-	{
-		_stream = stream;
-		_fieldSeparator = fieldSeparator;
-		_byteBuffer = new byte[8192];
-		_leaveOpen = leaveOpen;
-	}
 
 	public void Dispose()
 	{
-		if (!_leaveOpen) _stream.Dispose();
+		if (!leaveOpen)
+			stream.Dispose();
 	}
 
 	private bool RefillBuffer()
 		// Evilish line of code. 😈
-		=> (_length = _stream.Read(_byteBuffer, 0, _byteBuffer.Length)) != (_index = 0);
+		=> (_length = stream.Read(_byteBuffer, 0, _byteBuffer.Length)) != (_index = 0);
 
 	private static bool IsNewLineOrComment(byte b)
 		=> b == '\n' || b == '#';
@@ -73,7 +63,6 @@ public class UnicodeDataFileReader : IDisposable
 		}
 
 		do
-		{
 			while (_index < _length)
 			{
 				if (_byteBuffer[_index++] == '\n')
@@ -85,7 +74,7 @@ public class UnicodeDataFileReader : IDisposable
 					}
 				}
 			}
-		} while (RefillBuffer());
+		while (RefillBuffer());
 
 		_hasField = false;
 		Completed:;
@@ -132,7 +121,7 @@ public class UnicodeDataFileReader : IDisposable
 					break;
 				}
 
-				if (b == _fieldSeparator)
+				if (b == fieldSeparator)
 				{
 					endOffset = _index++;
 					break;

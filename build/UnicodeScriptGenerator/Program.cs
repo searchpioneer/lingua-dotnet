@@ -4,6 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace UnicodeScriptGenerator;
 
+/// <summary>
+/// Generates the UnicodeScript.g.cs file for character script properties
+/// </summary>
 internal partial class Program
 {
 	[GeneratedRegex("^# Scripts-(.*?).txt$")]

@@ -9,17 +9,21 @@
     <PackageProjectUrl>https://github.com/russcam/lingua-dotnet</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/russcam/lingua-dotnet/releases</PackageReleaseNotes>
     <PackageTags>lingua, language detection</PackageTags>
-    <SolutionRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Lingua.sln))</SolutionRoot>
-<!--    <AssemblyOriginatorKeyFile>$(SolutionRoot)build\keys\keypair.snk</AssemblyOriginatorKeyFile>-->
-<!--    <PublicKey>97ab15215fab2a5d</PublicKey>-->
     <LangVersion>latest</LangVersion>
-<!--    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+    <!-- TODO: fix all warnings and enable -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <IsPackable>False</IsPackable>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
   </PropertyGroup>
-
+  
+  <PropertyGroup>
+    <SolutionRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Lingua.sln))</SolutionRoot>
+    <AssemblyOriginatorKeyFile>$(SolutionRoot)build\keys\keypair.snk</AssemblyOriginatorKeyFile>
+    <PublicKey>00240000048000009400000006020000002400005253413100040000010001001da75df10c051edb93c8750764f353e705ed1f031d6e6e237ef132aa8f8bc9f26b6257e13ae136969da06a91761768719d2ddf9690b34e315d69c114bd6d5d6f5a790851081cdf0b955359d7fd9c9474044dd0c244096dfe4689ed455b0a43faccaa7928bef7e605187a8d79265527d094931d36fa6e4c9ae0284340e4a4c5e5</PublicKey>
+  </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="MinVer" Version="4.3.0" PrivateAssets="all"/>
   </ItemGroup>
