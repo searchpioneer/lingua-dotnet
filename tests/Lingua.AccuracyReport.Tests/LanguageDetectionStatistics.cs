@@ -64,7 +64,7 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 		);
 		var accuracyReportFilePath = Path.Combine(
 			accuracyReportsDirectoryPath,
-			$"{Language}.txt"
+			$"{Language}.md"
 		);
 
 		var statisticsReport = StatisticsReport();
@@ -75,6 +75,9 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 	}
 	private string StatisticsReport()
 	{
+		var newlines = new string('\n', 2);
+		var report = new StringBuilder($"## {Language}");
+
 		var singleWordsAccuracyvalues = MapCountsToAccuracies(_singleWordsStatistics);
 		var wordPairsAccuracyvalues = MapCountsToAccuracies(_wordPairsStatistics);
 		var sentencesAccuracyvalues = MapCountsToAccuracies(_sentencesStatistics);
@@ -103,26 +106,31 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 		var averageAccuracyInHighAccuracyMode =
 			(singleWordAccuracies.HighAccuracy + wordPairAccuracies.HighAccuracy + sentenceAccuracies.HighAccuracy) / 3;
 
-		var averageAccuracyReport = Implementation == Implementation.Lingua
-			? $">>> Accuracy on average: {FormatAccuracy(averageAccuracyInLowAccuracyMode)} | " +
-			  FormatAccuracy(averageAccuracyInHighAccuracyMode)
-			: $">>> Accuracy on average: {FormatAccuracy(averageAccuracyInHighAccuracyMode)}";
+		if (Implementation == Implementation.Lingua)
+		{
+			report.AppendLine($"{newlines}Overall average accuracy");
+			report.AppendLine();
+			report.AppendLine("| Low Accuracy Mode | High Accuracy Mode |");
+			report.AppendLine("| ----------------- | ------------------ |");
+			report.AppendLine(
+				$"| {FormatAccuracy(averageAccuracyInLowAccuracyMode)} | {FormatAccuracy(averageAccuracyInHighAccuracyMode)} |");
+		}
+		else
+		{
+			report.AppendLine($"{newlines}Overall average accuracy");
+			report.AppendLine();
+			report.AppendLine("| High Accuracy Mode |");
+			report.AppendLine("| ------------------ |");
+			report.AppendLine(
+				$"| {FormatAccuracy(averageAccuracyInHighAccuracyMode)} |");
+		}
 
 		var reportParts = new[]
 		{
-			averageAccuracyReport,
 			singleWordAccuracyReport,
 			wordPairAccuracyReport,
 			sentenceAccuracyReport
 		};
-		var newlines = new string('\n', 2);
-		var report = new StringBuilder($"##### {Language} #####");
-
-		if (Implementation == Implementation.Lingua)
-		{
-			report.Append(newlines);
-			report.Append("Legend: 'low accuracy mode | high accuracy mode'");
-		}
 
 		foreach (var reportPart in reportParts)
 		{
@@ -130,20 +138,21 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 				report.Append($"{newlines}{reportPart}");
 		}
 
-		report.Append($"{newlines}>> Exact values:");
+		report.Append($"{newlines}> Exact values:");
 		if (Implementation == Implementation.Lingua)
 		{
 			report.Append($" {averageAccuracyInLowAccuracyMode} {singleWordAccuracies.LowAccuracy} " +
 			              $"{wordPairAccuracies.LowAccuracy} {sentenceAccuracies.LowAccuracy}");
-			report.Append($" {averageAccuracyInHighAccuracyMode} {singleWordAccuracies.HighAccuracy} " +
+			report.AppendLine($" {averageAccuracyInHighAccuracyMode} {singleWordAccuracies.HighAccuracy} " +
 			              $"{wordPairAccuracies.HighAccuracy} {sentenceAccuracies.HighAccuracy}");
 		}
 		else
 		{
-			report.Append($" {averageAccuracyInHighAccuracyMode} {singleWordAccuracies.HighAccuracy} " +
+			report.AppendLine($" {averageAccuracyInHighAccuracyMode} {singleWordAccuracies.HighAccuracy} " +
 			              $"{wordPairAccuracies.HighAccuracy} {sentenceAccuracies.HighAccuracy}");
 		}
 
+		report.AppendLine();
 		return report.ToString();
 	}
 
@@ -220,42 +229,62 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 		string description)
 	{
 		var accuracies = statistics.GetValueOrDefault(Language, (0d, 0d));
-		var report = new StringBuilder(
-			$">> Detection of {count} {description} (average length: {(int)((double)length / count)} chars)\n");
+		var report = new StringBuilder($"### {Language} {description}");
+		report.AppendLine();
+		report.AppendLine();
+		report.AppendLine($"Detection of {count} {description} (average length: {(int)((double)length / count)} chars)");
+		report.AppendLine();
 
+		bool errors;
 		if (Implementation == Implementation.Lingua)
-			report.Append($"Accuracy: {FormatAccuracy(accuracies.Item1)} | {FormatAccuracy(accuracies.Item2)}\n");
+		{
+			report.AppendLine("| Low Accuracy Mode | High Accuracy Mode |");
+			report.AppendLine("| ----------------- | ------------------ |");
+			report.AppendLine($"| {FormatAccuracy(accuracies.Item1)} | {FormatAccuracy(accuracies.Item2)} |");
+			errors = accuracies.Item1 < 100 || accuracies.Item2 < 100;
+		}
 		else
-			report.Append($"Accuracy: {FormatAccuracy(accuracies.Item2)}\n");
+		{
+			report.AppendLine("| High Accuracy Mode |");
+			report.AppendLine("| ------------------ |");
+			report.AppendLine($"| {FormatAccuracy(accuracies.Item2)} |");
+			errors = accuracies.Item2 < 100;
+		}
 
-		report.AppendLine("Erroneously classified as");
-		report.Append(FormatStatistics(statistics, Language));
+		if (errors)
+		{
+			report.AppendLine();
+			report.AppendLine("Erroneously classified as");
+			report.AppendLine();
+			FormatStatistics(statistics, Language, report);
+		}
 
 		return (accuracies, report.ToString());
 	}
 
-	private string FormatStatistics(Dictionary<Language,(double, double)> statistics, Language language)
+	private string FormatStatistics(Dictionary<Language,(double, double)> statistics, Language language, StringBuilder builder)
 	{
 		var sorted = statistics
 			.Where(s => s.Key != language)
 			.OrderByDescending(s => s.Value.Item2)
 			.ToList();
 
-		var builder = new StringBuilder();
 		if (Implementation == Implementation.Lingua)
 		{
+			builder.AppendLine("| Language | Low Accuracy Mode | High Accuracy Mode |");
+			builder.AppendLine("| -------- | ----------------- | ------------------ |");
 			foreach (var statistic in sorted)
 			{
 				builder.AppendLine(
-					$"{statistic.Key}: {FormatAccuracy(statistic.Value.Item1)} | {FormatAccuracy(statistic.Value.Item2)}");
+					$"| {statistic.Key} | {FormatAccuracy(statistic.Value.Item1)} | {FormatAccuracy(statistic.Value.Item2)} |");
 			}
 		}
 		else
 		{
+			builder.AppendLine("| Language | High Accuracy Mode |");
+			builder.AppendLine("| -------- | ------------------ |");
 			foreach (var statistic in sorted)
-			{
-				builder.AppendLine($"{statistic.Key}: {FormatAccuracy(statistic.Value.Item2)}");
-			}
+				builder.AppendLine($"| {statistic.Key} | {FormatAccuracy(statistic.Value.Item2)} |");
 		}
 
 		return builder.ToString();

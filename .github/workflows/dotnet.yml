@@ -26,3 +26,8 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Accuracy Report
+      run: |
+        echo "# Lingua Language Accuracy report" >> $GITHUB_STEP_SUMMARY
+        cat accuracy-reports/lingua/*.md >> $GITHUB_STEP_SUMMARY
+          
