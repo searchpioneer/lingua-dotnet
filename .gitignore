@@ -7,5 +7,7 @@ riderModule.iml
 .idea
 *.sln.DotSettings.User
 
+nuget
+ 
 # Don't check in gzipped files
 /src/Lingua/LanguageModels/**/*.json.gz

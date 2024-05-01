@@ -15,7 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Root", "Solution R
 		README.md = README.md
 		Directory.Build.props = Directory.Build.props
 		dotnet-tools.json = dotnet-tools.json
+		build.bat = build.bat
+		build.sh = build.sh
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "build\Build\Build.csproj", "{E8C232A5-D100-47D5-A8CA-8E8927E52CD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,5 +39,9 @@ Global
 		{120D07F4-AAF1-4D00-BF86-48836F819C1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{120D07F4-AAF1-4D00-BF86-48836F819C1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{120D07F4-AAF1-4D00-BF86-48836F819C1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8C232A5-D100-47D5-A8CA-8E8927E52CD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8C232A5-D100-47D5-A8CA-8E8927E52CD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8C232A5-D100-47D5-A8CA-8E8927E52CD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8C232A5-D100-47D5-A8CA-8E8927E52CD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,5 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project>
+    <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  
     <PropertyGroup>
         <Title>Lingua</Title>
         <Description>Natural language detection library for .NET, suitable for long and short text alike</Description>
@@ -19,12 +20,7 @@
       <InternalsVisibleTo Include="$(AssemblyName).Tests" Key="$(PublicKey)" />
     </ItemGroup>
 
-  <!-- 
-    Gzip embedded resources to reduce size. 
-    Import the Sdk.targets here. Project Sdk="Microsoft.NET.Sdk" implicitly imports Sdk.targets at the bottom of
-    the file, per https://learn.microsoft.com/en-us/dotnet/core/project-sdk/overview#project-files, resulting
-    in a build warning for duplicate imports.
-  -->
+  <!-- Gzip embedded resources to reduce size -->
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <UsingTask TaskName="GZip"
              TaskFactory="RoslynCodeTaskFactory"
@@ -51,9 +47,7 @@
             string destinationSuffix = ".gz";
             string destinationPath = sourcePath + destinationSuffix;
             string destinationItemSpec = sourceItemSpec + destinationSuffix;
-
-            //Log.LogMessage(MessageImportance.Normal, "EmbeddedResource Src : " + sourceItemSpec);
-                  
+  
             using (var sourceStream = File.OpenRead(sourcePath))
             using (var destinationStream = File.OpenWrite(destinationPath))
             using (var destinationGZip = new GZipStream(destinationStream, CompressionLevel.Optimal))
@@ -62,8 +56,6 @@
             }
                   
             var destinationItem = new TaskItem(destinationItemSpec);   
-            //Log.LogMessage(MessageImportance.Normal, "EmbeddedResource GZip: " + destinationItem.ItemSpec);
-                 
             Result[i] = destinationItem;
         }
     }
@@ -75,8 +67,6 @@
     <GZip Files="@(EmbeddedResource)">
       <Output ItemName="GZipEmbeddedResource" TaskParameter="Result" />
     </GZip>
-    <Message Text="Source EmbeddedResources: @(EmbeddedResource)" Importance="High" />
-    <Message Text="GZipped EmbeddedResources: @(GZipEmbeddedResource)" Importance="High" />
     <ItemGroup>
       <EmbeddedResource Remove="@(EmbeddedResource)" />
       <EmbeddedResource Include="@(GZipEmbeddedResource)" />
