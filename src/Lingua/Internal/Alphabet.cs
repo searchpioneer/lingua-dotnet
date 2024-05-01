@@ -2,32 +2,53 @@
 
 namespace Lingua;
 
-public enum Alphabet
+internal enum Alphabet
 {
+    /// <summary>The 'Arabic' alphabet</summary>
     Arabic,
+    /// <summary>The 'Armenian' alphabet</summary>
     Armenian,
+    /// <summary>The 'Bengali' alphabet</summary>
     Bengali,
+    /// <summary>The 'Cyrillic' alphabet</summary>
     Cyrillic,
+    /// <summary>The 'Devanagari' alphabet</summary>
     Devanagari,
+    /// <summary>The 'Ethiopic' alphabet</summary>
     Ethiopic,
+    /// <summary>The 'Georgian' alphabet</summary>
     Georgian,
+    /// <summary>The 'Greek' alphabet</summary>
     Greek,
+    /// <summary>The 'Gujarati' alphabet</summary>
     Gujarati,
+    /// <summary>The 'Gurmukhi' alphabet</summary>
     Gurmukhi,
+    /// <summary>The 'Han' alphabet</summary>
     Han,
+    /// <summary>The 'Hangul' alphabet</summary>
     Hangul,
+    /// <summary>The 'Hebrew' alphabet</summary>
     Hebrew,
+    /// <summary>The 'Hiragana' alphabet</summary>
     Hiragana,
+    /// <summary>The 'Katakana' alphabet</summary>
     Katakana,
+    /// <summary>The 'Latin' alphabet</summary>
     Latin,
+    /// <summary>The 'Sinhala' alphabet</summary>
     Sinhala,
+    /// <summary>The 'Tamil' alphabet</summary>
     Tamil,
+    /// <summary>The 'Telugu' alphabet</summary>
     Telugu,
+    /// <summary>The 'Thai' alphabet</summary>
     Thai,
+    /// <summary>The imaginary 'None' alphabet</summary>
     None,
 }
 
-public static class AlphabetExtensions
+internal static class AlphabetExtensions
 {
     internal static readonly Alphabet[] Values = Enum.GetValues<Alphabet>();
 
@@ -92,18 +113,6 @@ public static class AlphabetExtensions
         return text.All(ch => ch.GetScript() == unicodeScript);
     }
 
-    private static HashSet<Language> SupportedLanguages(this Alphabet alphabet)
-    {
-        var languages = new HashSet<Language>();
-        foreach (var language in Enum.GetValues<Language>())
-        {
-            if (language.Alphabets().Contains(alphabet))
-	            languages.Add(language);
-        }
-
-        return languages;
-    }
-
     /// <summary>
     /// Gets the alphabets that support exactly one language.
     /// </summary>
@@ -121,9 +130,16 @@ public static class AlphabetExtensions
 
             var supportedLanguages = alphabet.SupportedLanguages();
             if (supportedLanguages.Count == 1)
-	            alphabets[alphabet] = supportedLanguages.Single();
+	            alphabets[alphabet] = supportedLanguages.First();
         }
 
         return alphabets;
+    }
+
+    private static HashSet<Language> SupportedLanguages(this Alphabet alphabet)
+    {
+	    var languages = LanguageInfo.All();
+	    languages.RemoveWhere(language => !language.Alphabets().Contains(alphabet));
+	    return languages;
     }
 }

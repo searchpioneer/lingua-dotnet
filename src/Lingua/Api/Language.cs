@@ -7,89 +7,172 @@ namespace Lingua.Api;
 /// </summary>
 public enum Language
 {
+    /// <summary>The 'Afrikaans' language</summary>
     Afrikaans,
+    /// <summary>The 'Albanian' language</summary>
     Albanian,
+    /// <summary>The 'Amharic' language</summary>
     Amharic,
+    /// <summary>The 'Arabic' language</summary>
     Arabic,
+    /// <summary>The 'Armenian' language</summary>
     Armenian,
+    /// <summary>The 'Azerbaijani' language</summary>
     Azerbaijani,
+    /// <summary>The 'Basque' language</summary>
     Basque,
+    /// <summary>The 'Belarusian' language</summary>
     Belarusian,
+    /// <summary>The 'Bengali' language</summary>
     Bengali,
+    /// <summary>The 'Bokmal' language</summary>
     Bokmal,
+    /// <summary>The 'Bosnian' language</summary>
     Bosnian,
+    /// <summary>The 'Bulgarian' language</summary>
     Bulgarian,
+    /// <summary>The 'Catalan' language</summary>
     Catalan,
+    /// <summary>The 'Chinese' language</summary>
     Chinese,
+    /// <summary>The 'Croatian' language</summary>
     Croatian,
+    /// <summary>The 'Czech' language</summary>
     Czech,
+    /// <summary>The 'Danish' language</summary>
     Danish,
+    /// <summary>The 'Dutch' language</summary>
     Dutch,
+    /// <summary>The 'English' language</summary>
     English,
+    /// <summary>The 'Esperanto' language</summary>
     Esperanto,
+    /// <summary>The 'Estonian' language</summary>
     Estonian,
+    /// <summary>The 'Finnish' language</summary>
     Finnish,
+    /// <summary>The 'French' language</summary>
     French,
+    /// <summary>The 'Ganda' language</summary>
     Ganda,
+    /// <summary>The 'Georgian' language</summary>
     Georgian,
+    /// <summary>The 'German' language</summary>
     German,
+    /// <summary>The 'Greek' language</summary>
     Greek,
+    /// <summary>The 'Gujarati' language</summary>
     Gujarati,
+    /// <summary>The 'Hebrew' language</summary>
     Hebrew,
+    /// <summary>The 'Hindi' language</summary>
     Hindi,
+    /// <summary>The 'Hungarian' language</summary>
     Hungarian,
+    /// <summary>The 'Icelandic' language</summary>
     Icelandic,
+    /// <summary>The 'Indonesian' language</summary>
     Indonesian,
+    /// <summary>The 'Irish' language</summary>
     Irish,
+    /// <summary>The 'Italian' language</summary>
     Italian,
+    /// <summary>The 'Japanese' language</summary>
     Japanese,
+    /// <summary>The 'Kazakh' language</summary>
     Kazakh,
+    /// <summary>The 'Korean' language</summary>
     Korean,
+    /// <summary>The 'Latin' language</summary>
     Latin,
+    /// <summary>The 'Latvian' language</summary>
     Latvian,
+    /// <summary>The 'Lithuanian' language</summary>
     Lithuanian,
+    /// <summary>The 'Macedonian' language</summary>
     Macedonian,
+    /// <summary>The 'Malay' language</summary>
     Malay,
+    /// <summary>The 'Maori' language</summary>
     Maori,
+    /// <summary>The 'Marathi' language</summary>
     Marathi,
+    /// <summary>The 'Mongolian' language</summary>
     Mongolian,
+    /// <summary>The 'Nynorsk' language</summary>
     Nynorsk,
+    /// <summary>The 'Oromo' language</summary>
     Oromo,
+    /// <summary>The 'Persian' language</summary>
     Persian,
+    /// <summary>The 'Polish' language</summary>
     Polish,
+    /// <summary>The 'Portuguese' language</summary>
     Portuguese,
+    /// <summary>The 'Punjabi' language</summary>
     Punjabi,
+    /// <summary>The 'Romanian' language</summary>
     Romanian,
+    /// <summary>The 'Russian' language</summary>
     Russian,
+    /// <summary>The 'Serbian' language</summary>
     Serbian,
+    /// <summary>The 'Shona' language</summary>
     Shona,
+    /// <summary>The 'Sinhala' language</summary>
     Sinhala,
+    /// <summary>The 'Slovak' language</summary>
     Slovak,
+    /// <summary>The 'Slovene' language</summary>
     Slovene,
+    /// <summary>The 'Somali' language</summary>
     Somali,
+    /// <summary>The 'Sotho' language</summary>
     Sotho,
+    /// <summary>The 'Spanish' language</summary>
     Spanish,
+    /// <summary>The 'Swahili' language</summary>
     Swahili,
+    /// <summary>The 'Swedish' language</summary>
     Swedish,
+    /// <summary>The 'Tagalog' language</summary>
     Tagalog,
+    /// <summary>The 'Tamil' language</summary>
     Tamil,
+    /// <summary>The 'Telugu' language</summary>
     Telugu,
+    /// <summary>The 'Thai' language</summary>
     Thai,
+    /// <summary>The 'Tigrinya' language</summary>
     Tigrinya,
+    /// <summary>The 'Tsonga' language</summary>
     Tsonga,
+    /// <summary>The 'Tswana' language</summary>
     Tswana,
+    /// <summary>The 'Turkish' language</summary>
     Turkish,
+    /// <summary>The 'Ukrainian' language</summary>
     Ukrainian,
+    /// <summary>The 'Urdu' language</summary>
     Urdu,
+    /// <summary>The 'Vietnamese' language</summary>
     Vietnamese,
+    /// <summary>The 'Welsh' language</summary>
     Welsh,
+    /// <summary>The 'Xhosa' language</summary>
     Xhosa,
+    /// <summary>The 'Yoruba' language</summary>
     Yoruba,
+    /// <summary>The 'Zulu' language</summary>
     Zulu,
+    /// <summary>The imaginary 'Unknown' language</summary>
     Unknown,
 }
 
-public static class LanguageExtensions
+/// <summary>
+/// Extension methods for <see cref="Language"/>.
+/// </summary>
+public static class LanguageInfo
 {
     private static readonly Dictionary<Language, LanguageProperties> LanguageProperties =
         new(Enum.GetValues(typeof(Language)).Length)
@@ -192,58 +275,94 @@ public static class LanguageExtensions
     public static IsoCode6393 IsoCode6393(this Language language) => LanguageProperties[language].IsoCode6393;
 
     /// <summary>
-    /// Gets the alphabets for the language
-    /// </summary>
-    /// <param name="language">The language</param>
-    /// <returns>The alphabets</returns>
-    public static IReadOnlySet<Alphabet> Alphabets(this Language language) => LanguageProperties[language].Alphabets;
-
-    /// <summary>
     /// Gets the unique characters for the language, or null if there are no unique characters.
     /// </summary>
     /// <param name="language">The language</param>
     /// <returns>The unique characters for the language, or null if there are no unique characters.</returns>
     public static string? UniqueCharacters(this Language language) => LanguageProperties[language].UniqueCharacters;
 
-    public static IList<Language> All() => LanguageProperties.Keys
-        .Where(l => l is not Unknown).ToList();
+    /// <summary>
+    /// Gets the list of languages supporting logograms
+    /// </summary>
+    public static readonly IReadOnlySet<Language> LanguagesSupportingLogograms =
+	    new HashSet<Language>{ Chinese, Japanese, Korean };
 
-    public static IList<Language> AllSpokenOnes() => LanguageProperties.Keys
-        .Where(l => l is not (Unknown or Latin)).ToList();
+    /// <summary>
+    /// Gets a set of all built-in languages.
+    /// </summary>
+    /// <returns>A set of all built-in languages.</returns>
+    public static HashSet<Language> All() => LanguageProperties.Keys
+        .Where(l => l is not Unknown).ToHashSet();
 
-    public static IList<Language> AllWithArabicScript() => LanguageProperties
+    /// <summary>
+    /// Gets a set of all built-in languages that are still spoken today.
+    /// </summary>
+    /// <returns>A set of all built-in languages that are still spoken today.</returns>
+    public static HashSet<Language> AllSpokenOnes() => LanguageProperties.Keys
+        .Where(l => l is not (Unknown or Latin)).ToHashSet();
+
+    /// <summary>
+    /// Gets a set of all built-in languages supporting the Arabic script.
+    /// </summary>
+    /// <returns>A set of all built-in languages supporting the Arabic script.</returns>
+    public static HashSet<Language> AllWithArabicScript() => LanguageProperties
         .Where(l => l.Value.Alphabets.Contains(Alphabet.Arabic))
         .Select(l => l.Key)
-        .ToList();
+        .ToHashSet();
 
-    public static IList<Language> AllWithCyrillicScript() => LanguageProperties
+    /// <summary>
+    /// Gets a set of all built-in languages supporting the Cyrillic script.
+    /// </summary>
+    /// <returns>A set of all built-in languages supporting the Cyrillic script.</returns>
+    public static HashSet<Language> AllWithCyrillicScript() => LanguageProperties
         .Where(l => l.Value.Alphabets.Contains(Alphabet.Cyrillic))
         .Select(l => l.Key)
-        .ToList();
+        .ToHashSet();
 
-    public static IList<Language> AllWithDevangariScript() => LanguageProperties
+    /// <summary>
+    /// Gets a set of all built-in languages supporting the Devangari script.
+    /// </summary>
+    /// <returns>A set of all built-in languages supporting the Devangari script.</returns>
+    public static HashSet<Language> AllWithDevangariScript() => LanguageProperties
         .Where(l => l.Value.Alphabets.Contains(Alphabet.Devanagari))
         .Select(l => l.Key)
-        .ToList();
+        .ToHashSet();
 
-    public static IList<Language> AllWithEthiopicScript() => LanguageProperties
+    /// <summary>
+    /// Gets a set of all built-in languages supporting the Ethiopic script.
+    /// </summary>
+    /// <returns>A set of all built-in languages supporting the Ethiopic script.</returns>
+    public static HashSet<Language> AllWithEthiopicScript() => LanguageProperties
         .Where(l => l.Value.Alphabets.Contains(Alphabet.Ethiopic))
         .Select(l => l.Key)
-        .ToList();
+        .ToHashSet();
 
-    public static IList<Language> AllWithLatinScript() => LanguageProperties
+    /// <summary>
+    /// Gets a set of all built-in languages supporting the Latin script.
+    /// </summary>
+    /// <returns>A set of all built-in languages supporting the Latin script.</returns>
+    public static HashSet<Language> AllWithLatinScript() => LanguageProperties
         .Where(l => l.Value.Alphabets.Contains(Alphabet.Latin))
         .Select(l => l.Key)
-        .ToList();
+        .ToHashSet();
 
+    /// <summary>
+    /// Gets a language by its <see cref="IsoCode6391"/> code.
+    /// </summary>
+    /// <param name="isoCode6391">The ISO 939-1 code</param>
+    /// <returns>The language identified by the given ISO 939-1 code.</returns>
     public static Language GetByIsoCode6391(IsoCode6391 isoCode6391) =>
-        LanguageProperties.Single(l => l.Value.IsoCode6391 == isoCode6391).Key;
+        LanguageProperties.First(l => l.Value.IsoCode6391 == isoCode6391).Key;
 
+    /// <summary>
+    /// Gets a language by its <see cref="IsoCode6393"/> code.
+    /// </summary>
+    /// <param name="isoCode6393">The ISO 939-3 code</param>
+    /// <returns>The language identified by the given ISO 939-3 code.</returns>
     public static Language GetByIsoCode6393(IsoCode6393 isoCode6393) =>
-        LanguageProperties.Single(l => l.Value.IsoCode6393 == isoCode6393).Key;
+        LanguageProperties.First(l => l.Value.IsoCode6393 == isoCode6393).Key;
 
-    public static readonly IReadOnlySet<Language> LanguagesSupportingLogograms =
-        new HashSet<Language>{ Chinese, Japanese, Korean };
+    internal static IReadOnlySet<Alphabet> Alphabets(this Language language) => LanguageProperties[language].Alphabets;
 }
 
 internal readonly record struct LanguageProperties(IsoCode6391 IsoCode6391, IsoCode6393 IsoCode6393, HashSet<Alphabet> Alphabets, string? UniqueCharacters = null)

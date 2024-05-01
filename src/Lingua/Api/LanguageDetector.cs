@@ -612,6 +612,7 @@ public sealed partial class LanguageDetector
         && _minimumRelativeDistance.Equals(other._minimumRelativeDistance)
         && _isLowAccuracyModeEnabled == other._isLowAccuracyModeEnabled;
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
@@ -620,6 +621,7 @@ public sealed partial class LanguageDetector
         return Equals((LanguageDetector)obj);
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         var hashCode = new HashCode();

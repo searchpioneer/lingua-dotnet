@@ -2,7 +2,7 @@
 
 internal static class CharExtensions
 {
-    private static readonly HashSet<Alphabet> AlphabetsWithLogograms = LanguageExtensions.LanguagesSupportingLogograms
+    private static readonly HashSet<Alphabet> AlphabetsWithLogograms = LanguageInfo.LanguagesSupportingLogograms
         .SelectMany(l => l.Alphabets())
         .ToHashSet();
 

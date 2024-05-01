@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace Lingua.Internal;
 
-public partial record struct TestDataLanguageModel(HashSet<Ngram> Ngrams)
+internal readonly partial record struct TestDataLanguageModel(HashSet<Ngram> Ngrams)
 {
 	[GeneratedRegex("^\\p{L}+$")]
     private static partial Regex LetterRegex();

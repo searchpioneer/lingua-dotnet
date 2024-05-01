@@ -12,34 +12,76 @@ public class LanguageDetectorBuilder
 
 	private LanguageDetectorBuilder(HashSet<Language> languages) => _languages = languages;
 
+	/// <summary>
+	/// Instantiates a new instance of <see cref="LanguageDetectorBuilder"/> using all built-in languages.
+	/// </summary>
+	/// <returns>A new instance of <see cref="LanguageDetectorBuilder"/></returns>
 	public static LanguageDetectorBuilder FromAllLanguages() =>
-		new(LanguageExtensions.All().ToHashSet());
+		new(LanguageInfo.All());
 
+	/// <summary>
+	/// Instantiates a new instance of <see cref="LanguageDetectorBuilder"/> using all built-in languages
+	/// that are still spoken today.
+	/// </summary>
+	/// <returns>A new instance of <see cref="LanguageDetectorBuilder"/></returns>
 	public static LanguageDetectorBuilder FromAllSpokenLanguages() =>
-		new(LanguageExtensions.AllSpokenOnes().ToHashSet());
+		new(LanguageInfo.AllSpokenOnes());
 
+	/// <summary>
+	/// Instantiates a new instance of <see cref="LanguageDetectorBuilder"/> using all built-in languages
+	/// supporting Arabic script.
+	/// </summary>
+	/// <returns>A new instance of <see cref="LanguageDetectorBuilder"/></returns>
 	public static LanguageDetectorBuilder FromAllLanguagesWithArabicScript() =>
-		new(LanguageExtensions.AllWithArabicScript().ToHashSet());
+		new(LanguageInfo.AllWithArabicScript());
 
+	/// <summary>
+	/// Instantiates a new instance of <see cref="LanguageDetectorBuilder"/> using all built-in languages
+	/// supporting Cyrillic script.
+	/// </summary>
+	/// <returns>A new instance of <see cref="LanguageDetectorBuilder"/></returns>
 	public static LanguageDetectorBuilder FromAllLanguagesWithCyrillicScript() =>
-		new(LanguageExtensions.AllWithCyrillicScript().ToHashSet());
+		new(LanguageInfo.AllWithCyrillicScript());
 
+	/// <summary>
+	/// Instantiates a new instance of <see cref="LanguageDetectorBuilder"/> using all built-in languages
+	/// supporting Devangari script.
+	/// </summary>
+	/// <returns>A new instance of <see cref="LanguageDetectorBuilder"/></returns>
 	public static LanguageDetectorBuilder FromAllLanguagesWithDevangariScript() =>
-		new(LanguageExtensions.AllWithDevangariScript().ToHashSet());
+		new(LanguageInfo.AllWithDevangariScript());
 
+	/// <summary>
+	/// Instantiates a new instance of <see cref="LanguageDetectorBuilder"/> using all built-in languages
+	/// supporting Latin script.
+	/// </summary>
+	/// <returns>A new instance of <see cref="LanguageDetectorBuilder"/></returns>
 	public static LanguageDetectorBuilder FromAllLanguagesWithLatinScript() =>
-		new(LanguageExtensions.AllWithLatinScript().ToHashSet());
+		new(LanguageInfo.AllWithLatinScript());
 
+	/// <summary>
+	/// Instantiates a new instance of <see cref="LanguageDetectorBuilder"/> using all built-in languages
+	/// except the given languages.
+	/// </summary>
+	/// <param name="languages">The languages to exclude to build a language detector.</param>
+	/// <returns>A new instance of <see cref="LanguageDetectorBuilder"/></returns>
+	/// <exception cref="ArgumentException">If there are less than 2 languages</exception>
 	public static LanguageDetectorBuilder FromAllLanguagesExcept(params Language[] languages)
 	{
-		var languagesToLoad = Enum.GetValues<Language>().ToHashSet();
-		languagesToLoad.RemoveWhere(language => language == Language.Unknown || languages.Contains(language));
+		var languagesToLoad = LanguageInfo.All();
+		languagesToLoad.RemoveWhere(languages.Contains);
 		if (languagesToLoad.Count < 2)
 			throw new ArgumentException("LanguageDetector needs at least 2 languages to choose from");
 
 		return new LanguageDetectorBuilder(languagesToLoad);
 	}
 
+	/// <summary>
+	/// Instantiates a new instance of <see cref="LanguageDetectorBuilder"/> using the given languages.
+	/// </summary>
+	/// <param name="languages">The languages to use to build a language detector.</param>
+	/// <returns>A new instance of <see cref="LanguageDetectorBuilder"/></returns>
+	/// <exception cref="ArgumentException">If there are less than 2 languages</exception>
 	public static LanguageDetectorBuilder FromLanguages(params Language[] languages)
 	{
 		var languagesToLoad = languages.ToHashSet();

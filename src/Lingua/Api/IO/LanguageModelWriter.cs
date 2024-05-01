@@ -1,23 +1,25 @@
 ﻿using System.Text;
-using System.Text.Json;
 using Lingua.Internal;
-using Lingua.Internal.IO;
+using static Lingua.Api.IO.PathValidation;
 
 namespace Lingua.Api.IO;
 
-public class LanguageModelFilesWriter : FilesWriter
+/// <summary>
+/// Creates language model files and writes them to a directory.
+/// </summary>
+public class LanguageModelWriter
 {
     /// <summary>
     /// Creates language model files and writes them to a directory.
     /// </summary>
     /// <param name="inputFilePath">The path to a txt file used for language model creation.</param>
-    /// <param name="inputFileCharset">The encoding of <see cref="inputFilePath"/>. Defaults to <see cref="Encoding.UTF8"/></param>
+    /// <param name="encoding">The encoding of <paramref name="inputFilePath"/>. Defaults to <see cref="Encoding.UTF8"/></param>
     /// <param name="outputDirectoryPath">The directory where the language model files are to be written.</param>
     /// <param name="language">The language for which to create language models.</param>
     /// <param name="charClass"> A regex character class as supported by <see cref="System.Text.RegularExpressions.Regex"/></param>
     public void CreateAndWriteLanguageModelFiles(
         string inputFilePath,
-        Encoding? inputFileCharset,
+        Encoding? encoding,
         string outputDirectoryPath,
         Language language,
         string charClass = "\\p{L}"
@@ -26,10 +28,10 @@ public class LanguageModelFilesWriter : FilesWriter
         CheckInputFilePath(inputFilePath);
         CheckOutputDirectoryPath(outputDirectoryPath);
 
-        inputFileCharset ??= Encoding.UTF8;
+        encoding ??= Encoding.UTF8;
         var unigramModel = CreateLanguageModel(
             inputFilePath,
-            inputFileCharset,
+            encoding,
             language,
             1,
             charClass,
@@ -37,7 +39,7 @@ public class LanguageModelFilesWriter : FilesWriter
         );
         var bigramModel = CreateLanguageModel(
             inputFilePath,
-            inputFileCharset,
+            encoding,
             language,
             2,
             charClass,
@@ -45,7 +47,7 @@ public class LanguageModelFilesWriter : FilesWriter
         );
         var trigramModel = CreateLanguageModel(
             inputFilePath,
-            inputFileCharset,
+            encoding,
             language,
             3,
             charClass,
@@ -53,7 +55,7 @@ public class LanguageModelFilesWriter : FilesWriter
         );
         var quadrigramModel = CreateLanguageModel(
             inputFilePath,
-            inputFileCharset,
+            encoding,
             language,
             4,
             charClass,
@@ -61,7 +63,7 @@ public class LanguageModelFilesWriter : FilesWriter
         );
         var fivegramModel = CreateLanguageModel(
             inputFilePath,
-            inputFileCharset,
+            encoding,
             language,
             5,
             charClass,

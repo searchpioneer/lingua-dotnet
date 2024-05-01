@@ -107,7 +107,7 @@ public class LanguageDetectorTests : IDisposable
         false);
 
     private readonly LanguageDetector _detectorForAllLanguages = new(
-        LanguageExtensions.All().ToHashSet(),
+        LanguageInfo.All().ToHashSet(),
         0,
         false,
         false);
@@ -224,7 +224,7 @@ public class LanguageDetectorTests : IDisposable
 
     [Theory]
     [MemberData(nameof(NgramProbabilityProvider))]
-    public void SumOfNgramProbabilitiesComputedCorrectly(HashSet<Ngram> ngrams, float expectedSumOfProbabilities) =>
+    internal void SumOfNgramProbabilitiesComputedCorrectly(HashSet<Ngram> ngrams, float expectedSumOfProbabilities) =>
         LanguageDetector.ComputeSumOfNgramProbabilities(English, ngrams)
             .Should()
             .Be(expectedSumOfProbabilities);
@@ -264,7 +264,7 @@ public class LanguageDetectorTests : IDisposable
 
     [Theory]
     [MemberData(nameof(LanguageProbabilitiesProvider))]
-    public void LanguageProbabilitiesComputedCorrectly(TestDataLanguageModel model,
+    internal void LanguageProbabilitiesComputedCorrectly(TestDataLanguageModel model,
         Dictionary<Language, float> expectedProbabilities) =>
         LanguageDetector.ComputeLanguageProbabilities(model, _detectorForEnglishAndGerman.Languages)
             .Should().BeEquivalentTo(expectedProbabilities);

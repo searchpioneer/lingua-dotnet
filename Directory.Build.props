@@ -10,12 +10,12 @@
     <PackageReleaseNotes>https://github.com/russcam/lingua-dotnet/releases</PackageReleaseNotes>
     <PackageTags>lingua, language detection</PackageTags>
     <LangVersion>latest</LangVersion>
-    <!-- TODO: fix all warnings and enable -->
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <IsPackable>False</IsPackable>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   
   <PropertyGroup>

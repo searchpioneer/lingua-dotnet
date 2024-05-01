@@ -5,7 +5,7 @@ namespace Lingua.Internal;
 /// <summary>
 /// A connected string of N items from a sample of text.
 /// </summary>
-public readonly struct Ngram : IEquatable<Ngram>
+internal readonly struct Ngram : IEquatable<Ngram>
 {
     private readonly string _value;
 
@@ -62,6 +62,10 @@ public readonly struct Ngram : IEquatable<Ngram>
     /// <inheritdoc />
     public override int GetHashCode() => _value.GetHashCode();
 
+    /// <summary>
+    /// Enumerates this ngram, producing ngrams of lower order down to unigram.
+    /// </summary>
+    /// <returns>A new instance of <see cref="IEnumerable{T}"/>.</returns>
     public IEnumerable<Ngram> RangeOfLowerOrderNGrams() =>
         new NgramEnumerable(this, new Ngram(_value[0].ToString()));
 
@@ -77,10 +81,17 @@ public readonly struct Ngram : IEquatable<Ngram>
 	    };
 }
 
-public struct NgramEnumerable : IEnumerable<Ngram>
+/// <inheritdoc />
+internal readonly struct NgramEnumerable : IEnumerable<Ngram>
 {
     private readonly Ngram _start;
 
+    /// <summary>
+    /// Intializes a new instance of <see cref="NgramEnumerable"/>
+    /// </summary>
+    /// <param name="start">The start ngram</param>
+    /// <param name="endInclusive">The end ngram</param>
+    /// <exception cref="ArgumentException">If the start ngram is not of higher order than end ngram</exception>
     public NgramEnumerable(Ngram start, Ngram endInclusive)
     {
         if (endInclusive.Length > start.Length)
@@ -95,7 +106,8 @@ public struct NgramEnumerable : IEnumerable<Ngram>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
 
-public struct NgramEnumerator : IEnumerator<Ngram>
+/// <inheritdoc />
+internal struct NgramEnumerator : IEnumerator<Ngram>
 {
     private readonly Ngram _start;
     private Ngram? _current;

@@ -52,7 +52,10 @@ public enum UnicodeScript
     Unknown,
 }
 
-public static class CharExtensions
+/// <summary>
+/// Extension method for <see cref=""char""/> to determine its <see cref=""UnicodeScript""/> property.
+/// </summary>
+public static class UnicodeScriptInfo
 {
     private static readonly int[] ScriptStarts =
     {");
