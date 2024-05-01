@@ -17,7 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Root", "Solution R
 		dotnet-tools.json = dotnet-tools.json
 		build.bat = build.bat
 		build.sh = build.sh
-		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "build\Build\Build.csproj", "{E8C232A5-D100-47D5-A8CA-8E8927E52CD8}"

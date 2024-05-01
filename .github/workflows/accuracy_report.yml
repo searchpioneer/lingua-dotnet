@@ -1,16 +1,13 @@
-name: .NET
+name: Accuracy Report
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
-
+    
     runs-on: ubuntu-latest
-
+    
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
@@ -22,5 +19,9 @@ jobs:
       - name: Build
         run: dotnet build --no-restore
       - name: Test
-        run: dotnet test tests/Lingua.Tests --no-build --verbosity normal
-      
+        run: dotnet test tests/Lingua.AccuracyReport.Tests --no-build --verbosity quiet
+      - name: Accuracy Report
+        run: |
+          echo "# Lingua Language Accuracy report" >> $GITHUB_STEP_SUMMARY
+          cat accuracy-reports/lingua/*.md >> $GITHUB_STEP_SUMMARY
+          
