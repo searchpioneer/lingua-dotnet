@@ -20,7 +20,12 @@
       <InternalsVisibleTo Include="$(AssemblyName).Tests" Key="$(PublicKey)" />
     </ItemGroup>
 
-  <!-- Gzip embedded resources to reduce size -->
+  <!-- 
+    Gzip embedded resources to reduce size. 
+    Import the Sdk.targets here. Project Sdk="Microsoft.NET.Sdk" implicitly imports Sdk.targets at the bottom of
+    the file, per https://learn.microsoft.com/en-us/dotnet/core/project-sdk/overview#project-files, resulting
+    in a warning.
+  -->
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <UsingTask TaskName="GZip"
              TaskFactory="RoslynCodeTaskFactory"
