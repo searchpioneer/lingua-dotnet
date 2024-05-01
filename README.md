@@ -1,5 +1,8 @@
 ![lingua](images/logo.png) 
 
+[![Build Status](https://github.com/russcam/lingua-dotnet/actions/workflows/dotnet.yml/badge.svg)](https://github.com/russcam/lingua-dotnet/actions/workflows/dotnet.yml)
+[![Accuracy Report](https://github.com/russcam/lingua-dotnet/actions/workflows/accuracy_report.yml/badge.svg)](https://github.com/russcam/lingua-dotnet/actions/workflows/accuracy_report.yml)
+
 ## 1. What does this library do?
 Its task is simple: It tells you which language some provided textual data is written in. 
 This is very useful as a preprocessing step for linguistic data in natural language 
