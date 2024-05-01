@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Root", "Solution R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "build\Build\Build.csproj", "{E8C232A5-D100-47D5-A8CA-8E8927E52CD8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lingua.AccuracyReport.Tests", "tests\Lingua.AccuracyReport.Tests\Lingua.AccuracyReport.Tests.csproj", "{5D43F878-754F-4AA4-B2E1-D833163240AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,5 +45,9 @@ Global
 		{E8C232A5-D100-47D5-A8CA-8E8927E52CD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8C232A5-D100-47D5-A8CA-8E8927E52CD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8C232A5-D100-47D5-A8CA-8E8927E52CD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D43F878-754F-4AA4-B2E1-D833163240AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D43F878-754F-4AA4-B2E1-D833163240AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D43F878-754F-4AA4-B2E1-D833163240AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D43F878-754F-4AA4-B2E1-D833163240AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

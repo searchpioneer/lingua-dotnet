@@ -18,6 +18,7 @@
   
     <ItemGroup>
       <InternalsVisibleTo Include="$(AssemblyName).Tests" Key="$(PublicKey)" />
+      <InternalsVisibleTo Include="$(AssemblyName).AccuracyReport.Tests" Key="$(PublicKey)" />
     </ItemGroup>
 
   <!-- Gzip embedded resources to reduce size -->

@@ -8,6 +8,7 @@ riderModule.iml
 *.sln.DotSettings.User
 
 nuget
+accuracy-reports
  
 # Don't check in gzipped files
 /src/Lingua/LanguageModels/**/*.json.gz
