@@ -29,67 +29,71 @@ namespace UnicodeScriptGenerator;
 
 public struct Utf8Buffer : IDisposable
 {
-    private static readonly ConcurrentStack<byte[]> BufferStack = new();
+	private static readonly ConcurrentStack<byte[]> BufferStack = new();
 
-    public static Utf8Buffer Get() => new(BufferStack.TryPop(out var buffer) ? buffer : new byte[100]);
+	public static Utf8Buffer Get() => new(BufferStack.TryPop(out var buffer) ? buffer : new byte[100]);
 
-    private byte[] _buffer;
+	private byte[] _buffer;
 
-    private int Length { get; set; }
+	private int Length { get; set; }
 
-    private Utf8Buffer(byte[] buffer)
-    {
-        _buffer = buffer;
-        Length = 0;
-    }
+	private Utf8Buffer(byte[] buffer)
+	{
+		_buffer = buffer;
+		Length = 0;
+	}
 
-    public void Dispose()
-    {
-        if (_buffer != null)
-        {
-            BufferStack.Push(_buffer);
-            this = default;
-        }
-    }
+	public void Dispose()
+	{
+		if (_buffer != null)
+		{
+			BufferStack.Push(_buffer);
+			this = default;
+		}
+	}
 
-    private void EnsureExtraCapacity(int count)
-    {
+	private void EnsureExtraCapacity(int count)
+	{
 		ArgumentOutOfRangeException.ThrowIfNegative(count);
 		if (_buffer.Length < checked(Length + count))
-            Array.Resize(ref _buffer, Math.Max(Length + count, _buffer.Length << 1));
-    }
+			Array.Resize(ref _buffer, Math.Max(Length + count, _buffer.Length << 1));
+	}
 
-    public void Append(byte[] value, int startIndex, int count)
-    {
+	public void Append(byte[] value, int startIndex, int count)
+	{
 		ArgumentNullException.ThrowIfNull(value);
 		ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(startIndex, value.Length);
-		if (checked(count += startIndex) > value.Length) throw new ArgumentOutOfRangeException(nameof(count));
+		if (checked(count += startIndex) > value.Length)
+			throw new ArgumentOutOfRangeException(nameof(count));
 
-        EnsureExtraCapacity(value.Length);
+		EnsureExtraCapacity(value.Length);
 
-        var buffer = _buffer;
+		var buffer = _buffer;
 
-        for (var i = startIndex; i < count; ++i)
-	        buffer[Length++] = value[i];
-    }
+		for (var i = startIndex; i < count; ++i)
+			buffer[Length++] = value[i];
+	}
 
-    public override string ToString() => Length > 0
-	    ? Encoding.UTF8.GetString(_buffer, 0, Length)
-	    : string.Empty;
+	public override string ToString() => Length > 0
+		? Encoding.UTF8.GetString(_buffer, 0, Length)
+		: string.Empty;
 
-    public string ToTrimmedString()
-    {
-        if (Length == 0) return string.Empty;
+	public string ToTrimmedString()
+	{
+		if (Length == 0)
+			return string.Empty;
 
-        var buffer = _buffer;
-        var start = 0;
-        var end = Length;
+		var buffer = _buffer;
+		var start = 0;
+		var end = Length;
 
-        while (buffer[start] == ' ') if (++start == Length) return string.Empty;
-        while (buffer[--end] == ' ')
-        {
-        }
+		while (buffer[start] == ' ')
+			if (++start == Length)
+				return string.Empty;
+		while (buffer[--end] == ' ')
+		{
+		}
 
-        return end > start ? Encoding.UTF8.GetString(buffer, start, end - start + 1) : string.Empty;
-    }
+		return end > start ? Encoding.UTF8.GetString(buffer, start, end - start + 1) : string.Empty;
+	}
 }

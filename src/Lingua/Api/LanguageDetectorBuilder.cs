@@ -1,4 +1,4 @@
-﻿namespace Lingua.Api;
+namespace Lingua.Api;
 
 /// <summary>
 /// Builder for <see cref="LanguageDetector"/>

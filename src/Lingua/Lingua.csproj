@@ -12,7 +12,6 @@
     </ItemGroup>
   
     <ItemGroup>
-      <None Remove="LanguageModels\**\*.json" />
       <EmbeddedResource Include="LanguageModels\**\*.json" />
     </ItemGroup>
   
@@ -24,7 +23,7 @@
     Gzip embedded resources to reduce size. 
     Import the Sdk.targets here. Project Sdk="Microsoft.NET.Sdk" implicitly imports Sdk.targets at the bottom of
     the file, per https://learn.microsoft.com/en-us/dotnet/core/project-sdk/overview#project-files, resulting
-    in a warning.
+    in a build warning for duplicate imports.
   -->
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <UsingTask TaskName="GZip"

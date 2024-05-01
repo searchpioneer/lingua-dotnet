@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 
 namespace Lingua.Internal;
 
@@ -59,7 +59,7 @@ internal ref struct SpanSplitEnumerator<T>
 
 	public SpanSplitValue Current
 	{
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get => _current;
 	}
 

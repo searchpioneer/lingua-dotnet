@@ -1,4 +1,4 @@
-﻿namespace Lingua.Api;
+namespace Lingua.Api;
 
 /// <summary>
 /// Three-character codes which serves as identifiers for individual languages from the world.
@@ -9,78 +9,59 @@ public enum IsoCode6393
 	/// <summary>The ISO 639-3 code for <see cref="Language.Afrikaans"/>.</summary>
 	Afr,
 
-
 	/// <summary>The ISO 639-3 code for <see cref="Language.Amharic"/>.</summary>
 	Amh,
-
 
 	/// <summary>The ISO 639-3 code for <see cref="Language.Arabic"/>.</summary>
 	Ara,
 
-
 	/// <summary>The ISO 639-3 code for <see cref="Language.Azerbaijani"/>.</summary>
 	Aze,
-
 
 	/// <summary>The ISO 639-3 code for <see cref="Language.Belarusian"/>.</summary>
 	Bel,
 
-
 	/// <summary>The ISO 639-3 code for <see cref="Language.Bengali"/>.</summary>
 	Ben,
-
 
 	/// <summary>The ISO 639-3 code for <see cref="Language.Bosnian"/>.</summary>
 	Bos,
 
-
 	/// <summary>The ISO 639-3 code for <see cref="Language.Bulgarian"/>.</summary>
 	Bul,
-
 
 	/// <summary>The ISO 639-3 code for <see cref="Language.Catalan"/>.</summary>
 	Cat,
 
-
 	/// <summary>The ISO 639-3 code for <see cref="Language.Czech"/>.</summary>
 	Ces,
-
 
 	/// <summary>The ISO 639-3 code for <see cref="Language.Welsh"/>.</summary>
 	Cym,
 
-
 	/// <summary>The ISO 639-3 code for <see cref="Language.Danish"/>.</summary>
 	Dan,
-
 
 	/// <summary>The ISO 639-3 code for <see cref="Language.German"/>.</summary>
 	Deu,
 
-
 	/// <summary>The ISO 639-3 code for <see cref="Language.Greek"/>.</summary>
 	Ell,
-
 
 	/// <summary>The ISO 639-3 code for <see cref="Language.English"/>.</summary>
 	Eng,
 
-
 	/// <summary>The ISO 639-3 code for <see cref="Language.Esperanto"/>.</summary>
 	Epo,
-
 
 	/// <summary>The ISO 639-3 code for <see cref="Language.Estonian"/>.</summary>
 	Est,
 
-
 	/// <summary>The ISO 639-3 code for <see cref="Language.Basque"/>.</summary>
 	Eus,
 
-
 	/// <summary>The ISO 639-3 code for <see cref="Language.Persian"/>.</summary>
 	Fas,
-
 
 	/// <summary>The ISO 639-3 code for <see cref="Language.Finnish"/>.</summary>
 	Fin,

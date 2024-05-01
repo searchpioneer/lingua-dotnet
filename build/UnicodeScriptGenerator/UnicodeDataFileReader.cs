@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2014 Fabien Barbier
 //
@@ -77,7 +77,8 @@ public class UnicodeDataFileReader(Stream stream, char fieldSeparator, bool leav
 		while (RefillBuffer());
 
 		_hasField = false;
-		Completed:;
+	Completed:
+		;
 		return _hasField;
 	}
 

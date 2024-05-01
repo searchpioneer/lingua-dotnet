@@ -1,18 +1,18 @@
-﻿using Lingua.Internal;
+using Lingua.Internal;
 
 namespace Lingua.Api;
 
 internal static class EnumerableExtensions
 {
-    public static IndexedDictionary<TKey, TValue> ToIndexedDictionary<TKey, TValue>(
-        this IEnumerable<KeyValuePair<TKey, TValue>> enumerable) where TKey : notnull
-    {
-        var dictionary = new IndexedDictionary<TKey, TValue>();
-        foreach (var keyValuePair in enumerable)
-        {
-            dictionary.Add(keyValuePair);
-        }
+	public static IndexedDictionary<TKey, TValue> ToIndexedDictionary<TKey, TValue>(
+		this IEnumerable<KeyValuePair<TKey, TValue>> enumerable) where TKey : notnull
+	{
+		var dictionary = new IndexedDictionary<TKey, TValue>();
+		foreach (var keyValuePair in enumerable)
+		{
+			dictionary.Add(keyValuePair);
+		}
 
-        return dictionary;
-    }
+		return dictionary;
+	}
 }

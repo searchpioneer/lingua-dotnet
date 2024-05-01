@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -39,11 +39,11 @@ public enum UnicodeScript
 
 		for (var i = 0; i < unicodeScripts.Count; i++)
 		{
-			var unicodeScript = unicodeScripts[i];
+			var (CodePointRanges, Name) = unicodeScripts[i];
 
 			builder.AppendLine(
-				$"    ///<summary>Unicode script for \"{unicodeScript.Name.Replace("_", " ")}\"</summary>");
-			builder.AppendLine($"    {unicodeScript.Name.Replace("_", "")},");
+				$"    ///<summary>Unicode script for \"{Name.Replace("_", " ")}\"</summary>");
+			builder.AppendLine($"    {Name.Replace("_", "")},");
 		}
 
 		var orderedScripts = CreateCollapsedOrderedRange(unicodeScripts);
