@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.IO.Compression;
 using System.Text.RegularExpressions;
 using Lingua.Internal;
 using static Lingua.Api.Language;
@@ -399,11 +400,16 @@ public sealed partial class LanguageDetector
 
     private static Dictionary<string,float> LoadLanguageModel(Language language, int ngramLength)
     {
-        var file = $"Lingua.LanguageModels.{language.IsoCode6391().ToString().ToLowerInvariant()}.{Ngram.GetNgramNameByLength(ngramLength)}s.json";
+	    var isoCode = language.IsoCode6391().ToString().ToLowerInvariant();
+	    var nGramName = Ngram.GetNgramNameByLength(ngramLength);
+        var file = $"Lingua.LanguageModels.{isoCode}.{nGramName}s.json.gz";
         using var stream = typeof(LanguageDetector).Assembly.GetManifestResourceStream(file);
-        return stream == null
-            ? new Dictionary<string, float>()
-            : TrainingDataLanguageModel.FromJson(stream);
+
+        if (stream is null)
+	        return new Dictionary<string, float>();
+
+        using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
+        return TrainingDataLanguageModel.FromJson(gzipStream);
     }
 
     internal HashSet<Language> FilterLanguagesByRules(List<string> words)
