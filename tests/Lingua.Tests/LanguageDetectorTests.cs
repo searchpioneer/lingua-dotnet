@@ -7,96 +7,96 @@ namespace Lingua.Tests;
 
 public class LanguageDetectorTests : IDisposable
 {
-	private static readonly Dictionary<string, float> UnigramLanguageModelForEnglish = new()
+	private static readonly Dictionary<string, double> UnigramLanguageModelForEnglish = new()
 	{
-		["a"] = 0.01F,
-		["l"] = 0.02F,
-		["t"] = 0.03F,
-		["e"] = 0.04F,
-		["r"] = 0.05F,
+		["a"] = 0.01,
+		["l"] = 0.02,
+		["t"] = 0.03,
+		["e"] = 0.04,
+		["r"] = 0.05,
 		// unknown unigram in model
-		["w"] = 0F
+		["w"] = 0
 	};
 
-	private static readonly Dictionary<string, float> BigramLanguageModelForEnglish = new()
+	private static readonly Dictionary<string, double> BigramLanguageModelForEnglish = new()
 	{
-		["al"] = 0.11F,
-		["lt"] = 0.12F,
-		["te"] = 0.13F,
-		["er"] = 0.14F,
+		["al"] = 0.11,
+		["lt"] = 0.12,
+		["te"] = 0.13,
+		["er"] = 0.14,
 		// unknown bigrams in model
-		["aq"] = 0F,
-		["wx"] = 0F
+		["aq"] = 0,
+		["wx"] = 0
 	};
 
-	private static readonly Dictionary<string, float> TrigramLanguageModelForEnglish = new()
+	private static readonly Dictionary<string, double> TrigramLanguageModelForEnglish = new()
 	{
-		["alt"] = 0.19F,
-		["lte"] = 0.2F,
-		["ter"] = 0.21F,
+		["alt"] = 0.19,
+		["lte"] = 0.2,
+		["ter"] = 0.21,
 		// unknown trigrams in model
-		["aqu"] = 0F,
-		["tez"] = 0F,
-		["wxy"] = 0F
+		["aqu"] = 0,
+		["tez"] = 0,
+		["wxy"] = 0
 	};
 
-	private static readonly Dictionary<string, float> QuadrigramLanguageModelForEnglish = new()
+	private static readonly Dictionary<string, double> QuadrigramLanguageModelForEnglish = new()
 	{
-		["alte"] = 0.25F,
-		["lter"] = 0.26F,
+		["alte"] = 0.25,
+		["lter"] = 0.26,
 		// unknown quadrigrams in model
-		["aqua"] = 0F,
-		["wxyz"] = 0F
+		["aqua"] = 0,
+		["wxyz"] = 0
 	};
 
-	private static readonly Dictionary<string, float> FivegramLanguageModelForEnglish = new()
+	private static readonly Dictionary<string, double> FivegramLanguageModelForEnglish = new()
 	{
-		["alter"] = 0.29F,
+		["alter"] = 0.29,
 		// unknown fivegrams in model
-		["aquas"] = 0F
+		["aquas"] = 0
 	};
 
-	private static readonly Dictionary<string, float> UnigramLanguageModelForGerman = new()
+	private static readonly Dictionary<string, double> UnigramLanguageModelForGerman = new()
 	{
-		["a"] = 0.06F,
-		["l"] = 0.07F,
-		["t"] = 0.08F,
-		["e"] = 0.09F,
-		["r"] = 0.1F,
+		["a"] = 0.06,
+		["l"] = 0.07,
+		["t"] = 0.08,
+		["e"] = 0.09,
+		["r"] = 0.1,
 		// unknown unigrams in model
-		["w"] = 0F
+		["w"] = 0
 	};
 
-	private static readonly Dictionary<string, float> BigramLanguageModelForGerman = new()
+	private static readonly Dictionary<string, double> BigramLanguageModelForGerman = new()
 	{
-		["al"] = 0.15F,
-		["lt"] = 0.16F,
-		["te"] = 0.17F,
-		["er"] = 0.18F,
+		["al"] = 0.15,
+		["lt"] = 0.16,
+		["te"] = 0.17,
+		["er"] = 0.18,
 		// unknown bigrams in model
-		["wx"] = 0F
+		["wx"] = 0
 	};
 
-	private static readonly Dictionary<string, float> TrigramLanguageModelForGerman = new()
+	private static readonly Dictionary<string, double> TrigramLanguageModelForGerman = new()
 	{
-		["alt"] = 0.22F,
-		["lte"] = 0.23F,
-		["ter"] = 0.24F,
+		["alt"] = 0.22,
+		["lte"] = 0.23,
+		["ter"] = 0.24,
 		// unknown trigrams in model
-		["wxy"] = 0F
+		["wxy"] = 0
 	};
 
-	private static readonly Dictionary<string, float> QuadrigramLanguageModelForGerman = new()
+	private static readonly Dictionary<string, double> QuadrigramLanguageModelForGerman = new()
 	{
-		["alte"] = 0.27F,
-		["lter"] = 0.28F,
+		["alte"] = 0.27,
+		["lter"] = 0.28,
 		// unknown quadrigrams in model
-		["wxyz"] = 0F
+		["wxyz"] = 0
 	};
 
-	private static readonly Dictionary<string, float> FivegramLanguageModelForGerman = new()
+	private static readonly Dictionary<string, double> FivegramLanguageModelForGerman = new()
 	{
-		["alter"] = 0.3F
+		["alter"] = 0.3
 	};
 
 	private readonly LanguageDetector _detectorForEnglishAndGerman = new(
@@ -187,7 +187,7 @@ public class LanguageDetectorTests : IDisposable
 	[InlineData(German, "alt", 0.22)]
 	[InlineData(German, "lter", 0.28)]
 	[InlineData(German, "alter", 0.30)]
-	public void NgramProbabilityLookupWorksCorrectly(Language language, string ngram, float expectedProbability) =>
+	public void NgramProbabilityLookupWorksCorrectly(Language language, string ngram, double expectedProbability) =>
 		LanguageDetector.LookupNgramProbability(language, ngram).Should()
 			.Be(expectedProbability);
 
@@ -205,25 +205,25 @@ public class LanguageDetectorTests : IDisposable
 		yield return
 		[
 			new HashSet<Ngram> { new("a"), new("l"), new("t"), new("e"), new("r") },
-			Math.Log(0.01F) + Math.Log(0.02F) + Math.Log(0.03F) + Math.Log(0.04F) + Math.Log(0.05F)
+			Math.Log(0.01) + Math.Log(0.02) + Math.Log(0.03) + Math.Log(0.04) + Math.Log(0.05)
 		];
 
 		yield return
 		[
 			new HashSet<Ngram> { new("alt"), new("lte"), new("tez") },
-			Math.Log(0.19F) + Math.Log(0.2F) + Math.Log(0.13F)
+			Math.Log(0.19) + Math.Log(0.2) + Math.Log(0.13)
 		];
 
 		yield return
 		[
 			new HashSet<Ngram> { new("aquas") },
-			Math.Log(0.01F)
+			Math.Log(0.01)
 		];
 	}
 
 	[Theory]
 	[MemberData(nameof(NgramProbabilityProvider))]
-	internal void SumOfNgramProbabilitiesComputedCorrectly(HashSet<Ngram> ngrams, float expectedSumOfProbabilities) =>
+	internal void SumOfNgramProbabilitiesComputedCorrectly(HashSet<Ngram> ngrams, double expectedSumOfProbabilities) =>
 		LanguageDetector.ComputeSumOfNgramProbabilities(English, ngrams)
 			.Should()
 			.Be(expectedSumOfProbabilities);
@@ -233,30 +233,30 @@ public class LanguageDetectorTests : IDisposable
 		yield return
 		[
 			UnigramTestLanguageModel,
-			new Dictionary<Language, float>
+			new Dictionary<Language, double>
 			{
-				[English] = (float)(Math.Log(0.01F) + Math.Log(0.02F) + Math.Log(0.03F) + Math.Log(0.04F) + Math.Log(0.05F)),
-				[German] = (float)(Math.Log(0.06F) + Math.Log(0.07F) + Math.Log(0.08F) + Math.Log(0.09F) + Math.Log(0.1F)),
+				[English] = Math.Log(0.01) + Math.Log(0.02) + Math.Log(0.03) + Math.Log(0.04) + Math.Log(0.05),
+				[German] = Math.Log(0.06) + Math.Log(0.07) + Math.Log(0.08) + Math.Log(0.09) + Math.Log(0.1),
 			}
 		];
 
 		yield return
 		[
 			TrigramTestLanguageModel,
-			new Dictionary<Language, float>
+			new Dictionary<Language, double>
 			{
-				[English] = (float)(Math.Log(0.19F) + Math.Log(0.2F) + Math.Log(0.21F)),
-				[German] = (float)(Math.Log(0.22F) + Math.Log(0.23F) + Math.Log(0.24F)),
+				[English] = Math.Log(0.19) + Math.Log(0.2) + Math.Log(0.21),
+				[German] = Math.Log(0.22) + Math.Log(0.23) + Math.Log(0.24),
 			}
 		];
 
 		yield return
 		[
 			QuadrigramTestLanguageModel,
-			new Dictionary<Language, float>
+			new Dictionary<Language, double>
 			{
-				[English] = (float)(Math.Log(0.25F) + Math.Log(0.26F)),
-				[German] = (float)(Math.Log(0.27F) + Math.Log(0.28F)),
+				[English] = Math.Log(0.25) + Math.Log(0.26),
+				[German] = Math.Log(0.27) + Math.Log(0.28),
 			}
 		];
 	}
@@ -264,7 +264,7 @@ public class LanguageDetectorTests : IDisposable
 	[Theory]
 	[MemberData(nameof(LanguageProbabilitiesProvider))]
 	internal void LanguageProbabilitiesComputedCorrectly(TestLanguageModel model,
-		Dictionary<Language, float> expectedProbabilities) =>
+		Dictionary<Language, double> expectedProbabilities) =>
 		LanguageDetector.ComputeLanguageProbabilities(model, _detectorForEnglishAndGerman.Languages)
 			.Should().BeEquivalentTo(expectedProbabilities);
 
@@ -729,44 +729,16 @@ public class LanguageDetectorTests : IDisposable
 	[Fact]
 	public void LanguageConfidenceValuesComputedCorrectly()
 	{
-		var unigramCountForBothLanguages = 5;
+		List<(Language Language, double Probability)> confidenceValues =
+			_detectorForEnglishAndGerman.ComputeLanguageConfidenceValues("Alter")
+			.Select(kv => (kv.Key, Math.Round(kv.Value, 2)))
+			.ToList();
 
-		var totalProbabilityForGerman = (
-			// Unigrams
-			Math.Log(0.06F) + Math.Log(0.07F) + Math.Log(0.08F) + Math.Log(0.09F) + Math.Log(0.1F) +
-			// Bigrams
-			Math.Log(0.15F) + Math.Log(0.16F) + Math.Log(0.17F) + Math.Log(0.18F) +
-			// Trigrams
-			Math.Log(0.22F) + Math.Log(0.23F) + Math.Log(0.24F) +
-			// Quadrigrams
-			Math.Log(0.27F) + Math.Log(0.28F) +
-			// Fivegrams
-			Math.Log(0.3F)
-		) / unigramCountForBothLanguages;
+		confidenceValues.First().Language.Should().Be(German);
+		confidenceValues.First().Probability.Should().Be(0.81);
 
-		var totalProbabilityForEnglish = (
-			// Unigrams
-			Math.Log(0.01F) + Math.Log(0.02F) + Math.Log(0.03F) + Math.Log(0.04F) + Math.Log(0.05F) +
-			// Bigrams
-			Math.Log(0.11F) + Math.Log(0.12F) + Math.Log(0.13F) + Math.Log(0.14F) +
-			// Trigrams
-			Math.Log(0.19F) + Math.Log(0.2F) + Math.Log(0.21F) +
-			// Quadrigrams
-			Math.Log(0.25F) + Math.Log(0.26F) +
-			// Fivegrams
-			Math.Log(0.29F)
-		) / unigramCountForBothLanguages;
-
-		var confidenceValues = _detectorForEnglishAndGerman.ComputeLanguageConfidenceValues("Alter");
-
-		confidenceValues.First().Key.Should().Be(German);
-		confidenceValues.Last().Key.Should().Be(English);
-
-		confidenceValues[German].Should().Be(1.0);
-		confidenceValues[English].Should().BeApproximately(
-			(totalProbabilityForGerman / totalProbabilityForEnglish),
-			0.000001
-		);
+		confidenceValues.Last().Language.Should().Be(English);
+		confidenceValues.Last().Probability.Should().Be(0.19);
 	}
 
 	[Fact]
@@ -774,8 +746,13 @@ public class LanguageDetectorTests : IDisposable
 		_detectorForEnglishAndGerman.DetectLanguageOf("проарплап").Should().Be(Unknown);
 
 	[Fact]
-	public void NoConfidenceValuesReturnedWhenNoNgramProbabilitiesAvailable() =>
-		_detectorForEnglishAndGerman.ComputeLanguageConfidenceValues("проарплап").Should().BeEmpty();
+	public void ZeroConfidenceValuesReturnedWhenNoNgramProbabilitiesAvailable() =>
+		_detectorForEnglishAndGerman.ComputeLanguageConfidenceValues("проарплап").Should().BeEquivalentTo(
+			new Dictionary<Language, double>()
+			{
+				[English] = 0,
+				[German] = 0
+			});
 
 	public static IEnumerable<object[]> AmbiguousTextProvider()
 	{

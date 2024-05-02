@@ -73,11 +73,11 @@ public sealed partial class LanguageDetector
 		["Éé"] = [Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Portuguese, Slovak, Spanish, Vietnamese, Yoruba],
 	};
 
-	internal static readonly Dictionary<Language, Dictionary<string, float>> UnigramLanguageModels = new();
-	internal static readonly Dictionary<Language, Dictionary<string, float>> BigramLanguageModels = new();
-	internal static readonly Dictionary<Language, Dictionary<string, float>> TrigramLanguageModels = new();
-	internal static readonly Dictionary<Language, Dictionary<string, float>> QuadrigramLanguageModels = new();
-	internal static readonly Dictionary<Language, Dictionary<string, float>> FivegramLanguageModels = new();
+	internal static readonly Dictionary<Language, Dictionary<string, double>> UnigramLanguageModels = new();
+	internal static readonly Dictionary<Language, Dictionary<string, double>> BigramLanguageModels = new();
+	internal static readonly Dictionary<Language, Dictionary<string, double>> TrigramLanguageModels = new();
+	internal static readonly Dictionary<Language, Dictionary<string, double>> QuadrigramLanguageModels = new();
+	internal static readonly Dictionary<Language, Dictionary<string, double>> FivegramLanguageModels = new();
 
 	private readonly HashSet<Language> _languages;
 	private readonly double _minimumRelativeDistance;
@@ -133,26 +133,26 @@ public sealed partial class LanguageDetector
 	}
 
 	/// <summary>
-	/// Computes confidence values for every language considered possible for the given input text.
+	/// Computes confidence values for each language supported by this detector for the given
+	/// input text. These values denote how likely it is that the given text has been written
+	/// in any of the languages supported by this detector.
 	/// <para />
-	/// The values that this method computes are part of a **relative** confidence metric, not of an absolute one.
-	/// Each value is a number between 0.0 and 1.0. The most likely language is always returned with value 1.0.
-	/// All other languages get values assigned which are lower than 1.0, denoting how less likely those languages
-	/// are in comparison to the most likely language.
-	/// <para />
-	/// The dictionary returned by this method does not necessarily contain all languages which the calling instance of
-	/// <see cref="LanguageDetector"/> was built from. If the rule-based engine decides that a specific language is
-	/// truly impossible, then it will not be part of the returned dictionary. Likewise, if no ngram probabilities can
-	/// be found within the detector's languages for the given input text, the returned dictionary will be empty.
-	/// The confidence value for each language not being part of the returned dictionary is assumed to be 0.0.
+	/// The <see cref="IDictionary{TKey,TValue}"/> returned by this method contains all languages supported by
+	/// this detector, together with their confidence values. The entries are sorted by confidence value descending.
+	/// Each confidence value is a probability between 0.0 and 1.0. The probabilities of all languages will
+	/// sum to 1.0. If the language is unambiguously identified by the rule engine, the value
+	/// 1.0 will always be returned for this language. The other languages will receive a value
+	/// of 0.0.
 	/// </summary>
 	/// <param name="text">The input text to detect the language for.</param>
 	/// <returns>A dictionary of all possible languages, sorted by their confidence value in descending order.</returns>
 	public IDictionary<Language, double> ComputeLanguageConfidenceValues(string text)
 	{
-		var values = new IndexedDictionary<Language, double>();
-		var cleanedUpText = CleanUpInputText(text);
+		var values = new Dictionary<Language, double>(_languages.Count);
+		foreach (var language in _languages)
+			values[language] = 0;
 
+		var cleanedUpText = CleanUpInputText(text);
 		if (cleanedUpText.Length == 0 || NoLetter().IsMatch(cleanedUpText))
 			return values;
 
@@ -162,7 +162,7 @@ public sealed partial class LanguageDetector
 		if (languageDetectedByRules != Unknown)
 		{
 			values[languageDetectedByRules] = 1;
-			return values;
+			return values.OrderByDescending(p => p.Value).ToIndexedDictionary();
 		}
 
 		var filteredLanguages = FilterLanguagesByRules(words);
@@ -170,54 +170,40 @@ public sealed partial class LanguageDetector
 		{
 			var filteredLanguage = filteredLanguages.Single();
 			values[filteredLanguage] = 1.0;
-			return values;
+			return values.OrderByDescending(p => p.Value).ToIndexedDictionary();
 		}
 
 		if (_isLowAccuracyModeEnabled && cleanedUpText.Length < 3)
 			return values;
 
-		var ngramSizeRange = cleanedUpText.Length >= HighAccuracyModeMaxTextLength || _isLowAccuracyModeEnabled
+		var ngramSizeRange = (cleanedUpText.Length >= HighAccuracyModeMaxTextLength || _isLowAccuracyModeEnabled
 			? Enumerable.Range(3, 1)
-			: Enumerable.Range(1, 5);
+			: Enumerable.Range(1, 5))
+			.Where(r => cleanedUpText.Length >= r)
+			.ToArray();
 
-		var allProbabilitiesAndUnigramCounts =
-			new ConcurrentBag<KeyValuePair<Dictionary<Language, float>, Dictionary<Language, int>?>>();
+		var allProbabilities = new Dictionary<Language, double>[ngramSizeRange.Length];
+		var unigramCounts = new Dictionary<Language, int>();
+		var startValue = ngramSizeRange[0];
 
-		Parallel.ForEach(ngramSizeRange.Where(r => cleanedUpText.Length >= r), i =>
+		Parallel.ForEach(ngramSizeRange, i =>
 		{
 			var testDataModel = TestLanguageModel.FromText(cleanedUpText, i);
 			var probabilities = ComputeLanguageProbabilities(testDataModel, filteredLanguages);
-
-			Dictionary<Language, int>? unigramCounts = null;
 			if (i == 1)
 			{
 				var unigramFilteredLanguages = _languages.Count > 0
 					? filteredLanguages.Where(f => _languages.Contains(f)).ToHashSet()
 					: filteredLanguages;
-				unigramCounts = CountUnigramsOfInputText(testDataModel, unigramFilteredLanguages);
+				unigramCounts = CountUnigrams(testDataModel, unigramFilteredLanguages);
 			}
-			allProbabilitiesAndUnigramCounts.Add(KeyValuePair.Create(probabilities, unigramCounts));
+			allProbabilities[i - startValue] = probabilities;
 		});
 
-		var allProbabilities = allProbabilitiesAndUnigramCounts
-			.Select(probabilities => probabilities.Key)
-			.ToList();
-
-		var unigramCounts = allProbabilitiesAndUnigramCounts.First().Value ?? new Dictionary<Language, int>();
 		var summedUpProbabilities = SumUpProbabilities(allProbabilities, unigramCounts, filteredLanguages);
-
-		if (summedUpProbabilities.Count == 0)
-			return new Dictionary<Language, double>();
-
-		var highestProbability = summedUpProbabilities.Max(p => p.Value);
-		var confidenceValues = summedUpProbabilities.ToDictionary(
-			p => p.Key,
-			p => (double)highestProbability / p.Value);
-
-		return confidenceValues
-			.OrderByDescending(c => c.Value)
-			.ThenBy(c => c.Key)
-			.ToIndexedDictionary();
+		return summedUpProbabilities.Count == 0
+			? values.OrderByDescending(c => c.Value).ToIndexedDictionary()
+			: ComputeConfidenceValues(values, allProbabilities, summedUpProbabilities);
 	}
 
 	/// <summary>
@@ -264,30 +250,80 @@ public sealed partial class LanguageDetector
 		}
 	}
 
-	private static Dictionary<Language, float> SumUpProbabilities(
-		List<Dictionary<Language, float>> probabilities,
-		Dictionary<Language, int> unigramCountsOfInputText,
+	private IDictionary<Language, double> ComputeConfidenceValues(
+		Dictionary<Language, double> values,
+		Dictionary<Language, double>[] allProbabilities,
+		Dictionary<Language, double> summedUpProbabilities)
+	{
+		var denominator = summedUpProbabilities.Values.Sum();
+
+		// If the denominator is still zero, the exponent of the summed
+		// log probabilities is too large to be computed for very long input strings.
+		// So we simply set the probability of the most likely language to 1.0 and
+		// leave the other languages at 0.0.
+		if (denominator == 0)
+		{
+			var probabilityMap = allProbabilities[0];
+			var mostLikelyLanguage = probabilityMap.MaxBy(p => p.Value).Key;
+			UpdateConfidenceValues(values, mostLikelyLanguage, 1.0);
+		}
+		else
+		{
+			foreach (var (language, probability) in summedUpProbabilities)
+			{
+				foreach (var value in values)
+				{
+					if (value.Key == language)
+					{
+						// apply softmax function
+						var normalizedProbability = probability / denominator;
+						values[language] = normalizedProbability;
+					}
+				}
+			}
+		}
+
+		return values.OrderByDescending(p => p.Value).ToIndexedDictionary();
+	}
+
+	private static void UpdateConfidenceValues(Dictionary<Language, double> values, Language language, double probability)
+	{
+		foreach (var value in values)
+		{
+			if (value.Key == language)
+			{
+				values[language] = probability;
+				break;
+			}
+		}
+	}
+
+	private static Dictionary<Language, double> SumUpProbabilities(
+		Dictionary<Language, double>[] probabilities,
+		Dictionary<Language, int> unigramCounts,
 		HashSet<Language> filteredLanguages)
 	{
-		var summedUpProbabilities = new Dictionary<Language, float>();
+		var summedUpProbabilities = new Dictionary<Language, double>();
 		foreach (var language in filteredLanguages)
 		{
-			var sum = 0f;
+			var sum = 0d;
 			foreach (var probability in probabilities)
 			{
 				probability.TryGetValue(language, out var value);
 				sum += value;
 			}
 
-			summedUpProbabilities[language] = sum;
-			if (unigramCountsOfInputText.TryGetValue(language, out var count))
-				summedUpProbabilities[language] /= count;
+			if (unigramCounts.TryGetValue(language, out var count))
+				sum /= count;
+
+			if (sum != 0)
+				summedUpProbabilities[language] = Math.Exp(sum);
 		}
 
-		return summedUpProbabilities.Where(p => p.Value != 0).ToDictionary();
+		return summedUpProbabilities;
 	}
 
-	private static Dictionary<Language, int> CountUnigramsOfInputText(TestLanguageModel unigramLanguageModel, HashSet<Language> filteredLanguages)
+	private static Dictionary<Language, int> CountUnigrams(TestLanguageModel unigramLanguageModel, HashSet<Language> filteredLanguages)
 	{
 		var unigramCounts = new Dictionary<Language, int>();
 		foreach (var language in filteredLanguages)
@@ -303,18 +339,22 @@ public sealed partial class LanguageDetector
 		return unigramCounts;
 	}
 
-	internal static Dictionary<Language, float> ComputeLanguageProbabilities(TestLanguageModel testModel, IReadOnlySet<Language> filteredLanguages)
+	internal static Dictionary<Language, double> ComputeLanguageProbabilities(TestLanguageModel testModel, IReadOnlySet<Language> filteredLanguages)
 	{
-		var probabilities = new Dictionary<Language, float>();
+		var probabilities = new Dictionary<Language, double>();
 		foreach (var language in filteredLanguages)
-			probabilities[language] = ComputeSumOfNgramProbabilities(language, testModel.Ngrams);
+		{
+			var sum = ComputeSumOfNgramProbabilities(language, testModel.Ngrams);
+			if (sum < 0)
+				probabilities[language] = sum;
+		}
 
-		return probabilities.Where(p => p.Value < 0).ToDictionary();
+		return probabilities;
 	}
 
-	internal static float ComputeSumOfNgramProbabilities(Language language, HashSet<Ngram> ngrams)
+	internal static double ComputeSumOfNgramProbabilities(Language language, HashSet<Ngram> ngrams)
 	{
-		var probabilitiesSum = 0d;
+		var sum = 0d;
 		foreach (var ngram in ngrams)
 		{
 			foreach (var elem in ngram.LowerOrderNGrams())
@@ -322,22 +362,22 @@ public sealed partial class LanguageDetector
 				var probability = LookupNgramProbability(language, elem);
 				if (probability > 0)
 				{
-					probabilitiesSum += Math.Log(probability);
+					sum += Math.Log(probability);
 					break;
 				}
 			}
 		}
 
-		return (float)probabilitiesSum;
+		return sum;
 	}
 
-	private static float LookupNgramProbability(Language language, ReadOnlySpan<char> ngram) =>
+	private static double LookupNgramProbability(Language language, ReadOnlySpan<char> ngram) =>
 		// ideally we can look up in a Dictionary<string, TValue> using a ReadOnlySpan<char> key
 		// see https://github.com/dotnet/runtime/issues/27229.
 		// For now, .ToString() the span...
 		LookupNgramProbability(language, ngram.ToString());
 
-	internal static float LookupNgramProbability(Language language, string ngram)
+	internal static double LookupNgramProbability(Language language, string ngram)
 	{
 		var ngramLength = ngram.Length;
 		var languageModels = ngramLength switch
@@ -388,7 +428,7 @@ public sealed partial class LanguageDetector
 		});
 	}
 
-	private static Dictionary<string, float> LoadLanguageModels(Dictionary<Language, Dictionary<string, float>> languageModels, Language language, int ngramLength)
+	private static Dictionary<string, double> LoadLanguageModels(Dictionary<Language, Dictionary<string, double>> languageModels, Language language, int ngramLength)
 	{
 		lock (languageModels)
 		{
@@ -404,7 +444,7 @@ public sealed partial class LanguageDetector
 		}
 	}
 
-	private static Dictionary<string, float> LoadLanguageModel(Language language, int ngramLength)
+	private static Dictionary<string, double> LoadLanguageModel(Language language, int ngramLength)
 	{
 		var isoCode = language.IsoCode6391().ToString().ToLowerInvariant();
 		var nGramName = Ngram.GetNameByLength(ngramLength);
@@ -412,7 +452,7 @@ public sealed partial class LanguageDetector
 		using var stream = typeof(LanguageDetector).Assembly.GetManifestResourceStream(file);
 
 		if (stream is null)
-			return new Dictionary<string, float>();
+			return new Dictionary<string, double>();
 
 		using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
 		return LanguageModel.FromJson(gzipStream);
@@ -427,7 +467,7 @@ public sealed partial class LanguageDetector
 			{
 				if (alphabet.Matches(word))
 				{
-					detectedAlphabets.IncrementCounter(alphabet);
+					detectedAlphabets.IncrementCounter(alphabet, word.Length);
 					break;
 				}
 			}
@@ -472,8 +512,9 @@ public sealed partial class LanguageDetector
 			}
 		}
 
+		var halfWordCount = 0.5 * words.Count;
 		var languagesSubset = languageCounts
-			.Where(l => l.Value >= words.Count / 2d)
+			.Where(l => l.Value >= halfWordCount)
 			.Select(l => l.Key)
 			.ToHashSet();
 
@@ -483,7 +524,6 @@ public sealed partial class LanguageDetector
 	internal Language DetectLanguageWithRules(List<string> words)
 	{
 		var totalLanguageCounts = new Dictionary<Language, int>();
-
 		foreach (var word in words)
 		{
 			var wordLanguageCounts = new Dictionary<Language, int>();
@@ -548,7 +588,8 @@ public sealed partial class LanguageDetector
 		}
 
 		totalLanguageCounts.TryGetValue(Unknown, out var unknownLanguageCount);
-		if (unknownLanguageCount < 0.5 * words.Count)
+		var halfWordCount = 0.5 * words.Count;
+		if (unknownLanguageCount < halfWordCount)
 			totalLanguageCounts.Remove(Unknown);
 
 		switch (totalLanguageCounts.Count)

@@ -6,13 +6,13 @@ namespace Lingua.Internal;
 
 internal static class LanguageModel
 {
-	public static Dictionary<string, float> FromJson(Stream stream)
+	public static Dictionary<string, double> FromJson(Stream stream)
 	{
 		using var memoryStream = new MemoryStream();
 		stream.CopyTo(memoryStream);
 		var bytes = new ReadOnlySequence<byte>(memoryStream.ToArray());
 		var reader = new Utf8JsonReader(bytes);
-		var frequencies = new Dictionary<string, float>();
+		var frequencies = new Dictionary<string, double>();
 
 		while (reader.Read())
 		{
@@ -34,7 +34,7 @@ internal static class LanguageModel
 
 							var fraction = reader.GetString()!.AsSpan();
 							var delimiter = fraction.IndexOf('/');
-							var frequency = float.Parse(fraction[..delimiter]) / int.Parse(fraction[(delimiter + 1)..]);
+							var frequency = double.Parse(fraction[..delimiter]) / int.Parse(fraction[(delimiter + 1)..]);
 							reader.Read();
 							var ngrams = new SplitSpanEnumerable<char>(reader.GetString()!.AsSpan(), " ");
 							foreach (var ngram in ngrams)

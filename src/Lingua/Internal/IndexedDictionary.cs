@@ -15,11 +15,6 @@ internal sealed class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue
 	private readonly Dictionary<TKey, TValue> _dict;
 	private readonly List<TKey> _ordering;
 
-	/// <summary>
-	///     Initializes a new instance of the <see cref="IndexedDictionary{TKey,TValue}"/>
-	///     that is empty, has the default initial capacity, and uses the default equality
-	///     comparer for the key type.
-	/// </summary>
 	public IndexedDictionary()
 	{
 		_dict = new Dictionary<TKey, TValue>();
@@ -31,9 +26,8 @@ internal sealed class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue
 		get => _dict[key];
 		set
 		{
-			if (!_dict.ContainsKey(key))
+			if (_dict.TryAdd(key, value))
 				_ordering.Add(key);
-			_dict[key] = value;
 		}
 	}
 
@@ -293,16 +287,7 @@ internal sealed class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue
 
 		public KeyValuePair<TKey, TValue> Current { get; private set; }
 
-		object IEnumerator.Current
-		{
-			get
-			{
-				if (_index <= 0 || _index == _items.Count)
-					throw new InvalidOperationException("Cannot get current item if the Enumerator hasn't started or has ended.");
-
-				return Current;
-			}
-		}
+		object IEnumerator.Current => Current;
 
 		void IEnumerator.Reset()
 		{
