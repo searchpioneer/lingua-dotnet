@@ -1,7 +1,10 @@
 ![lingua](images/logo.png) 
 
+[![NuGet Release][nuget image]][nuget url]
 [![Build Status](https://github.com/russcam/lingua-dotnet/actions/workflows/dotnet.yml/badge.svg)](https://github.com/russcam/lingua-dotnet/actions/workflows/dotnet.yml)
 [![Accuracy Report](https://github.com/russcam/lingua-dotnet/actions/workflows/accuracy_report.yml/badge.svg)](https://github.com/russcam/lingua-dotnet/actions/workflows/accuracy_report.yml)
+[![license badge][license badge]][license url]
+[![supported languages][supported languages badge]](#3-which-languages-are-supported)
 
 ## 1. What does this library do?
 Its task is simple: It tells you which language some provided textual data is written in. 
@@ -128,4 +131,8 @@ Currently, the following 75 languages are supported:
 - Z
   - Zulu   
 
-
+[nuget url]: https://www.nuget.org/packages/Lingua/
+[nuget image]: https://img.shields.io/nuget/v/Lingua.svg
+[license badge]: https://img.shields.io/badge/license-Apache%202.0-blue.svg
+[license url]: https://www.apache.org/licenses/LICENSE-2.0
+[supported languages badge]: https://img.shields.io/badge/supported%20languages-75-green.svg
