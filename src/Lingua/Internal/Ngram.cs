@@ -33,7 +33,7 @@ internal readonly struct Ngram : IEquatable<Ngram>
 
 	public NgramEnumerable LowerOrderNGrams() => new(this);
 
-	internal static string GetNgramNameByLength(int ngramLength) =>
+	internal static string GetNameByLength(int ngramLength) =>
 		ngramLength switch
 		{
 			1 => "unigram",
@@ -45,33 +45,15 @@ internal readonly struct Ngram : IEquatable<Ngram>
 		};
 }
 
-internal readonly struct NgramEnumerable
+internal readonly ref struct NgramEnumerable(Ngram start)
 {
-	private readonly Ngram _start;
-
-	/// <summary>
-	/// Intializes a new instance of <see cref="NgramEnumerable"/>
-	/// </summary>
-	/// <param name="start">The start ngram</param>
-	public NgramEnumerable(Ngram start) => _start = start;
-
-	public NgramEnumerator GetEnumerator() => new(_start);
+	public NgramEnumerator GetEnumerator() => new(start);
 }
 
-internal ref struct NgramEnumerator
+internal ref struct NgramEnumerator(Ngram start)
 {
-	private readonly ReadOnlySpan<char> _start;
-	private int _currentEndIndex;
-
-	/// <summary>
-	/// Initializes a new instance of <see cref="NgramEnumerator"/>
-	/// </summary>
-	/// <param name="start"></param>
-	public NgramEnumerator(Ngram start)
-	{
-		_start = start.ToString();
-		_currentEndIndex = start.Length + 1;
-	}
+	private readonly ReadOnlySpan<char> _start = start.AsSpan();
+	private int _currentEndIndex = start.Length + 1;
 
 	public bool MoveNext()
 	{
@@ -84,6 +66,7 @@ internal ref struct NgramEnumerator
 
 	public void Reset() => _currentEndIndex = _start.Length + 1;
 
+	// IMPORTANT: MoveNext() must be called before Current
 	public OrderedNgram Current
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -93,11 +76,13 @@ internal ref struct NgramEnumerator
 	public void Dispose()
 	{
 	}
+
+	internal readonly ref struct OrderedNgram(ReadOnlySpan<char> ngram)
+	{
+		private readonly ReadOnlySpan<char> _ngram = ngram;
+
+		public static implicit operator ReadOnlySpan<char>(OrderedNgram entry) => entry._ngram;
+	}
 }
 
-internal readonly ref struct OrderedNgram(ReadOnlySpan<char> ngram)
-{
-	private readonly ReadOnlySpan<char> _ngram = ngram;
 
-	public static implicit operator ReadOnlySpan<char>(OrderedNgram entry) => entry._ngram;
-}

@@ -1,6 +1,6 @@
 using Lingua.Api;
 
-namespace Lingua;
+namespace Lingua.Internal;
 
 internal enum Alphabet
 {

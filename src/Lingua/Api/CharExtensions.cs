@@ -1,3 +1,5 @@
+using Lingua.Internal;
+
 namespace Lingua.Api;
 
 internal static class CharExtensions

@@ -125,16 +125,11 @@ internal sealed class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue
 		return hashCode;
 	}
 
-	public sealed class ValueCollection : ICollection<TValue>, ICollection, IReadOnlyCollection<TValue>
+	public sealed class ValueCollection(Dictionary<TKey, TValue> dictionary, List<TKey> items)
+		: ICollection<TValue>, ICollection, IReadOnlyCollection<TValue>
 	{
-		private readonly List<TKey> _items;
-		private readonly Dictionary<TKey, TValue> _dictionary;
-
-		public ValueCollection(Dictionary<TKey, TValue> dictionary, List<TKey> items)
-		{
-			_dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
-			_items = items ?? throw new ArgumentNullException(nameof(items));
-		}
+		private readonly List<TKey> _items = items ?? throw new ArgumentNullException(nameof(items));
+		private readonly Dictionary<TKey, TValue> _dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
 
 		public ValueEnumerator GetEnumerator() => new(_dictionary, _items);
 

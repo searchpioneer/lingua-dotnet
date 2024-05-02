@@ -409,7 +409,7 @@ public sealed partial class LanguageDetector
 	private static Dictionary<string, float> LoadLanguageModel(Language language, int ngramLength)
 	{
 		var isoCode = language.IsoCode6391().ToString().ToLowerInvariant();
-		var nGramName = Ngram.GetNgramNameByLength(ngramLength);
+		var nGramName = Ngram.GetNameByLength(ngramLength);
 		var file = $"Lingua.LanguageModels.{isoCode}.{nGramName}s.json.gz";
 		using var stream = typeof(LanguageDetector).Assembly.GetManifestResourceStream(file);
 

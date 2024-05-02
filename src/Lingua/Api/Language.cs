@@ -1,3 +1,4 @@
+using Lingua.Internal;
 using static Lingua.Api.Language;
 
 namespace Lingua.Api;

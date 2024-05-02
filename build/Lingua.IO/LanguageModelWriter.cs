@@ -8,7 +8,7 @@ namespace Lingua.IO;
 /// <summary>
 /// Creates language model files and writes them to a directory.
 /// </summary>
-public class LanguageModelWriter
+public static class LanguageModelWriter
 {
 	/// <summary>
 	/// Creates language model files and writes them to a directory.

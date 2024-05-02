@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -7,35 +8,24 @@ using Lingua.Internal;
 
 namespace Lingua.IO;
 
-internal class TrainingDataLanguageModel
+[SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local")]
+internal class TrainingDataLanguageModel(
+	Language language,
+	Dictionary<Ngram, int> absoluteFrequencies,
+	Dictionary<Ngram, Fraction> relativeFrequencies)
 {
-	private record JsonLanguageModel(Language language, Dictionary<Fraction, string> ngrams);
-
-	private readonly Language _language;
-	private readonly Dictionary<Ngram, int> _absoluteFrequencies;
-	private readonly Dictionary<Ngram, Fraction> _relativeFrequencies;
-
-	public Dictionary<Ngram, int> AbsoluteFrequencies => _absoluteFrequencies;
-
 	private static readonly JsonSerializerOptions JsonSerializerOptions = new()
 	{
 		Converters = { new FractionConverter(), new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseUpper) },
+		PropertyNamingPolicy = JsonNamingPolicy.CamelCase
 	};
 
-	public TrainingDataLanguageModel(
-		Language language,
-		Dictionary<Ngram, int> absoluteFrequencies,
-		Dictionary<Ngram, Fraction> relativeFrequencies)
-	{
-		_language = language;
-		_absoluteFrequencies = absoluteFrequencies;
-		_relativeFrequencies = relativeFrequencies;
-	}
+	public Dictionary<Ngram, int> AbsoluteFrequencies => absoluteFrequencies;
 
 	public string ToJson()
 	{
 		var nGramsByFraction = new Dictionary<Fraction, List<Ngram>>();
-		foreach (var (ngram, fraction) in _relativeFrequencies)
+		foreach (var (ngram, fraction) in relativeFrequencies)
 		{
 			if (!nGramsByFraction.TryGetValue(fraction, out var ngrams))
 			{
@@ -47,11 +37,13 @@ internal class TrainingDataLanguageModel
 
 		var jsonLanguageModel =
 			new JsonLanguageModel(
-				_language,
+				language,
 				nGramsByFraction.ToDictionary(k => k.Key, v => string.Join(' ', v.Value)));
 
 		return JsonSerializer.Serialize(jsonLanguageModel, JsonSerializerOptions);
 	}
+
+	private record JsonLanguageModel(Language Language, Dictionary<Fraction, string> Ngrams);
 
 	public static TrainingDataLanguageModel FromText(
 		IEnumerable<string> text,
@@ -88,7 +80,7 @@ internal class TrainingDataLanguageModel
 		var totalNgramFrequency = absoluteFrequencies.Values.Sum();
 		foreach (var (ngram, frequency) in absoluteFrequencies)
 		{
-			var denominator = ngramLength == 1 || !lowerNgramAbsoluteFrequencies.Any()
+			var denominator = ngramLength == 1 || lowerNgramAbsoluteFrequencies.Count == 0
 				? totalNgramFrequency
 				: lowerNgramAbsoluteFrequencies[new Ngram(ngram.ToString().Substring(0, ngramLength - 1))];
 
@@ -102,7 +94,6 @@ internal class TrainingDataLanguageModel
 	{
 		var absoluteFrequencies = new Dictionary<Ngram, int>();
 		var regex = new Regex($"^[{charClass}]+$");
-
 		foreach (var line in text)
 		{
 			var lowerCasedLine = line.ToLowerInvariant().AsSpan();
