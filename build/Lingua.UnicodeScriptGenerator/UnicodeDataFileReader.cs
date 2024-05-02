@@ -22,7 +22,7 @@
 //
 // https://github.com/hexawyz/NetUnicodeInfo/blob/c2ab5227094d8f934b34fe6d3186c7f1e2be5e74/System.Unicode.Build.Core/UnicodeDataFileReader.cs#L5
 
-namespace UnicodeScriptGenerator;
+namespace Lingua.UnicodeScriptGenerator;
 
 public class UnicodeDataFileReader(Stream stream, char fieldSeparator, bool leaveOpen = false) : IDisposable
 {

@@ -1,4 +1,4 @@
-﻿using Xunit;
+using Xunit;
 using static Lingua.Api.Language;
 
 namespace Lingua.AccuracyReport.Tests.Lingua;

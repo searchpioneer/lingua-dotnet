@@ -25,7 +25,7 @@
 using System.Collections.Concurrent;
 using System.Text;
 
-namespace UnicodeScriptGenerator;
+namespace Lingua.UnicodeScriptGenerator;
 
 public struct Utf8Buffer : IDisposable
 {

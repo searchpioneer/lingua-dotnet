@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace UnicodeScriptGenerator;
+namespace Lingua.UnicodeScriptGenerator;
 
 /// <summary>
 /// Generates the UnicodeScript.g.cs file for character script properties

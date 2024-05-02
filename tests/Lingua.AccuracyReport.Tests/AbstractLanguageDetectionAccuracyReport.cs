@@ -1,4 +1,4 @@
-﻿using Lingua.Api;
+using Lingua.Api;
 
 namespace Lingua.AccuracyReport.Tests;
 

@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Generates training and test data language model files</Description>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Needs to be signed for InternalsVisibleTo -->
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fractions" Version="7.7.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.3" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionRoot)\src\Lingua\Lingua.csproj" />
+  </ItemGroup>
+
+</Project>

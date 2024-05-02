@@ -1,8 +1,9 @@
 using System.Text;
+using Lingua.Api;
 using Lingua.Internal;
-using static Lingua.Api.IO.PathValidation;
+using static Lingua.IO.PathValidation;
 
-namespace Lingua.Api.IO;
+namespace Lingua.IO;
 
 /// <summary>
 /// Creates language model files and writes them to a directory.
@@ -17,7 +18,7 @@ public class LanguageModelWriter
 	/// <param name="outputDirectoryPath">The directory where the language model files are to be written.</param>
 	/// <param name="language">The language for which to create language models.</param>
 	/// <param name="charClass"> A regex character class as supported by <see cref="System.Text.RegularExpressions.Regex"/></param>
-	public void CreateAndWriteLanguageModelFiles(
+	public static void CreateAndWriteLanguageModelFiles(
 		string inputFilePath,
 		Encoding? encoding,
 		string outputDirectoryPath,

@@ -185,7 +185,7 @@ public sealed partial class LanguageDetector
 
 		Parallel.ForEach(ngramSizeRange.Where(r => cleanedUpText.Length >= r), i =>
 		{
-			var testDataModel = TestDataLanguageModel.FromText(cleanedUpText, i);
+			var testDataModel = TestLanguageModel.FromText(cleanedUpText, i);
 			var probabilities = ComputeLanguageProbabilities(testDataModel, filteredLanguages);
 
 			Dictionary<Language, int>? unigramCounts = null;
@@ -287,7 +287,7 @@ public sealed partial class LanguageDetector
 		return summedUpProbabilities.Where(p => p.Value != 0).ToDictionary();
 	}
 
-	private static Dictionary<Language, int> CountUnigramsOfInputText(TestDataLanguageModel unigramLanguageModel, HashSet<Language> filteredLanguages)
+	private static Dictionary<Language, int> CountUnigramsOfInputText(TestLanguageModel unigramLanguageModel, HashSet<Language> filteredLanguages)
 	{
 		var unigramCounts = new Dictionary<Language, int>();
 		foreach (var language in filteredLanguages)
@@ -303,11 +303,11 @@ public sealed partial class LanguageDetector
 		return unigramCounts;
 	}
 
-	internal static Dictionary<Language, float> ComputeLanguageProbabilities(TestDataLanguageModel testDataModel, IReadOnlySet<Language> filteredLanguages)
+	internal static Dictionary<Language, float> ComputeLanguageProbabilities(TestLanguageModel testModel, IReadOnlySet<Language> filteredLanguages)
 	{
 		var probabilities = new Dictionary<Language, float>();
 		foreach (var language in filteredLanguages)
-			probabilities[language] = ComputeSumOfNgramProbabilities(language, testDataModel.Ngrams);
+			probabilities[language] = ComputeSumOfNgramProbabilities(language, testModel.Ngrams);
 
 		return probabilities.Where(p => p.Value < 0).ToDictionary();
 	}
@@ -409,7 +409,7 @@ public sealed partial class LanguageDetector
 			return new Dictionary<string, float>();
 
 		using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
-		return TrainingDataLanguageModel.FromJson(gzipStream);
+		return LanguageModel.FromJson(gzipStream);
 	}
 
 	internal HashSet<Language> FilterLanguagesByRules(List<string> words)

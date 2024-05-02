@@ -1,4 +1,4 @@
-﻿namespace Lingua.AccuracyReport.Tests;
+namespace Lingua.AccuracyReport.Tests;
 
 public enum Implementation
 {

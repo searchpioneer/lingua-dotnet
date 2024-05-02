@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Lingua.Api;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -142,14 +142,14 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 		if (Implementation == Implementation.Lingua)
 		{
 			report.Append($" {averageAccuracyInLowAccuracyMode} {singleWordAccuracies.LowAccuracy} " +
-			              $"{wordPairAccuracies.LowAccuracy} {sentenceAccuracies.LowAccuracy}");
+						  $"{wordPairAccuracies.LowAccuracy} {sentenceAccuracies.LowAccuracy}");
 			report.AppendLine($" {averageAccuracyInHighAccuracyMode} {singleWordAccuracies.HighAccuracy} " +
-			              $"{wordPairAccuracies.HighAccuracy} {sentenceAccuracies.HighAccuracy}");
+						  $"{wordPairAccuracies.HighAccuracy} {sentenceAccuracies.HighAccuracy}");
 		}
 		else
 		{
 			report.AppendLine($" {averageAccuracyInHighAccuracyMode} {singleWordAccuracies.HighAccuracy} " +
-			              $"{wordPairAccuracies.HighAccuracy} {sentenceAccuracies.HighAccuracy}");
+						  $"{wordPairAccuracies.HighAccuracy} {sentenceAccuracies.HighAccuracy}");
 		}
 
 		report.AppendLine();
@@ -183,27 +183,27 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 		switch (Implementation)
 		{
 			case Implementation.Lingua:
-			{
-				var low = LinguaLanguageDetectorWithLowAccuracy.Value.DetectLanguageOf(element);
-				var high = LinguaLanguageDetectorWithHighAccuracy.Value.DetectLanguageOf(element);
-				detectedLanguages = (low, high);
-				break;
-			}
+				{
+					var low = LinguaLanguageDetectorWithLowAccuracy.Value.DetectLanguageOf(element);
+					var high = LinguaLanguageDetectorWithHighAccuracy.Value.DetectLanguageOf(element);
+					detectedLanguages = (low, high);
+					break;
+				}
 		};
 
 		var languageInLowAccuracyMode = detectedLanguages.Item1;
 		var languageInHighAccuracyMode = detectedLanguages.Item2;
 
-		var languageCounts = statistics.GetValueOrDefault(languageInLowAccuracyMode, (0,0));
+		var languageCounts = statistics.GetValueOrDefault(languageInLowAccuracyMode, (0, 0));
 		languageCounts = (languageCounts.Item1 + 1, languageCounts.Item2);
 		statistics[languageInLowAccuracyMode] = languageCounts;
 
-		languageCounts = statistics.GetValueOrDefault(languageInHighAccuracyMode, (0,0));
+		languageCounts = statistics.GetValueOrDefault(languageInHighAccuracyMode, (0, 0));
 		languageCounts = (languageCounts.Item1, languageCounts.Item2 + 1);
 		statistics[languageInHighAccuracyMode] = languageCounts;
 	}
 
-	private static Dictionary<Language, (double LowAccuracy , double HighAccuracy)> MapCountsToAccuracies(Dictionary<Language, (int, int)> statistics)
+	private static Dictionary<Language, (double LowAccuracy, double HighAccuracy)> MapCountsToAccuracies(Dictionary<Language, (int, int)> statistics)
 	{
 		var sumOfCountsInLowAccuracyMode = statistics.Values.Sum(pair => pair.Item1);
 		var sumOfCountsInHighAccuracyMode = statistics.Values.Sum(pair => pair.Item2);
@@ -262,7 +262,7 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 		return (accuracies, report.ToString());
 	}
 
-	private string FormatStatistics(Dictionary<Language,(double, double)> statistics, Language language, StringBuilder builder)
+	private string FormatStatistics(Dictionary<Language, (double, double)> statistics, Language language, StringBuilder builder)
 	{
 		var sorted = statistics
 			.Where(s => s.Key != language)

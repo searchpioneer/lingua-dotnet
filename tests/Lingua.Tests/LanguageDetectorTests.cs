@@ -112,7 +112,7 @@ public class LanguageDetectorTests : IDisposable
 		false,
 		false);
 
-	private static readonly TestDataLanguageModel UnigramTestDataLanguageModel = new(new()
+	private static readonly TestLanguageModel UnigramTestLanguageModel = new(new()
 	{
 		new("a"),
 		new("l"),
@@ -121,7 +121,7 @@ public class LanguageDetectorTests : IDisposable
 		new("r")
 	});
 
-	private static readonly TestDataLanguageModel TrigramTestDataLanguageModel = new(new()
+	private static readonly TestLanguageModel TrigramTestLanguageModel = new(new()
 	{
 		new("alt"),
 		new("lte"),
@@ -129,7 +129,7 @@ public class LanguageDetectorTests : IDisposable
 		new("wxy")
 	});
 
-	private static readonly TestDataLanguageModel QuadrigramTestDataLanguageModel = new(new()
+	private static readonly TestLanguageModel QuadrigramTestLanguageModel = new(new()
 	{
 		new("alte"),
 		new("lter"),
@@ -233,7 +233,7 @@ public class LanguageDetectorTests : IDisposable
 	{
 		yield return
 		[
-			UnigramTestDataLanguageModel,
+			UnigramTestLanguageModel,
 			new Dictionary<Language, float>
 			{
 				[English] = (float)(Math.Log(0.01F) + Math.Log(0.02F) + Math.Log(0.03F) + Math.Log(0.04F) + Math.Log(0.05F)),
@@ -243,7 +243,7 @@ public class LanguageDetectorTests : IDisposable
 
 		yield return
 		[
-			TrigramTestDataLanguageModel,
+			TrigramTestLanguageModel,
 			new Dictionary<Language, float>
 			{
 				[English] = (float)(Math.Log(0.19F) + Math.Log(0.2F) + Math.Log(0.21F)),
@@ -253,7 +253,7 @@ public class LanguageDetectorTests : IDisposable
 
 		yield return
 		[
-			QuadrigramTestDataLanguageModel,
+			QuadrigramTestLanguageModel,
 			new Dictionary<Language, float>
 			{
 				[English] = (float)(Math.Log(0.25F) + Math.Log(0.26F)),
@@ -264,7 +264,7 @@ public class LanguageDetectorTests : IDisposable
 
 	[Theory]
 	[MemberData(nameof(LanguageProbabilitiesProvider))]
-	internal void LanguageProbabilitiesComputedCorrectly(TestDataLanguageModel model,
+	internal void LanguageProbabilitiesComputedCorrectly(TestLanguageModel model,
 		Dictionary<Language, float> expectedProbabilities) =>
 		LanguageDetector.ComputeLanguageProbabilities(model, _detectorForEnglishAndGerman.Languages)
 			.Should().BeEquivalentTo(expectedProbabilities);

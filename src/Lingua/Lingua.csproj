@@ -8,7 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Fractions" Version="7.7.0" />
       <PackageReference Include="System.Text.Json" Version="8.0.3" />
     </ItemGroup>
   
@@ -17,6 +16,7 @@
     </ItemGroup>
   
     <ItemGroup>
+      <InternalsVisibleTo Include="$(AssemblyName).IO" Key="$(PublicKey)" />
       <InternalsVisibleTo Include="$(AssemblyName).Tests" Key="$(PublicKey)" />
     </ItemGroup>
 

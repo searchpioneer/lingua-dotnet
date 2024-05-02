@@ -5,6 +5,7 @@ using static Bullseye.Targets;
 using static SimpleExec.Command;
 
 const string packOutput = "nuget";
+const string reportOutput = "accuracy-reports";
 
 var cmd = new RootCommand
 {
@@ -48,7 +49,18 @@ cmd.SetHandler(async () =>
 
 	Target(Test, DependsOn(Build), () =>
 	{
-		Run("dotnet", "test -c Release --no-build");
+		Run("dotnet", "test tests/Lingua.Tests -c Release --no-build  --verbosity normal");
+	});
+
+	Target(Report, DependsOn(CleanReportOutput, Build), () =>
+	{
+		Run("dotnet", "test tests/Lingua.AccuracyReport.Tests -c Release --no-build");
+	});
+
+	Target(CleanReportOutput, () =>
+	{
+		if (Directory.Exists(reportOutput))
+			Directory.Delete(reportOutput, true);
 	});
 
 	Target(CleanPackOutput, () =>
@@ -56,6 +68,8 @@ cmd.SetHandler(async () =>
 		if (Directory.Exists(packOutput))
 			Directory.Delete(packOutput, true);
 	});
+
+	Target(Clean, DependsOn(CleanBuildOutput, CleanReportOutput, CleanPackOutput));
 
 	Target(Pack, DependsOn(Build, CleanPackOutput), () =>
 	{
@@ -74,10 +88,13 @@ internal static class BuildTargets
 {
 	public const string CleanBuildOutput = "clean-build-output";
 	public const string CleanPackOutput = "clean-pack-output";
+	public const string CleanReportOutput = "clean-report-output";
+	public const string Clean = "clean";
 	public const string Build = "build";
 	public const string Test = "test";
 	public const string Default = "default";
 	public const string Restore = "restore";
 	public const string Format = "format";
 	public const string Pack = "pack";
+	public const string Report = "report";
 }
