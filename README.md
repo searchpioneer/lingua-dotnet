@@ -1,4 +1,4 @@
-![lingua](images/logo.png) 
+![lingua](https://raw.githubusercontent.com/russcam/lingua-dotnet/main/images/logo.png) 
 
 [![NuGet Release][nuget image]][nuget url]
 [![Build Status](https://github.com/russcam/lingua-dotnet/actions/workflows/dotnet.yml/badge.svg)](https://github.com/russcam/lingua-dotnet/actions/workflows/dotnet.yml)
