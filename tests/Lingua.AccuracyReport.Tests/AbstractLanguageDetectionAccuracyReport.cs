@@ -1,5 +1,3 @@
-using Lingua.Api;
-
 namespace Lingua.AccuracyReport.Tests;
 
 public abstract class AbstractLanguageDetectionAccuracyReport

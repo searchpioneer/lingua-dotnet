@@ -1,8 +1,7 @@
 using FluentAssertions;
-using Lingua.Api;
 using Lingua.Internal;
 using Xunit;
-using static Lingua.Api.Language;
+using static Lingua.Language;
 
 namespace Lingua.Tests;
 

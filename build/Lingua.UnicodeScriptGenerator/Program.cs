@@ -33,6 +33,8 @@ namespace Lingua;
 ///<summary>Unicode script information, version {version}</summary>
 public enum UnicodeScript
 {{
+    ///<summary>Unicode script for ""Unknown""</summary>
+    Unknown = 0,
 ");
 
 		var unicodeScripts = ReadUnicodeScriptsFromFile(fileName);
@@ -48,9 +50,7 @@ public enum UnicodeScript
 
 		var orderedScripts = CreateCollapsedOrderedRange(unicodeScripts);
 
-		builder.AppendLine(@"    ///<summary>Unicode script for ""Unknown""</summary>
-    Unknown,
-}
+		builder.AppendLine(@"}
 
 /// <summary>
 /// Extension method for <see cref=""char""/> to determine its <see cref=""UnicodeScript""/> property.

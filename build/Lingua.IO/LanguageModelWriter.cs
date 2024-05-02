@@ -1,5 +1,4 @@
 using System.Text;
-using Lingua.Api;
 using Lingua.Internal;
 using static Lingua.IO.PathValidation;
 

@@ -1,4 +1,4 @@
-namespace Lingua.Api;
+namespace Lingua;
 
 /// <summary>
 /// Two-character codes which serves as identifiers for major (macro) languages from the world,
@@ -6,6 +6,9 @@ namespace Lingua.Api;
 /// </summary>
 public enum IsoCode6391
 {
+	/// <summary>The ISO 639-1 code for the imaginary <see cref="Language.Unknown"/>.</summary>
+	None = 0,
+
 	/// <summary>The ISO 639-1 code for <see cref="Language.Afrikaans"/>.</summary>
 	Af,
 
@@ -242,7 +245,4 @@ public enum IsoCode6391
 
 	/// <summary>The ISO 639-1 code for <see cref="Language.Zulu"/>.</summary>
 	Zu,
-
-	/// <summary>The ISO 639-1 code for the imaginary <see cref="Language.Unknown"/>.</summary>
-	None
 }

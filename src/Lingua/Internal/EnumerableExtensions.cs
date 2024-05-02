@@ -1,6 +1,4 @@
-using Lingua.Internal;
-
-namespace Lingua.Api;
+namespace Lingua.Internal;
 
 internal static class EnumerableExtensions
 {
@@ -9,9 +7,7 @@ internal static class EnumerableExtensions
 	{
 		var dictionary = new IndexedDictionary<TKey, TValue>();
 		foreach (var keyValuePair in enumerable)
-		{
 			dictionary.Add(keyValuePair);
-		}
 
 		return dictionary;
 	}

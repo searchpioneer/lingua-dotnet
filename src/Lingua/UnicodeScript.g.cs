@@ -6,6 +6,8 @@ namespace Lingua;
 ///<summary>Unicode script information, version 15.1.0</summary>
 public enum UnicodeScript
 {
+    ///<summary>Unicode script for "Unknown"</summary>
+    Unknown = 0,
     ///<summary>Unicode script for "Common"</summary>
     Common,
     ///<summary>Unicode script for "Latin"</summary>
@@ -332,8 +334,6 @@ public enum UnicodeScript
     Kawi,
     ///<summary>Unicode script for "Nag Mundari"</summary>
     NagMundari,
-    ///<summary>Unicode script for "Unknown"</summary>
-    Unknown,
 }
 
 /// <summary>

@@ -1,4 +1,4 @@
-namespace Lingua.Api;
+namespace Lingua;
 
 /// <summary>
 /// Three-character codes which serves as identifiers for individual languages from the world.
@@ -6,6 +6,9 @@ namespace Lingua.Api;
 /// </summary>
 public enum IsoCode6393
 {
+	/// <summary>The ISO 639-3 code for imaginary <see cref="Language.Unknown"/>.</summary>
+	None = 0,
+
 	/// <summary>The ISO 639-3 code for <see cref="Language.Afrikaans"/>.</summary>
 	Afr,
 
@@ -242,7 +245,4 @@ public enum IsoCode6393
 
 	/// <summary>The ISO 639-3 code for <see cref="Language.Zulu"/>.</summary>
 	Zul,
-
-	/// <summary>The ISO 639-3 code for imaginary <see cref="Language.Unknown"/>.</summary>
-	None,
 }

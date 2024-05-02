@@ -1,12 +1,10 @@
 using System.Collections.Concurrent;
-using System.Collections.Frozen;
 using System.IO.Compression;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Lingua.Internal;
-using static Lingua.Api.Language;
+using static Lingua.Language;
 
-namespace Lingua.Api;
+namespace Lingua;
 
 /// <summary>
 /// Detects language of given input text, and computes confidence values for every language considered possible

@@ -3,7 +3,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Fractions;
-using Lingua.Api;
 using Lingua.Internal;
 
 namespace Lingua.IO;

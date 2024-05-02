@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace Lingua.Api;
+namespace Lingua.Internal;
 
 internal static class DictionaryExtensions
 {

@@ -1,7 +1,7 @@
-namespace Lingua.Api;
+namespace Lingua;
 
 /// <summary>
-/// Builder for <see cref="LanguageDetector"/>
+/// Builder for <see cref="Lingua.LanguageDetector"/>
 /// </summary>
 public class LanguageDetectorBuilder
 {
@@ -125,7 +125,7 @@ public class LanguageDetectorBuilder
 	}
 
 	/// <summary>
-	/// Preloads all language models when creating the instance of <see cref="LanguageDetector"/>.
+	/// Preloads all language models when creating the instance of <see cref="Lingua.LanguageDetector"/>.
 	/// <para />
 	/// By default, *Lingua* uses lazy-loading to load only those language models
 	/// on demand which are considered relevant by the rule-based filter engine.
@@ -159,10 +159,10 @@ public class LanguageDetectorBuilder
 	}
 
 	/// <summary>
-	/// Builds a new instance of <see cref="LanguageDetector"/>.
+	/// Builds a new instance of <see cref="Lingua.LanguageDetector"/>.
 	/// </summary>
-	/// <returns>a new instance of <see cref="LanguageDetector"/></returns>
-	public LanguageDetector Build() =>
+	/// <returns>a new instance of <see cref="Lingua.LanguageDetector"/></returns>
+	public Lingua.LanguageDetector Build() =>
 		new(_languages,
 			_minimumRelativeDistance,
 			_isEveryLanguageModelPreloaded,
