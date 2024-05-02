@@ -1,6 +1,8 @@
+using System.Runtime.CompilerServices;
 using System.Text;
 using Xunit.Abstractions;
 using Xunit.Sdk;
+using LanguageDetection;
 
 namespace Lingua.AccuracyReport.Tests;
 
@@ -23,6 +25,13 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 	private static readonly Lazy<LanguageDetector> LinguaLanguageDetectorWithHighAccuracy = new(() =>
 		LanguageDetectorBuilder.FromLanguages(Languages)
 			.Build());
+
+	private static readonly Lazy<LanguageDetection.LanguageDetector> LanguageDetectorLanguageDetectorWithHighAccuracy = new(() =>
+	{
+		var detector = new LanguageDetection.LanguageDetector();
+		detector.AddAllLanguages();
+		return detector;
+	});
 
 	private readonly Dictionary<Language, (int, int)> _singleWordsStatistics = new();
 	private readonly Dictionary<Language, (int, int)> _wordPairsStatistics = new();
@@ -182,12 +191,25 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 		switch (Implementation)
 		{
 			case Implementation.Lingua:
+			{
+				var low = LinguaLanguageDetectorWithLowAccuracy.Value.DetectLanguageOf(element);
+				var high = LinguaLanguageDetectorWithHighAccuracy.Value.DetectLanguageOf(element);
+				detectedLanguages = (low, high);
+				break;
+			}
+			case Implementation.LanguageDetection:
+			{
+				var code = LanguageDetectorLanguageDetectorWithHighAccuracy.Value.Detect(element);
+				if (code is not null)
 				{
-					var low = LinguaLanguageDetectorWithLowAccuracy.Value.DetectLanguageOf(element);
-					var high = LinguaLanguageDetectorWithHighAccuracy.Value.DetectLanguageOf(element);
-					detectedLanguages = (low, high);
-					break;
+					if (Enum.TryParse<IsoCode6393>(code, true, out var result))
+					{
+						var language = LanguageInfo.GetByIsoCode6393(result);
+						detectedLanguages = (language, language);
+					}
 				}
+				break;
+			}
 		};
 
 		var languageInLowAccuracyMode = detectedLanguages.Item1;
