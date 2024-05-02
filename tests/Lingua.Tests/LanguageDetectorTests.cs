@@ -189,14 +189,14 @@ public class LanguageDetectorTests : IDisposable
 	[InlineData(German, "lter", 0.28)]
 	[InlineData(German, "alter", 0.30)]
 	public void NgramProbabilityLookupWorksCorrectly(Language language, string ngram, float expectedProbability) =>
-		LanguageDetector.LookupNgramProbability(language, new Ngram(ngram)).Should()
+		LanguageDetector.LookupNgramProbability(language, ngram).Should()
 			.Be(expectedProbability);
 
 	[Fact]
 	public void NgramProbabilityLookupThrowsForZerogram()
 	{
 		var exception = Assert.Throws<ArgumentException>(() =>
-				LanguageDetector.LookupNgramProbability(English, new Ngram("")));
+				LanguageDetector.LookupNgramProbability(English, ""));
 
 		exception.Message.Should().Be("Zerogram detected");
 	}

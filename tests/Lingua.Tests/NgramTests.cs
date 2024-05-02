@@ -6,13 +6,12 @@ namespace Lingua.Tests;
 
 public class NgramTests
 {
-	private static readonly Ngram Zerogram = Ngram.Zerogram;
+	private static readonly Ngram Zerogram = new("");
 	private static readonly Ngram Unigram = new("q");
 	private static readonly Ngram Bigram = new("qw");
 	private static readonly Ngram Trigram = new("qwe");
 	private static readonly Ngram Quadrigram = new("qwer");
 	private static readonly Ngram Fivegram = new("qwert");
-	private static readonly List<Ngram> Ngrams = [Unigram, Bigram, Trigram, Quadrigram, Fivegram];
 
 	[Fact]
 	public void ToStringReturnsValue()
@@ -28,23 +27,35 @@ public class NgramTests
 	[Fact]
 	public void FivegramsShouldDecrementCorrectly()
 	{
-		var quadrigram = Fivegram.Dec();
-		quadrigram.Should().Be(Quadrigram);
-
-		var trigram = quadrigram.Dec();
-		trigram.Should().Be(Trigram);
-
-		var bigram = trigram.Dec();
-		bigram.Should().Be(Bigram);
-
-		var unigram = bigram.Dec();
-		unigram.Should().Be(Unigram);
-
-		var zerogram = unigram.Dec();
-		zerogram.Should().Be(Zerogram);
-
-		var exception = Assert.Throws<InvalidOperationException>(() => zerogram.Dec());
-		exception.Message.Should().Be("Zerogram is ngram type of lowest order and can not be decremented");
+		var count = 5;
+		foreach (var orderedNgram in Fivegram.LowerOrderNGrams())
+		{
+			switch (count)
+			{
+				case 5:
+					Assert.Equal(Fivegram.AsSpan(), orderedNgram);
+					break;
+				case 4:
+					Assert.Equal(Quadrigram.AsSpan(), orderedNgram);
+					break;
+				case 3:
+					Assert.Equal(Trigram.AsSpan(), orderedNgram);
+					break;
+				case 2:
+					Assert.Equal(Bigram.AsSpan(), orderedNgram);
+					break;
+				case 1:
+					Assert.Equal(Unigram.AsSpan(), orderedNgram);
+					break;
+				case 0:
+					Assert.Equal(Zerogram.AsSpan(), orderedNgram);
+					break;
+				default:
+					Assert.Fail("Enumerated passed the end value");
+					break;
+			}
+			count--;
+		}
 	}
 
 	[Fact]
@@ -53,17 +64,17 @@ public class NgramTests
 		var enumerator = new NgramEnumerator(Fivegram);
 
 		enumerator.MoveNext();
-		enumerator.Current.Should().Be(Fivegram);
+		Assert.Equal(Fivegram.AsSpan(), enumerator.Current);
 		enumerator.MoveNext();
-		enumerator.Current.Should().Be(Quadrigram);
+		Assert.Equal(Quadrigram.AsSpan(), enumerator.Current);
 		enumerator.MoveNext();
-		enumerator.Current.Should().Be(Trigram);
+		Assert.Equal(Trigram.AsSpan(), enumerator.Current);
 		enumerator.MoveNext();
-		enumerator.Current.Should().Be(Bigram);
+		Assert.Equal(Bigram.AsSpan(), enumerator.Current);
 		enumerator.MoveNext();
-		enumerator.Current.Should().Be(Unigram);
+		Assert.Equal(Unigram.AsSpan(), enumerator.Current);
 		enumerator.MoveNext();
-		enumerator.Current.Should().Be(Zerogram);
+		Assert.Equal(Zerogram.AsSpan(), enumerator.Current);
 
 		enumerator.MoveNext().Should().BeFalse();
 		enumerator.MoveNext().Should().BeFalse();

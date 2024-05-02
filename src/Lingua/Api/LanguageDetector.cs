@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.IO.Compression;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Lingua.Internal;
 using static Lingua.Api.Language;
@@ -294,7 +296,7 @@ public sealed partial class LanguageDetector
 		{
 			foreach (var unigram in unigramLanguageModel.Ngrams)
 			{
-				var probability = LookupNgramProbability(language, unigram);
+				var probability = LookupNgramProbability(language, unigram.Value);
 				if (probability > 0)
 					unigramCounts.IncrementCounter(language);
 			}
@@ -317,7 +319,7 @@ public sealed partial class LanguageDetector
 		var probabilitiesSum = 0d;
 		foreach (var ngram in ngrams)
 		{
-			foreach (var elem in ngram.RangeOfLowerOrderNGrams())
+			foreach (var elem in ngram.LowerOrderNGrams())
 			{
 				var probability = LookupNgramProbability(language, elem);
 				if (probability > 0)
@@ -331,9 +333,15 @@ public sealed partial class LanguageDetector
 		return (float)probabilitiesSum;
 	}
 
-	internal static float LookupNgramProbability(Language language, Ngram ngram)
+	private static float LookupNgramProbability(Language language, ReadOnlySpan<char> ngram) =>
+		// ideally we can look up in a Dictionary<string, TValue> using a ReadOnlySpan<char> key
+		// see https://github.com/dotnet/runtime/issues/27229.
+		// For now, .ToString() the span...
+		LookupNgramProbability(language, ngram.ToString());
+
+	internal static float LookupNgramProbability(Language language, string ngram)
 	{
-		var ngramLength = ngram.ToString().Length;
+		var ngramLength = ngram.Length;
 		var languageModels = ngramLength switch
 		{
 			5 => FivegramLanguageModels,
@@ -346,7 +354,7 @@ public sealed partial class LanguageDetector
 		};
 
 		var model = LoadLanguageModels(languageModels, language, ngramLength);
-		return model.GetValueOrDefault(ngram.ToString(), 0);
+		return model.GetValueOrDefault(ngram, 0);
 	}
 
 	private void PreloadLanguageModels()

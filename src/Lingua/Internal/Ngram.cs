@@ -1,4 +1,4 @@
-using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace Lingua.Internal;
 
@@ -9,11 +9,6 @@ internal readonly struct Ngram : IEquatable<Ngram>
 {
 	private readonly string _value;
 
-	/// <summary>
-	/// Initializes a new instance of <see cref="Ngram"/>
-	/// </summary>
-	/// <param name="value">The sample of text.</param>
-	/// <exception cref="ArgumentException">If <paramref name="value"/> is greater than 5</exception>
 	public Ngram(string value)
 	{
 		if (value.Length > 5)
@@ -22,52 +17,21 @@ internal readonly struct Ngram : IEquatable<Ngram>
 		_value = value;
 	}
 
-	/// <summary>
-	/// An Ngram of zero length
-	/// </summary>
-	public static readonly Ngram Zerogram = new("");
+	public ReadOnlySpan<char> AsSpan() => _value.AsSpan();
 
-	/// <summary>
-	/// Whether value is empty.
-	/// </summary>
-	public bool IsEmpty => _value.Length == 0;
-
-	/// <summary>
-	/// Gets the length of the value.
-	/// </summary>
 	public int Length => _value.Length;
 
-	/// <summary>
-	/// Decrements and returns a new instance of an <see cref="Ngram"/> that is a substring of this instance.
-	/// </summary>
-	/// <returns>A new instance of <see cref="Ngram"/></returns>
-	/// <exception cref="InvalidOperationException">If the Ngram has a length of 0.</exception>
-	public Ngram Dec() =>
-		_value.Length switch
-		{
-			0 => throw new InvalidOperationException("Zerogram is ngram type of lowest order and can not be decremented"),
-			1 => Zerogram,
-			_ => new Ngram(_value.Substring(0, _value.Length - 1))
-		};
+	public string Value => _value;
 
-	/// <inheritdoc />
 	public override string ToString() => _value;
 
-	/// <inheritdoc />
 	public bool Equals(Ngram other) => _value == other._value;
 
-	/// <inheritdoc />
 	public override bool Equals(object? obj) => obj is Ngram other && Equals(other);
 
-	/// <inheritdoc />
 	public override int GetHashCode() => _value.GetHashCode();
 
-	/// <summary>
-	/// Enumerates this ngram, producing ngrams of lower order down to unigram.
-	/// </summary>
-	/// <returns>A new instance of <see cref="IEnumerable{T}"/>.</returns>
-	public IEnumerable<Ngram> RangeOfLowerOrderNGrams() =>
-		new NgramEnumerable(this, new Ngram(_value[0].ToString()));
+	public NgramEnumerable LowerOrderNGrams() => new(this);
 
 	internal static string GetNgramNameByLength(int ngramLength) =>
 		ngramLength switch
@@ -81,8 +45,7 @@ internal readonly struct Ngram : IEquatable<Ngram>
 		};
 }
 
-/// <inheritdoc />
-internal readonly struct NgramEnumerable : IEnumerable<Ngram>
+internal readonly struct NgramEnumerable
 {
 	private readonly Ngram _start;
 
@@ -90,60 +53,51 @@ internal readonly struct NgramEnumerable : IEnumerable<Ngram>
 	/// Intializes a new instance of <see cref="NgramEnumerable"/>
 	/// </summary>
 	/// <param name="start">The start ngram</param>
-	/// <param name="endInclusive">The end ngram</param>
-	/// <exception cref="ArgumentException">If the start ngram is not of higher order than end ngram</exception>
-	public NgramEnumerable(Ngram start, Ngram endInclusive)
-	{
-		if (endInclusive.Length > start.Length)
-			throw new ArgumentException($"'{start}' must be of higher order than '{endInclusive}'");
+	public NgramEnumerable(Ngram start) => _start = start;
 
-		_start = start;
-	}
-
-	/// <inheritdoc />
-	public IEnumerator<Ngram> GetEnumerator() => new NgramEnumerator(_start);
-
-	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+	public NgramEnumerator GetEnumerator() => new(_start);
 }
 
-/// <inheritdoc />
-internal struct NgramEnumerator : IEnumerator<Ngram>
+internal ref struct NgramEnumerator
 {
-	private readonly Ngram _start;
-	private Ngram? _current;
+	private readonly ReadOnlySpan<char> _start;
+	private int _currentEndIndex;
 
 	/// <summary>
 	/// Initializes a new instance of <see cref="NgramEnumerator"/>
 	/// </summary>
 	/// <param name="start"></param>
-	public NgramEnumerator(Ngram start) => _start = start;
-
-	/// <inheritdoc />
-	public bool MoveNext()
+	public NgramEnumerator(Ngram start)
 	{
-		if (_current is null)
-		{
-			_current = _start;
-			return true;
-		}
-
-		if (_current.Value.IsEmpty)
-			return false;
-
-		_current = _current.Value.Dec();
-		return !_current.Value.IsEmpty;
+		_start = start.ToString();
+		_currentEndIndex = start.Length + 1;
 	}
 
-	/// <inheritdoc />
-	public void Reset() => _current = null;
+	public bool MoveNext()
+	{
+		if (_currentEndIndex == 0)
+			return false;
 
-	/// <inheritdoc />
-	public Ngram Current => _current!.Value;
+		_currentEndIndex--;
+		return _currentEndIndex > 0;
+	}
 
-	object IEnumerator.Current => Current;
+	public void Reset() => _currentEndIndex = _start.Length + 1;
 
-	/// <inheritdoc />
+	public OrderedNgram Current
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => new(_start[.._currentEndIndex]);
+	}
+
 	public void Dispose()
 	{
 	}
+}
+
+internal readonly ref struct OrderedNgram(ReadOnlySpan<char> ngram)
+{
+	private readonly ReadOnlySpan<char> _ngram = ngram;
+
+	public static implicit operator ReadOnlySpan<char>(OrderedNgram entry) => entry._ngram;
 }
