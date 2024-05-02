@@ -131,7 +131,7 @@ Currently, the following 75 languages are supported:
 - Z
   - Zulu
 
-# 4. How accurate is it?
+## 4. How accurate is it?
 
 Lingua is able to report accuracy statistics for some bundled test data available for each supported language.
 The test data for each language is split into three parts:
@@ -227,10 +227,11 @@ Assert.Equal(new []
 }, detectedLanguage);
 ```
 
-In the example above, a vector of two-element tuples is returned containing all possible languages
+In the example above, an array of tuples is returned containing all possible languages
 sorted by their confidence value in descending order. Each value is a probability between 0.0 and 1.0.
 The probabilities of all languages will sum to 1.0. If the language is unambiguously identified by
-the rule engine, the value 1.0 will always be returned for this language. The other languages will receive a value of 0.0.
+the rule engine, the value 1.0 will always be returned for this language. 
+The other languages will receive a value of 0.0.
 
 ### Eager loading versus lazy loading
 
