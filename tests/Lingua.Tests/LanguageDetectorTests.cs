@@ -888,20 +888,20 @@ public class LanguageDetectorTests : IDisposable
 
 	private void AddLanguageModelsToDetector()
 	{
-		LanguageDetector.UnigramLanguageModels[English] = UnigramLanguageModelForEnglish;
-		LanguageDetector.UnigramLanguageModels[German] = UnigramLanguageModelForGerman;
+		LanguageDetector.UnigramLanguageModels[English] = new Lazy<Dictionary<string, double>>(UnigramLanguageModelForEnglish);
+		LanguageDetector.UnigramLanguageModels[German] = new Lazy<Dictionary<string, double>>(UnigramLanguageModelForGerman);
 
-		LanguageDetector.BigramLanguageModels[English] = BigramLanguageModelForEnglish;
-		LanguageDetector.BigramLanguageModels[German] = BigramLanguageModelForGerman;
+		LanguageDetector.BigramLanguageModels[English] = new Lazy<Dictionary<string, double>>(BigramLanguageModelForEnglish);
+		LanguageDetector.BigramLanguageModels[German] = new Lazy<Dictionary<string, double>>(BigramLanguageModelForGerman);
 
-		LanguageDetector.TrigramLanguageModels[English] = TrigramLanguageModelForEnglish;
-		LanguageDetector.TrigramLanguageModels[German] = TrigramLanguageModelForGerman;
+		LanguageDetector.TrigramLanguageModels[English] = new Lazy<Dictionary<string, double>>(TrigramLanguageModelForEnglish);
+		LanguageDetector.TrigramLanguageModels[German] = new Lazy<Dictionary<string, double>>(TrigramLanguageModelForGerman);
 
-		LanguageDetector.QuadrigramLanguageModels[English] = QuadrigramLanguageModelForEnglish;
-		LanguageDetector.QuadrigramLanguageModels[German] = QuadrigramLanguageModelForGerman;
+		LanguageDetector.QuadrigramLanguageModels[English] = new Lazy<Dictionary<string, double>>(QuadrigramLanguageModelForEnglish);
+		LanguageDetector.QuadrigramLanguageModels[German] = new Lazy<Dictionary<string, double>>(QuadrigramLanguageModelForGerman);
 
-		LanguageDetector.FivegramLanguageModels[English] = FivegramLanguageModelForEnglish;
-		LanguageDetector.FivegramLanguageModels[German] = FivegramLanguageModelForGerman;
+		LanguageDetector.FivegramLanguageModels[English] = new Lazy<Dictionary<string, double>>(FivegramLanguageModelForEnglish);
+		LanguageDetector.FivegramLanguageModels[German] = new Lazy<Dictionary<string, double>>(FivegramLanguageModelForGerman);
 	}
 
 	private void RemoveLanguageModelsFromDetector()

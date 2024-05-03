@@ -73,11 +73,11 @@ public sealed partial class LanguageDetector
 		["Éé"] = [Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Portuguese, Slovak, Spanish, Vietnamese, Yoruba],
 	};
 
-	internal static readonly Dictionary<Language, Dictionary<string, double>> UnigramLanguageModels = new();
-	internal static readonly Dictionary<Language, Dictionary<string, double>> BigramLanguageModels = new();
-	internal static readonly Dictionary<Language, Dictionary<string, double>> TrigramLanguageModels = new();
-	internal static readonly Dictionary<Language, Dictionary<string, double>> QuadrigramLanguageModels = new();
-	internal static readonly Dictionary<Language, Dictionary<string, double>> FivegramLanguageModels = new();
+	internal static readonly ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>> UnigramLanguageModels = new();
+	internal static readonly ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>> BigramLanguageModels = new();
+	internal static readonly ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>> TrigramLanguageModels = new();
+	internal static readonly ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>> QuadrigramLanguageModels = new();
+	internal static readonly ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>> FivegramLanguageModels = new();
 
 	private readonly HashSet<Language> _languages;
 	private readonly double _minimumRelativeDistance;
@@ -216,37 +216,22 @@ public sealed partial class LanguageDetector
 	/// </summary>
 	public void UnloadLanguageModels()
 	{
-		lock (TrigramLanguageModels)
-		{
-			foreach (var language in _languages)
-				TrigramLanguageModels.Remove(language);
-		}
+		foreach (var language in _languages)
+			TrigramLanguageModels.TryRemove(language, out _);
 
 		if (!_isLowAccuracyModeEnabled)
 		{
-			lock (UnigramLanguageModels)
-			{
-				foreach (var language in _languages)
-					UnigramLanguageModels.Remove(language);
-			}
+			foreach (var language in _languages)
+				UnigramLanguageModels.TryRemove(language, out _);
 
-			lock (BigramLanguageModels)
-			{
-				foreach (var language in _languages)
-					BigramLanguageModels.Remove(language);
-			}
+			foreach (var language in _languages)
+				BigramLanguageModels.TryRemove(language, out _);
 
-			lock (QuadrigramLanguageModels)
-			{
-				foreach (var language in _languages)
-					QuadrigramLanguageModels.Remove(language);
-			}
+			foreach (var language in _languages)
+				QuadrigramLanguageModels.TryRemove(language, out _);
 
-			lock (FivegramLanguageModels)
-			{
-				foreach (var language in _languages)
-					FivegramLanguageModels.Remove(language);
-			}
+			foreach (var language in _languages)
+				FivegramLanguageModels.TryRemove(language, out _);
 		}
 	}
 
@@ -380,16 +365,29 @@ public sealed partial class LanguageDetector
 	internal static double LookupNgramProbability(Language language, string ngram)
 	{
 		var ngramLength = ngram.Length;
-		var languageModels = ngramLength switch
+		ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>>? languageModels;
+		switch (ngramLength)
 		{
-			5 => FivegramLanguageModels,
-			4 => QuadrigramLanguageModels,
-			3 => TrigramLanguageModels,
-			2 => BigramLanguageModels,
-			1 => UnigramLanguageModels,
-			0 => throw new ArgumentException("Zerogram detected"),
-			_ => throw new ArgumentException($"unsupported ngram length detected: ${ngramLength}")
-		};
+			case 5:
+				languageModels = FivegramLanguageModels;
+				break;
+			case 4:
+				languageModels = QuadrigramLanguageModels;
+				break;
+			case 3:
+				languageModels = TrigramLanguageModels;
+				break;
+			case 2:
+				languageModels = BigramLanguageModels;
+				break;
+			case 1:
+				languageModels = UnigramLanguageModels;
+				break;
+			case 0:
+				throw new ArgumentException("Zerogram detected");
+			default:
+				throw new ArgumentException($"unsupported ngram length detected: ${ngramLength}");
+		}
 
 		var model = LoadLanguageModels(languageModels, language, ngramLength);
 		return model.GetValueOrDefault(ngram, 0);
@@ -428,21 +426,9 @@ public sealed partial class LanguageDetector
 		});
 	}
 
-	private static Dictionary<string, double> LoadLanguageModels(Dictionary<Language, Dictionary<string, double>> languageModels, Language language, int ngramLength)
-	{
-		lock (languageModels)
-		{
-			if (languageModels.TryGetValue(language, out var value))
-				return value;
-		}
-
-		var model = LoadLanguageModel(language, ngramLength);
-		lock (languageModels)
-		{
-			languageModels.TryAdd(language, model);
-			return model;
-		}
-	}
+	private static Dictionary<string, double> LoadLanguageModels(ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>> languageModels, Language language, int ngramLength) =>
+		languageModels.GetOrAdd(language, static (l, nl) =>
+			new Lazy<Dictionary<string, double>>(() => LoadLanguageModel(l, nl)), ngramLength).Value;
 
 	private static Dictionary<string, double> LoadLanguageModel(Language language, int ngramLength)
 	{
