@@ -8,7 +8,7 @@ namespace Lingua.AccuracyReport.Tests;
 /// <summary>
 /// Collects statistics for language detection for a given language.
 /// </summary>
-public class LanguageDetectionStatistics<TDetectorFactory>(IMessageSink messageSink) : IDisposable
+public class LanguageDetectionStatistics<TDetectorFactory> : IDisposable
 	where TDetectorFactory : ILanguageDetectorFactory, new()
 {
 	private readonly Dictionary<Language, int[]> _singleWordsStatistics = new();
@@ -49,11 +49,10 @@ public class LanguageDetectionStatistics<TDetectorFactory>(IMessageSink messageS
 		);
 
 		var statisticsReport = StatisticsReport();
-		messageSink.OnMessage(new DiagnosticMessage(statisticsReport));
-
 		Directory.CreateDirectory(accuracyReportsDirectoryPath);
 		File.WriteAllText(accuracyReportFilePath, statisticsReport);
 	}
+
 	private string StatisticsReport()
 	{
 		var newlines = new string('\n', 2);
@@ -89,7 +88,7 @@ public class LanguageDetectionStatistics<TDetectorFactory>(IMessageSink messageS
 
 		if (Factory.SupportsLowAccuracyMode)
 		{
-			report.AppendLine($"{newlines}Overall average accuracy");
+			report.AppendLine($"{newlines}Average accuracy");
 			report.AppendLine();
 			report.AppendLine("| Low Accuracy Mode | High Accuracy Mode |");
 			report.AppendLine("| ----------------- | ------------------ |");
@@ -98,7 +97,7 @@ public class LanguageDetectionStatistics<TDetectorFactory>(IMessageSink messageS
 		}
 		else
 		{
-			report.AppendLine($"{newlines}Overall average accuracy");
+			report.AppendLine($"{newlines}Average accuracy");
 			report.AppendLine();
 			report.AppendLine("| High Accuracy Mode |");
 			report.AppendLine("| ------------------ |");
@@ -158,7 +157,7 @@ public class LanguageDetectionStatistics<TDetectorFactory>(IMessageSink messageS
 		_sentenceLengthCount += sentence.Length;
 	}
 
-	private void ComputeStatistics(Dictionary<Language, int[]> statistics, string element)
+	private static void ComputeStatistics(Dictionary<Language, int[]> statistics, string element)
 	{
 		var detectedLanguageInHighAccuracyMode = HighAccuracyDetector.DetectLanguageOf(element);
 		var detectedLanguageInLowAccuracyMode = Factory.SupportsLowAccuracyMode
@@ -200,7 +199,7 @@ public class LanguageDetectionStatistics<TDetectorFactory>(IMessageSink messageS
 		string description)
 	{
 		var accuracies = statistics.GetValueOrDefault(Language, (0d, 0d));
-		var report = new StringBuilder($"### {Language} {description}");
+		var report = new StringBuilder($"###{Factory.Implementation}: {Language} {description}");
 		report.AppendLine();
 		report.AppendLine();
 		report.AppendLine($"Detection of {count} {description} (average length: {(int)((double)length / count)} chars)");
@@ -225,9 +224,13 @@ public class LanguageDetectionStatistics<TDetectorFactory>(IMessageSink messageS
 		if (errors)
 		{
 			report.AppendLine();
-			report.AppendLine("Erroneously classified as");
+			report.AppendLine("<details>");
+			report.AppendLine("<summary>Error details</summary>");
+			report.AppendLine();
+			report.AppendLine("Erroneously classified as:");
 			report.AppendLine();
 			FormatStatistics(statistics, Language, report);
+			report.AppendLine("</details>");
 		}
 
 		return (accuracies, report.ToString());

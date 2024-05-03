@@ -13,7 +13,7 @@ public static class CombinedAccuracyReport
 			writer.WriteLine($"# {name} Accuracy report");
 			writer.WriteLine();
 			writer.Flush();
-			foreach (var report in Directory.GetFiles(implementationDir))
+			foreach (var report in Directory.GetFiles(implementationDir).OrderBy(p => p))
 			{
 				using var reportStream = File.OpenRead(report);
 				reportStream.CopyTo(combinedResportStream);
