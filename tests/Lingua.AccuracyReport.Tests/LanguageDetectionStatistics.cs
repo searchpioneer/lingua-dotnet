@@ -1,8 +1,6 @@
-using System.Runtime.CompilerServices;
 using System.Text;
 using Xunit.Abstractions;
 using Xunit.Sdk;
-using LanguageDetection;
 
 namespace Lingua.AccuracyReport.Tests;
 
@@ -191,25 +189,25 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 		switch (Implementation)
 		{
 			case Implementation.Lingua:
-			{
-				var low = LinguaLanguageDetectorWithLowAccuracy.Value.DetectLanguageOf(element);
-				var high = LinguaLanguageDetectorWithHighAccuracy.Value.DetectLanguageOf(element);
-				detectedLanguages = (low, high);
-				break;
-			}
-			case Implementation.LanguageDetection:
-			{
-				var code = LanguageDetectorLanguageDetectorWithHighAccuracy.Value.Detect(element);
-				if (code is not null)
 				{
-					if (Enum.TryParse<IsoCode6393>(code, true, out var result))
-					{
-						var language = LanguageInfo.GetByIsoCode6393(result);
-						detectedLanguages = (language, language);
-					}
+					var low = LinguaLanguageDetectorWithLowAccuracy.Value.DetectLanguageOf(element);
+					var high = LinguaLanguageDetectorWithHighAccuracy.Value.DetectLanguageOf(element);
+					detectedLanguages = (low, high);
+					break;
 				}
-				break;
-			}
+			case Implementation.LanguageDetection:
+				{
+					var code = LanguageDetectorLanguageDetectorWithHighAccuracy.Value.Detect(element);
+					if (code is not null)
+					{
+						if (Enum.TryParse<IsoCode6393>(code, true, out var result))
+						{
+							var language = LanguageInfo.GetByIsoCode6393(result);
+							detectedLanguages = (language, language);
+						}
+					}
+					break;
+				}
 		};
 
 		var languageInLowAccuracyMode = detectedLanguages.Item1;
@@ -283,7 +281,8 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 		return (accuracies, report.ToString());
 	}
 
-	private string FormatStatistics(Dictionary<Language, (double, double)> statistics, Language language, StringBuilder builder)
+	private void FormatStatistics(Dictionary<Language, (double, double)> statistics, Language language,
+		StringBuilder builder)
 	{
 		var sorted = statistics
 			.Where(s => s.Key != language)
@@ -307,8 +306,6 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 			foreach (var statistic in sorted)
 				builder.AppendLine($"| {statistic.Key} | {FormatAccuracy(statistic.Value.Item2)} |");
 		}
-
-		return builder.ToString();
 	}
 
 	private static string FormatAccuracy(double value) => $"{value:0.00}%";

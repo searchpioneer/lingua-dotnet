@@ -1,4 +1,5 @@
 using System.CommandLine;
+using System.Text;
 using Bullseye;
 using static BuildTargets;
 using static Bullseye.Targets;
@@ -7,13 +8,26 @@ using static SimpleExec.Command;
 const string packOutput = "nuget";
 const string reportOutput = "accuracy-reports";
 
+
+var language = new Option<string[]>(["--language"], "languages to generate an accuracy report for")
+{
+	Arity = ArgumentArity.ZeroOrMore
+};
+
+var detector = new Option<string[]>(["--detector"], "detectors to generate an accuracy report for")
+{
+	Arity = ArgumentArity.ZeroOrMore,
+};
+
 var cmd = new RootCommand
 {
+	language,
+	detector,
 	new Argument<string[]>("targets")
 	{
 		Description =
 			"A list of targets to run or list. If not specified, the \"default\" target will be run, or all targets will be listed.",
-	},
+	}
 };
 
 foreach (var (aliases, description) in Options.Definitions)
@@ -22,7 +36,27 @@ foreach (var (aliases, description) in Options.Definitions)
 cmd.SetHandler(async () =>
 {
 	var cmdLine = cmd.Parse(args);
-	var targets = cmdLine.CommandResult.Tokens.Select(token => token.Value);
+	var tokens = cmdLine.CommandResult.Tokens.Select(token => token.Value).ToList();
+	var targets = new List<string>();
+	var seen = false;
+	var targetOptions = new List<string>();
+	foreach (var t in tokens)
+	{
+		if (seen)
+		{
+			targetOptions.Add(t);
+			continue;
+		}
+
+		if (t.StartsWith("-"))
+		{
+			seen = true;
+			targetOptions.Add(t);
+		}
+		else
+			targets.Add(t);
+	}
+
 	var options = new Options(Options.Definitions.Select(d => (d.Aliases[0],
 		cmdLine.GetValueForOption(cmd.Options.OfType<Option<bool>>().Single(o => o.HasAlias(d.Aliases[0]))))));
 
@@ -54,7 +88,47 @@ cmd.SetHandler(async () =>
 
 	Target(Report, DependsOn(CleanReportOutput, Build), () =>
 	{
-		Run("dotnet", "test tests/Lingua.AccuracyReport.Tests -c Release --no-build");
+		var filter = new StringBuilder();
+		var languages = cmdLine.GetValueForOption(language);
+		if (languages is not null)
+		{
+			foreach (var l in languages)
+			{
+				if (filter.Length > 0)
+					filter.Append(" & ");
+
+				filter.Append("(FullyQualifiedName~");
+				filter.Append(l);
+				filter.Append(')');
+			}
+		}
+
+		var detectors = cmdLine.GetValueForOption(detector);
+		if (detectors is not null)
+		{
+			foreach (var d in detectors)
+			{
+				if (filter.Length > 0)
+					filter.Append(" & ");
+
+				filter.Append("(FullyQualifiedName~.");
+				filter.Append(d);
+				filter.Append(')');
+			}
+		}
+
+		Run("dotnet",
+			filter.Length > 0
+				? $"test tests/Lingua.AccuracyReport.Tests -c Release --no-build --filter \"{filter}\""
+				: "test tests/Lingua.AccuracyReport.Tests -c Release --no-build");
+	});
+
+	Target(Benchmark, () =>
+	{
+		if (targetOptions.Count != 0)
+			Run("dotnet", "run --project tests/Lingua.Benchmarks -c Release " + string.Join(' ', targetOptions));
+		else
+			Run("dotnet", "run --project tests/Lingua.Benchmarks -c Release");
 	});
 
 	Target(CleanReportOutput, () =>
@@ -97,4 +171,5 @@ internal static class BuildTargets
 	public const string Format = "format";
 	public const string Pack = "pack";
 	public const string Report = "report";
+	public const string Benchmark = "benchmark";
 }
