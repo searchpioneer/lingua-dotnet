@@ -3,9 +3,9 @@ using static Lingua.Language;
 
 namespace Lingua.AccuracyReport.Tests.LanguageDetectionTests;
 
-public class PersianDetectionAccuracyReport(LanguageDetectionStatistics statistics)
-	: AbstractLanguageDetectionAccuracyReport(Persian, Implementation.LanguageDetection, statistics),
-		IClassFixture<LanguageDetectionStatistics>
+public class PersianDetectionAccuracyReport(LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory> statistics)
+	: LanguageDetectionLanguageDetectionAccuracyReport(Persian, statistics),
+		IClassFixture<LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory>>
 {
 	[Theory(DisplayName = "single word detection")]
 	[SingleWordData(Persian)]

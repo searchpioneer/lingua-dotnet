@@ -3,9 +3,9 @@ using static Lingua.Language;
 
 namespace Lingua.AccuracyReport.Tests.LanguageDetectionTests;
 
-public class TamilDetectionAccuracyReport(LanguageDetectionStatistics statistics)
-	: AbstractLanguageDetectionAccuracyReport(Tamil, Implementation.LanguageDetection, statistics),
-		IClassFixture<LanguageDetectionStatistics>
+public class TamilDetectionAccuracyReport(LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory> statistics)
+	: LanguageDetectionLanguageDetectionAccuracyReport(Tamil, statistics),
+		IClassFixture<LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory>>
 {
 	[Theory(DisplayName = "single word detection")]
 	[SingleWordData(Tamil)]

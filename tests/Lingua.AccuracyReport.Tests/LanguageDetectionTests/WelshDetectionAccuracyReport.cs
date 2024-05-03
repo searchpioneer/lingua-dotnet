@@ -3,9 +3,9 @@ using static Lingua.Language;
 
 namespace Lingua.AccuracyReport.Tests.LanguageDetectionTests;
 
-public class WelshDetectionAccuracyReport(LanguageDetectionStatistics statistics)
-	: AbstractLanguageDetectionAccuracyReport(Welsh, Implementation.LanguageDetection, statistics),
-		IClassFixture<LanguageDetectionStatistics>
+public class WelshDetectionAccuracyReport(LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory> statistics)
+	: LanguageDetectionLanguageDetectionAccuracyReport(Welsh, statistics),
+		IClassFixture<LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory>>
 {
 	[Theory(DisplayName = "single word detection")]
 	[SingleWordData(Welsh)]

@@ -3,9 +3,9 @@ using static Lingua.Language;
 
 namespace Lingua.AccuracyReport.Tests.Lingua;
 
-public class JapaneseDetectionAccuracyReport(LanguageDetectionStatistics statistics)
-	: AbstractLanguageDetectionAccuracyReport(Japanese, Implementation.Lingua, statistics),
-		IClassFixture<LanguageDetectionStatistics>
+public class JapaneseDetectionAccuracyReport(LanguageDetectionStatistics<LinguaLanguageDetectorFactory> statistics)
+	: LinguaDetectionAccuracyReport(Japanese, statistics),
+		IClassFixture<LanguageDetectionStatistics<LinguaLanguageDetectorFactory>>
 {
 	[Theory(DisplayName = "single word detection")]
 	[SingleWordData(Japanese)]

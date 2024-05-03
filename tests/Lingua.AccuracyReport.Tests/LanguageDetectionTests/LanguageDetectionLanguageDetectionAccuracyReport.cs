@@ -1,0 +1,6 @@
+namespace Lingua.AccuracyReport.Tests.LanguageDetectionTests;
+
+public abstract class LanguageDetectionLanguageDetectionAccuracyReport(
+	Language language,
+	LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory> statistics)
+	: AbstractLanguageDetectionAccuracyReport<LanguageDetectionLanguageDetectorFactory>(language, statistics);

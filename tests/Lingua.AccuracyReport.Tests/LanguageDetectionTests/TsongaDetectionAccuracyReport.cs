@@ -3,9 +3,9 @@ using static Lingua.Language;
 
 namespace Lingua.AccuracyReport.Tests.LanguageDetectionTests;
 
-public class TsongaDetectionAccuracyReport(LanguageDetectionStatistics statistics)
-	: AbstractLanguageDetectionAccuracyReport(Tsonga, Implementation.LanguageDetection, statistics),
-		IClassFixture<LanguageDetectionStatistics>
+public class TsongaDetectionAccuracyReport(LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory> statistics)
+	: LanguageDetectionLanguageDetectionAccuracyReport(Tsonga, statistics),
+		IClassFixture<LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory>>
 {
 	[Theory(DisplayName = "single word detection")]
 	[SingleWordData(Tsonga)]

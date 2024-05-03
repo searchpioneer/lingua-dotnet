@@ -3,9 +3,9 @@ using static Lingua.Language;
 
 namespace Lingua.AccuracyReport.Tests.Lingua;
 
-public class CroatianDetectionAccuracyReport(LanguageDetectionStatistics statistics)
-	: AbstractLanguageDetectionAccuracyReport(Croatian, Implementation.Lingua, statistics),
-		IClassFixture<LanguageDetectionStatistics>
+public class CroatianDetectionAccuracyReport(LanguageDetectionStatistics<LinguaLanguageDetectorFactory> statistics)
+	: LinguaDetectionAccuracyReport(Croatian, statistics),
+		IClassFixture<LanguageDetectionStatistics<LinguaLanguageDetectorFactory>>
 {
 	[Theory(DisplayName = "single word detection")]
 	[SingleWordData(Croatian)]

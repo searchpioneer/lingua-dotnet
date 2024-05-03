@@ -14,10 +14,9 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-      - name: Build
+      - name: Build Accuracy Report
         run: ./build.sh report
-      - name: Accuracy Report
+      - name: Write Summary
         run: |
-          echo "# Lingua Language Accuracy report" >> $GITHUB_STEP_SUMMARY
-          cat accuracy-reports/lingua/*.md >> $GITHUB_STEP_SUMMARY
+          cat accuracy-reports/report.md >> $GITHUB_STEP_SUMMARY
           

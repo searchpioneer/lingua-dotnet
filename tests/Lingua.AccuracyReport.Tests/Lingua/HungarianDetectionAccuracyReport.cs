@@ -3,9 +3,9 @@ using static Lingua.Language;
 
 namespace Lingua.AccuracyReport.Tests.Lingua;
 
-public class HungarianDetectionAccuracyReport(LanguageDetectionStatistics statistics)
-	: AbstractLanguageDetectionAccuracyReport(Hungarian, Implementation.Lingua, statistics),
-		IClassFixture<LanguageDetectionStatistics>
+public class HungarianDetectionAccuracyReport(LanguageDetectionStatistics<LinguaLanguageDetectorFactory> statistics)
+	: LinguaDetectionAccuracyReport(Hungarian, statistics),
+		IClassFixture<LanguageDetectionStatistics<LinguaLanguageDetectorFactory>>
 {
 	[Theory(DisplayName = "single word detection")]
 	[SingleWordData(Hungarian)]

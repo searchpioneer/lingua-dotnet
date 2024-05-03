@@ -3,9 +3,9 @@ using static Lingua.Language;
 
 namespace Lingua.AccuracyReport.Tests.Lingua;
 
-public class OromoDetectionAccuracyReport(LanguageDetectionStatistics statistics)
-	: AbstractLanguageDetectionAccuracyReport(Oromo, Implementation.Lingua, statistics),
-		IClassFixture<LanguageDetectionStatistics>
+public class OromoDetectionAccuracyReport(LanguageDetectionStatistics<LinguaLanguageDetectorFactory> statistics)
+	: LinguaDetectionAccuracyReport(Oromo, statistics),
+		IClassFixture<LanguageDetectionStatistics<LinguaLanguageDetectorFactory>>
 {
 	[Theory(DisplayName = "single word detection")]
 	[SingleWordData(Oromo)]

@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.Text;
+using Build;
 using Bullseye;
 using static BuildTargets;
 using static Bullseye.Targets;
@@ -7,7 +8,6 @@ using static SimpleExec.Command;
 
 const string packOutput = "nuget";
 const string reportOutput = "accuracy-reports";
-
 
 var language = new Option<string[]>(["--language"], "languages to generate an accuracy report for")
 {
@@ -76,17 +76,17 @@ cmd.SetHandler(async () =>
 		Run("dotnet", "format");
 	});
 
-	Target(Build, DependsOn(CleanBuildOutput, Format), () =>
+	Target(BuildSln, DependsOn(CleanBuildOutput, Format), () =>
 	{
 		Run("dotnet", "build -c Release --nologo");
 	});
 
-	Target(Test, DependsOn(Build), () =>
+	Target(Test, DependsOn(BuildSln), () =>
 	{
 		Run("dotnet", "test tests/Lingua.Tests -c Release --no-build  --verbosity normal");
 	});
 
-	Target(Report, DependsOn(CleanReportOutput, Build), () =>
+	Target(Report, DependsOn(CleanReportOutput, BuildSln), () =>
 	{
 		var filter = new StringBuilder();
 		var languages = cmdLine.GetValueForOption(language);
@@ -121,6 +121,8 @@ cmd.SetHandler(async () =>
 			filter.Length > 0
 				? $"test tests/Lingua.AccuracyReport.Tests -c Release --no-build --filter \"{filter}\""
 				: "test tests/Lingua.AccuracyReport.Tests -c Release --no-build");
+
+		CombinedAccuracyReport.Create();
 	});
 
 	Target(Benchmark, () =>
@@ -145,7 +147,7 @@ cmd.SetHandler(async () =>
 
 	Target(Clean, DependsOn(CleanBuildOutput, CleanReportOutput, CleanPackOutput));
 
-	Target(Pack, DependsOn(Build, CleanPackOutput), () =>
+	Target(Pack, DependsOn(BuildSln, CleanPackOutput), () =>
 	{
 		var outputDir = Directory.CreateDirectory(packOutput);
 		Run("dotnet", $"pack -c Release -o \"{outputDir.FullName}\" --no-build --nologo");
@@ -164,7 +166,7 @@ internal static class BuildTargets
 	public const string CleanPackOutput = "clean-pack-output";
 	public const string CleanReportOutput = "clean-report-output";
 	public const string Clean = "clean";
-	public const string Build = "build";
+	public const string BuildSln = "build";
 	public const string Test = "test";
 	public const string Default = "default";
 	public const string Restore = "restore";

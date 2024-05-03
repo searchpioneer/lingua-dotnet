@@ -3,9 +3,9 @@ using static Lingua.Language;
 
 namespace Lingua.AccuracyReport.Tests.Lingua;
 
-public class IcelandicDetectionAccuracyReport(LanguageDetectionStatistics statistics)
-	: AbstractLanguageDetectionAccuracyReport(Icelandic, Implementation.Lingua, statistics),
-		IClassFixture<LanguageDetectionStatistics>
+public class IcelandicDetectionAccuracyReport(LanguageDetectionStatistics<LinguaLanguageDetectorFactory> statistics)
+	: LinguaDetectionAccuracyReport(Icelandic, statistics),
+		IClassFixture<LanguageDetectionStatistics<LinguaLanguageDetectorFactory>>
 {
 	[Theory(DisplayName = "single word detection")]
 	[SingleWordData(Icelandic)]

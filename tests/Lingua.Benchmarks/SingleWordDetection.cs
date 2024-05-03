@@ -1,13 +1,9 @@
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Diagnostics.dotTrace;
 
 namespace Lingua.Benchmarks;
 
-[MemoryDiagnoser]
-[DotTraceDiagnoser]
 public class SingleWordDetection
 {
-	private readonly string _data = "languages are awesome";
 	private readonly LanguageDetector _linguaLanguageDetector;
 	private readonly LanguageDetection.LanguageDetector _languageDetectionLanguageDetector;
 
@@ -30,6 +26,7 @@ public class SingleWordDetection
 				languages.Add(LanguageInfo.GetByIsoCode6393(result));
 			else if (language == "nor")
 			{
+				// Norwegian languages
 				languages.Add(Language.Nynorsk);
 				languages.Add(Language.Bokmal);
 			}
@@ -52,9 +49,13 @@ public class SingleWordDetection
 			.Build();
 	}
 
+	[Params("ialomiţa", "pohľade", "ґрунтовому", "cằm")]
+	// ReSharper disable once UnassignedField.Global
+	public string? Text;
+
 	[Benchmark(Baseline = true)]
-	public Language Lingua() => _linguaLanguageDetector.DetectLanguageOf(_data);
+	public Language Lingua() => _linguaLanguageDetector.DetectLanguageOf(Text!);
 
 	[Benchmark]
-	public string LanguageDetection() => _languageDetectionLanguageDetector.Detect(_data);
+	public string LanguageDetection() => _languageDetectionLanguageDetector.Detect(Text!);
 }

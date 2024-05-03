@@ -1,8 +1,8 @@
 namespace Lingua.AccuracyReport.Tests;
 
-public abstract class AbstractLanguageDetectionAccuracyReport
+public abstract class AbstractLanguageDetectionAccuracyReport<TDetectorFactory> where TDetectorFactory : ILanguageDetectorFactory, new()
 {
-	private readonly LanguageDetectionStatistics _statistics;
+	private readonly LanguageDetectionStatistics<TDetectorFactory> _statistics;
 
 	public abstract void SingleWordsAreIdentifiedCorrectly(string singleWord);
 	public abstract void WordPairsAreIdentifiedCorrectly(string wordPair);
@@ -10,12 +10,10 @@ public abstract class AbstractLanguageDetectionAccuracyReport
 
 	protected AbstractLanguageDetectionAccuracyReport(
 		Language language,
-		Implementation implementation,
-		LanguageDetectionStatistics statistics)
+		LanguageDetectionStatistics<TDetectorFactory> statistics)
 	{
 		_statistics = statistics;
 		_statistics.Language = language;
-		_statistics.Implementation = implementation;
 	}
 
 	protected void ComputeSingleWordStatistics(string singleWord) =>

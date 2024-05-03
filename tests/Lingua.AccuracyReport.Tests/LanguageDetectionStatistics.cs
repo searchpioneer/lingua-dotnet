@@ -8,65 +8,40 @@ namespace Lingua.AccuracyReport.Tests;
 /// <summary>
 /// Collects statistics for language detection for a given language.
 /// </summary>
-public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
+public class LanguageDetectionStatistics<TDetectorFactory>(IMessageSink messageSink) : IDisposable
+	where TDetectorFactory : ILanguageDetectorFactory, new()
 {
-	private static readonly Lazy<string> LazyRoot = new(FindSolutionRoot);
-	private static string Root => LazyRoot.Value;
-
-	private static readonly Language[] Languages = LanguageInfo.All().ToArray();
-
-	private static readonly Lazy<LanguageDetector> LinguaLanguageDetectorWithLowAccuracy = new(() =>
-		LanguageDetectorBuilder.FromLanguages(Languages)
-			.WithLowAccuracyMode()
-			.Build());
-
-	private static readonly Lazy<LanguageDetector> LinguaLanguageDetectorWithHighAccuracy = new(() =>
-		LanguageDetectorBuilder.FromLanguages(Languages)
-			.Build());
-
-	private static readonly Lazy<LanguageDetection.LanguageDetector> LanguageDetectorLanguageDetectorWithHighAccuracy = new(() =>
-	{
-		var detector = new LanguageDetection.LanguageDetector();
-		detector.AddAllLanguages();
-		return detector;
-	});
-
-	private readonly Dictionary<Language, (int, int)> _singleWordsStatistics = new();
-	private readonly Dictionary<Language, (int, int)> _wordPairsStatistics = new();
-	private readonly Dictionary<Language, (int, int)> _sentencesStatistics = new();
+	private readonly Dictionary<Language, int[]> _singleWordsStatistics = new();
+	private readonly Dictionary<Language, int[]> _wordPairsStatistics = new();
+	private readonly Dictionary<Language, int[]> _sentencesStatistics = new();
 	private int _wordCount;
 	private int _wordPairCount;
 	private int _sentenceCount;
 	private int _wordLengthCount;
 	private int _wordPairLengthCount;
 	private int _sentenceLengthCount;
+	private static readonly TDetectorFactory Factory;
+
+	// intentional to have different detectors stored per closed generic type of TDetectorFactory
+	// ReSharper disable StaticMemberInGenericType
+	private static readonly ILanguageDetector LowAccuracyDetector;
+	private static readonly ILanguageDetector HighAccuracyDetector;
+	// ReSharper restore StaticMemberInGenericType
 
 	public Language Language { get; set; }
-	public Implementation Implementation { get; set; }
 
-	private static string FindSolutionRoot()
+	static LanguageDetectionStatistics()
 	{
-		var linguaSln = "Lingua.sln";
-		var startDir = Directory.GetCurrentDirectory();
-		var currentDirectory = new DirectoryInfo(startDir);
-		do
-		{
-			if (File.Exists(Path.Combine(currentDirectory.FullName, linguaSln)))
-				return currentDirectory.FullName;
-
-			currentDirectory = currentDirectory.Parent;
-		} while (currentDirectory != null);
-
-		throw new InvalidOperationException(
-			$"Could not find solution root directory from the current directory {startDir}");
+		Factory = new TDetectorFactory();
+		(LowAccuracyDetector, HighAccuracyDetector) = Factory.Create();
 	}
 
 	public void Dispose()
 	{
 		var accuracyReportsDirectoryPath = Path.Combine(
-			Root,
+			SolutionPaths.Root,
 			"accuracy-reports",
-			Implementation.ToString().ToLowerInvariant()
+			Factory.Implementation.ToString()
 		);
 		var accuracyReportFilePath = Path.Combine(
 			accuracyReportsDirectoryPath,
@@ -112,7 +87,7 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 		var averageAccuracyInHighAccuracyMode =
 			(singleWordAccuracies.HighAccuracy + wordPairAccuracies.HighAccuracy + sentenceAccuracies.HighAccuracy) / 3;
 
-		if (Implementation == Implementation.Lingua)
+		if (Factory.SupportsLowAccuracyMode)
 		{
 			report.AppendLine($"{newlines}Overall average accuracy");
 			report.AppendLine();
@@ -144,18 +119,18 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 				report.Append($"{newlines}{reportPart}");
 		}
 
-		report.Append($"{newlines}> Exact values:");
-		if (Implementation == Implementation.Lingua)
+		report.Append($"{newlines}<!-- Exact values:");
+		if (Factory.SupportsLowAccuracyMode)
 		{
 			report.Append($" {averageAccuracyInLowAccuracyMode} {singleWordAccuracies.LowAccuracy} " +
 						  $"{wordPairAccuracies.LowAccuracy} {sentenceAccuracies.LowAccuracy}");
 			report.AppendLine($" {averageAccuracyInHighAccuracyMode} {singleWordAccuracies.HighAccuracy} " +
-						  $"{wordPairAccuracies.HighAccuracy} {sentenceAccuracies.HighAccuracy}");
+						  $"{wordPairAccuracies.HighAccuracy} {sentenceAccuracies.HighAccuracy} -->");
 		}
 		else
 		{
 			report.AppendLine($" {averageAccuracyInHighAccuracyMode} {singleWordAccuracies.HighAccuracy} " +
-						  $"{wordPairAccuracies.HighAccuracy} {sentenceAccuracies.HighAccuracy}");
+						  $"{wordPairAccuracies.HighAccuracy} {sentenceAccuracies.HighAccuracy} -->");
 		}
 
 		report.AppendLine();
@@ -183,56 +158,33 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 		_sentenceLengthCount += sentence.Length;
 	}
 
-	private void ComputeStatistics(Dictionary<Language, (int, int)> statistics, string element)
+	private void ComputeStatistics(Dictionary<Language, int[]> statistics, string element)
 	{
-		var detectedLanguages = (Language.Unknown, Language.Unknown);
-		switch (Implementation)
-		{
-			case Implementation.Lingua:
-				{
-					var low = LinguaLanguageDetectorWithLowAccuracy.Value.DetectLanguageOf(element);
-					var high = LinguaLanguageDetectorWithHighAccuracy.Value.DetectLanguageOf(element);
-					detectedLanguages = (low, high);
-					break;
-				}
-			case Implementation.LanguageDetection:
-				{
-					var code = LanguageDetectorLanguageDetectorWithHighAccuracy.Value.Detect(element);
-					if (code is not null)
-					{
-						if (Enum.TryParse<IsoCode6393>(code, true, out var result))
-						{
-							var language = LanguageInfo.GetByIsoCode6393(result);
-							detectedLanguages = (language, language);
-						}
-					}
-					break;
-				}
-		};
+		var detectedLanguageInHighAccuracyMode = HighAccuracyDetector.DetectLanguageOf(element);
+		var detectedLanguageInLowAccuracyMode = Factory.SupportsLowAccuracyMode
+			? LowAccuracyDetector.DetectLanguageOf(element)
+			: detectedLanguageInHighAccuracyMode;
 
-		var languageInLowAccuracyMode = detectedLanguages.Item1;
-		var languageInHighAccuracyMode = detectedLanguages.Item2;
+		var languageCounts = statistics.GetValueOrDefault(detectedLanguageInLowAccuracyMode, [0, 0]);
+		languageCounts[0]++;
+		statistics[detectedLanguageInLowAccuracyMode] = languageCounts;
 
-		var languageCounts = statistics.GetValueOrDefault(languageInLowAccuracyMode, (0, 0));
-		languageCounts = (languageCounts.Item1 + 1, languageCounts.Item2);
-		statistics[languageInLowAccuracyMode] = languageCounts;
-
-		languageCounts = statistics.GetValueOrDefault(languageInHighAccuracyMode, (0, 0));
-		languageCounts = (languageCounts.Item1, languageCounts.Item2 + 1);
-		statistics[languageInHighAccuracyMode] = languageCounts;
+		languageCounts = statistics.GetValueOrDefault(detectedLanguageInHighAccuracyMode, [0, 0]);
+		languageCounts[1]++;
+		statistics[detectedLanguageInHighAccuracyMode] = languageCounts;
 	}
 
-	private static Dictionary<Language, (double LowAccuracy, double HighAccuracy)> MapCountsToAccuracies(Dictionary<Language, (int, int)> statistics)
+	private static Dictionary<Language, (double LowAccuracy, double HighAccuracy)> MapCountsToAccuracies(Dictionary<Language, int[]> statistics)
 	{
-		var sumOfCountsInLowAccuracyMode = statistics.Values.Sum(pair => pair.Item1);
-		var sumOfCountsInHighAccuracyMode = statistics.Values.Sum(pair => pair.Item2);
+		var sumOfCountsInLowAccuracyMode = statistics.Values.Sum(values => values[0]);
+		var sumOfCountsInHighAccuracyMode = statistics.Values.Sum(values => values[1]);
 
 		return statistics.ToDictionary(
 			kvp => kvp.Key,
 			kvp =>
 			{
-				var lowAccuracy = ComputeAccuracy(kvp.Value.Item1, sumOfCountsInLowAccuracyMode);
-				var highAccuracy = ComputeAccuracy(kvp.Value.Item2, sumOfCountsInHighAccuracyMode);
+				var lowAccuracy = ComputeAccuracy(kvp.Value[0], sumOfCountsInLowAccuracyMode);
+				var highAccuracy = ComputeAccuracy(kvp.Value[1], sumOfCountsInHighAccuracyMode);
 				return (lowAccuracy, highAccuracy);
 			}
 		);
@@ -255,7 +207,7 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 		report.AppendLine();
 
 		bool errors;
-		if (Implementation == Implementation.Lingua)
+		if (Factory.SupportsLowAccuracyMode)
 		{
 			report.AppendLine("| Low Accuracy Mode | High Accuracy Mode |");
 			report.AppendLine("| ----------------- | ------------------ |");
@@ -281,7 +233,7 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 		return (accuracies, report.ToString());
 	}
 
-	private void FormatStatistics(Dictionary<Language, (double, double)> statistics, Language language,
+	private static void FormatStatistics(Dictionary<Language, (double, double)> statistics, Language language,
 		StringBuilder builder)
 	{
 		var sorted = statistics
@@ -289,7 +241,7 @@ public class LanguageDetectionStatistics(IMessageSink messageSink) : IDisposable
 			.OrderByDescending(s => s.Value.Item2)
 			.ToList();
 
-		if (Implementation == Implementation.Lingua)
+		if (Factory.SupportsLowAccuracyMode)
 		{
 			builder.AppendLine("| Language | Low Accuracy Mode | High Accuracy Mode |");
 			builder.AppendLine("| -------- | ----------------- | ------------------ |");
