@@ -11,6 +11,22 @@ namespace Lingua.AccuracyReport.Tests;
 public class LanguageDetectionStatistics<TDetectorFactory> : IDisposable
 	where TDetectorFactory : ILanguageDetectorFactory, new()
 {
+	private static readonly TDetectorFactory Factory;
+	// intentional to have different detectors stored per closed generic type of TDetectorFactory
+	// ReSharper disable StaticMemberInGenericType
+	private static readonly ILanguageDetector LowAccuracyDetector;
+	private static readonly ILanguageDetector HighAccuracyDetector;
+	// ReSharper restore StaticMemberInGenericType
+
+	private static string Implementation => Factory.Implementation.ToString();
+	private static string ImplementationLowercase => Implementation.ToLowerInvariant();
+
+	static LanguageDetectionStatistics()
+	{
+		Factory = new TDetectorFactory();
+		(LowAccuracyDetector, HighAccuracyDetector) = Factory.Create();
+	}
+
 	private readonly Dictionary<Language, int[]> _singleWordsStatistics = new();
 	private readonly Dictionary<Language, int[]> _wordPairsStatistics = new();
 	private readonly Dictionary<Language, int[]> _sentencesStatistics = new();
@@ -20,21 +36,8 @@ public class LanguageDetectionStatistics<TDetectorFactory> : IDisposable
 	private int _wordLengthCount;
 	private int _wordPairLengthCount;
 	private int _sentenceLengthCount;
-	private static readonly TDetectorFactory Factory;
-
-	// intentional to have different detectors stored per closed generic type of TDetectorFactory
-	// ReSharper disable StaticMemberInGenericType
-	private static readonly ILanguageDetector LowAccuracyDetector;
-	private static readonly ILanguageDetector HighAccuracyDetector;
-	// ReSharper restore StaticMemberInGenericType
 
 	public Language Language { get; set; }
-
-	static LanguageDetectionStatistics()
-	{
-		Factory = new TDetectorFactory();
-		(LowAccuracyDetector, HighAccuracyDetector) = Factory.Create();
-	}
 
 	public void Dispose()
 	{
@@ -53,10 +56,13 @@ public class LanguageDetectionStatistics<TDetectorFactory> : IDisposable
 		File.WriteAllText(accuracyReportFilePath, statisticsReport);
 	}
 
+	private static string Anchor(string text, string id) => $"<a id=\"{id}\">{text}</a>";
+
 	private string StatisticsReport()
 	{
 		var newlines = new string('\n', 2);
-		var report = new StringBuilder($"## {Language}");
+		var language = Language.ToString();
+		var report = new StringBuilder($"## {Anchor(language, $"{ImplementationLowercase}-{language.ToLowerInvariant()}")}");
 
 		var singleWordsAccuracyvalues = MapCountsToAccuracies(_singleWordsStatistics);
 		var wordPairsAccuracyvalues = MapCountsToAccuracies(_wordPairsStatistics);
@@ -199,7 +205,7 @@ public class LanguageDetectionStatistics<TDetectorFactory> : IDisposable
 		string description)
 	{
 		var accuracies = statistics.GetValueOrDefault(Language, (0d, 0d));
-		var report = new StringBuilder($"###{Factory.Implementation}: {Language} {description}");
+		var report = new StringBuilder($"### {Factory.Implementation}: {Language} {description}");
 		report.AppendLine();
 		report.AppendLine();
 		report.AppendLine($"Detection of {count} {description} (average length: {(int)((double)length / count)} chars)");
