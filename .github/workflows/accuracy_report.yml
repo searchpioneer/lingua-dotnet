@@ -2,6 +2,15 @@ name: Accuracy Report
 
 on:
   workflow_dispatch:
+    inputs: 
+      lingua:
+        type: boolean
+        default: true
+        description: "Generate accuracy report for Lingua library?"
+      language_detection:
+        type: boolean
+        default: true
+        description: "Generate accuracy report for LanguageDetection library?"  
 
 jobs:
   report:
@@ -15,7 +24,7 @@ jobs:
         with:
           dotnet-version: 8.0.x
       - name: Build Accuracy Report
-        run: ./build.sh report
+        run: ./build.sh report ${{ inputs.lingua && '--implementation Lingua' || '' }} ${{ inputs.language_detection && '--implementation LanguageDetection' || '' }}
       - name: Write Summary
         run: |
           cat accuracy-reports/report.md >> $GITHUB_STEP_SUMMARY

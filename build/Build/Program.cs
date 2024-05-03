@@ -14,7 +14,7 @@ var language = new Option<string[]>(["--language"], "languages to generate an ac
 	Arity = ArgumentArity.ZeroOrMore
 };
 
-var detector = new Option<string[]>(["--detector"], "detectors to generate an accuracy report for")
+var detector = new Option<string[]>(["--implementation"], "implementations to generate an accuracy report for")
 {
 	Arity = ArgumentArity.ZeroOrMore,
 };
