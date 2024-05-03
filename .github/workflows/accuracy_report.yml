@@ -6,11 +6,11 @@ on:
       lingua:
         type: boolean
         default: true
-        description: "Generate accuracy report for Lingua library?"
+        description: "include Lingua library?"
       language_detection:
         type: boolean
         default: true
-        description: "Generate accuracy report for LanguageDetection library?"  
+        description: "include LanguageDetection library?"  
 
 jobs:
   report:
