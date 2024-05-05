@@ -44,7 +44,7 @@ public class LanguageDetectionStatistics<TDetectorFactory> : IDisposable
 		var accuracyReportsDirectoryPath = Path.Combine(
 			SolutionPaths.Root,
 			"accuracy-reports",
-			Factory.Implementation.ToString()
+			Implementation
 		);
 		var accuracyReportFilePath = Path.Combine(
 			accuracyReportsDirectoryPath,

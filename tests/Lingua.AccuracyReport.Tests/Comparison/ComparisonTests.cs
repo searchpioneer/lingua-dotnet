@@ -7,12 +7,12 @@ namespace Lingua.AccuracyReport.Tests.Comparison;
 public class ComparisonTests
 {
 	private readonly LanguageDetector _linguaDetector;
-	private readonly LanguageDetection.LanguageDetector _languageDetectionDetector;
+	private readonly global::LanguageDetection.LanguageDetector _languageDetectionDetector;
 
 	public ComparisonTests()
 	{
 		_linguaDetector = LanguageDetectorBuilder.FromAllLanguages().WithPreloadedLanguageModels().Build();
-		_languageDetectionDetector = new LanguageDetection.LanguageDetector();
+		_languageDetectionDetector = new global::LanguageDetection.LanguageDetector();
 		_languageDetectionDetector.AddAllLanguages();
 	}
 

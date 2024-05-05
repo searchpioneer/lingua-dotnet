@@ -1,6 +1,6 @@
 namespace Lingua.AccuracyReport.Tests;
 
-public class LanguageDetectionLanguageDetector(LanguageDetection.LanguageDetector detector) : ILanguageDetector
+public class LanguageDetectionLanguageDetector(global::LanguageDetection.LanguageDetector detector) : ILanguageDetector
 {
 	public Language DetectLanguageOf(string text)
 	{

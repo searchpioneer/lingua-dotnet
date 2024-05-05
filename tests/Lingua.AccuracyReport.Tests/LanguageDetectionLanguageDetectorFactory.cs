@@ -7,7 +7,7 @@ public class LanguageDetectionLanguageDetectorFactory : ILanguageDetectorFactory
 
 	public (ILanguageDetector lowAccuracyDetector, ILanguageDetector highAccuracyDetector) Create()
 	{
-		var detector = new LanguageDetection.LanguageDetector();
+		var detector = new global::LanguageDetection.LanguageDetector();
 		detector.AddAllLanguages();
 		var languageDetectionLanguageDetector = new LanguageDetectionLanguageDetector(detector);
 		return (languageDetectionLanguageDetector, languageDetectionLanguageDetector);
