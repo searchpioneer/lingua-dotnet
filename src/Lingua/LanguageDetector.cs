@@ -85,6 +85,9 @@ public sealed partial class LanguageDetector
 	private readonly Dictionary<Alphabet, Language> _oneLanguageAlphabets;
 	private readonly IEnumerable<Language> _languagesWithUniqueCharacters;
 
+	private static readonly int[] LowAccuracyRange = [3];
+	private static readonly int[] HighAccuracyRange = [1, 2, 3, 4, 5];
+
 	internal LanguageDetector(
 		HashSet<Language> languages,
 		double minimumRelativeDistance = 0,
@@ -177,8 +180,8 @@ public sealed partial class LanguageDetector
 			return values;
 
 		var ngramSizeRange = (cleanedUpText.Length >= HighAccuracyModeMaxTextLength || _isLowAccuracyModeEnabled
-			? Enumerable.Range(3, 1)
-			: Enumerable.Range(1, 5))
+			? LowAccuracyRange
+			: HighAccuracyRange)
 			.Where(r => cleanedUpText.Length >= r)
 			.ToArray();
 
@@ -396,8 +399,8 @@ public sealed partial class LanguageDetector
 	private void PreloadLanguageModels()
 	{
 		var range = _isLowAccuracyModeEnabled
-			? Enumerable.Range(3, 1)
-			: Enumerable.Range(1, 5);
+			? LowAccuracyRange
+			: HighAccuracyRange;
 
 		var languagesAndRange =
 			_languages.SelectMany(language => range.Select(ngramLength => (language, ngramLength)));
