@@ -109,7 +109,7 @@ public class LanguageDetectorBuilder
 	/// dependent on the length of the input text. The longer the input
 	/// text, the larger the distance between the languages. So if you
 	/// want to classify very short text phrases, do not set the minimum
-	/// relative distance too high. Otherwise you will get most results
+	/// relative distance too high. Otherwise, you will get most results
 	/// returned as <see cref="Language.Unknown"/> which is the return value for cases
 	/// where language detection is not reliably possible.
 	/// </summary>
@@ -162,7 +162,7 @@ public class LanguageDetectorBuilder
 	/// Builds a new instance of <see cref="Lingua.LanguageDetector"/>.
 	/// </summary>
 	/// <returns>a new instance of <see cref="Lingua.LanguageDetector"/></returns>
-	public Lingua.LanguageDetector Build() =>
+	public LanguageDetector Build() =>
 		new(_languages,
 			_minimumRelativeDistance,
 			_isEveryLanguageModelPreloaded,

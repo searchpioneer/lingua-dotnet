@@ -488,11 +488,14 @@ public sealed partial class LanguageDetector
 		foreach (var (characters, languages) in CharsToLanguagesMapping)
 		{
 			var relevantLanguages = languages.Intersect(filteredLanguages).ToList();
+			var charactersSpan = characters.AsSpan();
+
 			foreach (var word in words)
 			{
-				foreach (var ch in characters)
+				var wordSpan = word.AsSpan();
+				foreach (var ch in charactersSpan)
 				{
-					if (word.Contains(ch))
+					if (wordSpan.Contains(ch))
 					{
 						foreach (var language in relevantLanguages)
 							languageCounts.IncrementCounter(language);
