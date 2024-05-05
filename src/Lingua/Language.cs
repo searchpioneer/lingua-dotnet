@@ -26,7 +26,7 @@ public enum Language
 	Belarusian,
 	/// <summary>The 'Bengali' language</summary>
 	Bengali,
-	/// <summary>The 'Bokmal' language</summary>
+	/// <summary>The Norwegian 'Bokmal' language</summary>
 	Bokmal,
 	/// <summary>The 'Bosnian' language</summary>
 	Bosnian,
@@ -100,7 +100,7 @@ public enum Language
 	Marathi,
 	/// <summary>The 'Mongolian' language</summary>
 	Mongolian,
-	/// <summary>The 'Nynorsk' language</summary>
+	/// <summary>The Norwegian 'Nynorsk' language</summary>
 	Nynorsk,
 	/// <summary>The 'Oromo' language</summary>
 	Oromo,
