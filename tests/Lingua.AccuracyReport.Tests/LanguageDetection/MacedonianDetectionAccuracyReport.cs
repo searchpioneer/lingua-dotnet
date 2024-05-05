@@ -4,7 +4,7 @@ using static Lingua.Language;
 namespace Lingua.AccuracyReport.Tests.LanguageDetection;
 
 public class MacedonianDetectionAccuracyReport(LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory> statistics)
-	: LanguageDetectionLanguageDetectionAccuracyReport(Macedonian, statistics),
+	: LanguageDetectionDetectionAccuracyReport(Macedonian, statistics),
 		IClassFixture<LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory>>
 {
 	[Theory(DisplayName = "single word detection")]

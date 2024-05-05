@@ -4,7 +4,7 @@ using static Lingua.Language;
 namespace Lingua.AccuracyReport.Tests.LanguageDetection;
 
 public class IndonesianDetectionAccuracyReport(LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory> statistics)
-	: LanguageDetectionLanguageDetectionAccuracyReport(Indonesian, statistics),
+	: LanguageDetectionDetectionAccuracyReport(Indonesian, statistics),
 		IClassFixture<LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory>>
 {
 	[Theory(DisplayName = "single word detection")]

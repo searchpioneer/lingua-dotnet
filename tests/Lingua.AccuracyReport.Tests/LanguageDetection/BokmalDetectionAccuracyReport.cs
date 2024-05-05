@@ -4,7 +4,7 @@ using static Lingua.Language;
 namespace Lingua.AccuracyReport.Tests.LanguageDetection;
 
 public class BokmalDetectionAccuracyReport(LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory> statistics)
-	: LanguageDetectionLanguageDetectionAccuracyReport(Bokmal, statistics),
+	: LanguageDetectionDetectionAccuracyReport(Bokmal, statistics),
 		IClassFixture<LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory>>
 {
 	[Theory(DisplayName = "single word detection")]

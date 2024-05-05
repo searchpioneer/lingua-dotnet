@@ -4,7 +4,7 @@ using static Lingua.Language;
 namespace Lingua.AccuracyReport.Tests.LanguageDetection;
 
 public class TigrinyaDetectionAccuracyReport(LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory> statistics)
-	: LanguageDetectionLanguageDetectionAccuracyReport(Tigrinya, statistics),
+	: LanguageDetectionDetectionAccuracyReport(Tigrinya, statistics),
 		IClassFixture<LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory>>
 {
 	[Theory(DisplayName = "single word detection")]

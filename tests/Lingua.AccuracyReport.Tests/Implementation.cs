@@ -3,5 +3,6 @@ namespace Lingua.AccuracyReport.Tests;
 public enum Implementation
 {
 	Lingua,
-	LanguageDetection
+	LanguageDetection,
+	NTextCat
 }

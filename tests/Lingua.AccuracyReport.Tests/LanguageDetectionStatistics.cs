@@ -1,6 +1,4 @@
 using System.Text;
-using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace Lingua.AccuracyReport.Tests;
 
@@ -163,11 +161,11 @@ public class LanguageDetectionStatistics<TDetectorFactory> : IDisposable
 		_sentenceLengthCount += sentence.Length;
 	}
 
-	private static void ComputeStatistics(Dictionary<Language, int[]> statistics, string element)
+	private void ComputeStatistics(Dictionary<Language, int[]> statistics, string element)
 	{
-		var detectedLanguageInHighAccuracyMode = HighAccuracyDetector.DetectLanguageOf(element);
+		var detectedLanguageInHighAccuracyMode = HighAccuracyDetector.DetectLanguageOf(element, Language);
 		var detectedLanguageInLowAccuracyMode = Factory.SupportsLowAccuracyMode
-			? LowAccuracyDetector.DetectLanguageOf(element)
+			? LowAccuracyDetector.DetectLanguageOf(element, Language)
 			: detectedLanguageInHighAccuracyMode;
 
 		var languageCounts = statistics.GetValueOrDefault(detectedLanguageInLowAccuracyMode, [0, 0]);
