@@ -18,7 +18,7 @@ public class TextFileDataDiscoverer : DataDiscoverer
 
 [DataDiscoverer("Lingua.AccuracyReport.Tests.TextFileDataDiscoverer", "Lingua.AccuracyReport.Tests")]
 [AttributeUsage(AttributeTargets.Method)]
-public class TextFileDataAttribute(string name, Language language) : DataAttribute
+public class TextFileDataAttribute(string testDirectoryName, Language language) : DataAttribute
 {
 	private static readonly string TestDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
 
@@ -27,7 +27,7 @@ public class TextFileDataAttribute(string name, Language language) : DataAttribu
 		var path = Path.Combine(
 			TestDirectory,
 			"LanguageTestData",
-			name,
+			testDirectoryName,
 			$"{language.IsoCode6391().ToString().ToLowerInvariant()}.txt");
 
 		if (!File.Exists(path))
