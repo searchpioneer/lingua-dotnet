@@ -29,7 +29,7 @@ public static class CombinedAccuracyReport
 		public int Compare(string? x, string? y)
 		{
 			if (Path.GetFileName(x) == LinguaReports)
-				return 1;
+				return -1;
 
 			return Path.GetFileName(y) == LinguaReports ? 1 : string.CompareOrdinal(x, y);
 		}

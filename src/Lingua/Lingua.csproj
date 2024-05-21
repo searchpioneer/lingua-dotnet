@@ -12,7 +12,14 @@
     </ItemGroup>
   
     <ItemGroup>
-      <EmbeddedResource Include="LanguageModels\**\*.json" />
+      <Content Include="Lingua\LanguageModels\**\*.json" />
+    </ItemGroup>
+  
+    <ItemGroup>
+      <None Include="$(SolutionRoot)build\Lingua.targets">
+        <Pack>true</Pack>
+        <PackagePath>build\Lingua.targets</PackagePath>
+      </None>
     </ItemGroup>
   
     <ItemGroup>
@@ -20,7 +27,7 @@
       <InternalsVisibleTo Include="$(AssemblyName).Tests" Key="$(PublicKey)" />
     </ItemGroup>
 
-  <!-- Gzip embedded resources to reduce size -->
+  <!-- Gzip content resources to reduce size -->
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <UsingTask TaskName="GZip"
              TaskFactory="RoslynCodeTaskFactory"
@@ -36,40 +43,43 @@
       <Using Namespace="System.IO.Compression" />
       <Code Type="Fragment" Language="cs">
         <![CDATA[
-    if (Files.Length > 0)
-    {
-        Result = new TaskItem[Files.Length];
-        for (int i = 0; i < Files.Length; i++)
-        {
-            ITaskItem item = Files[i];
-            string sourcePath = item.GetMetadata("FullPath");
-            string sourceItemSpec = item.ItemSpec;              
-            string destinationSuffix = ".gz";
-            string destinationPath = sourcePath + destinationSuffix;
-            string destinationItemSpec = sourceItemSpec + destinationSuffix;
-  
-            using (var sourceStream = File.OpenRead(sourcePath))
-            using (var destinationStream = File.OpenWrite(destinationPath))
-            using (var destinationGZip = new GZipStream(destinationStream, CompressionLevel.Optimal))
-            {
-                sourceStream.CopyTo(destinationGZip);
-            }
-                  
-            var destinationItem = new TaskItem(destinationItemSpec);   
-            Result[i] = destinationItem;
-        }
-    }
-  ]]>
+          if (Files.Length > 0)
+          {
+              Result = new TaskItem[Files.Length];
+              for (int i = 0; i < Files.Length; i++)
+              {
+                  ITaskItem item = Files[i];
+                  string sourcePath = item.GetMetadata("FullPath");
+                  string sourceItemSpec = item.ItemSpec;              
+                  string destinationSuffix = ".gz";
+                  string destinationPath = sourcePath + destinationSuffix;
+                  string destinationItemSpec = sourceItemSpec + destinationSuffix;
+                  using (var sourceStream = File.OpenRead(sourcePath))
+                  using (var destinationStream = File.OpenWrite(destinationPath))
+                  using (var destinationGZip = new GZipStream(destinationStream, CompressionLevel.Optimal))
+                  {
+                      sourceStream.CopyTo(destinationGZip);
+                  }
+                   
+                  var destinationItem = new TaskItem(destinationItemSpec);   
+                  Result[i] = destinationItem;
+              }
+          }
+        ]]>
       </Code>
     </Task>
   </UsingTask>
   <Target Name="BeforeBuild">
-    <GZip Files="@(EmbeddedResource)">
-      <Output ItemName="GZipEmbeddedResource" TaskParameter="Result" />
+    <GZip Files="@(Content)">
+      <Output ItemName="GZipContent" TaskParameter="Result" />
     </GZip>
     <ItemGroup>
-      <EmbeddedResource Remove="@(EmbeddedResource)" />
-      <EmbeddedResource Include="@(GZipEmbeddedResource)" />
+      <Content Remove="@(Content)" />
+      <Content Include="@(GZipContent)" CopyToOutputDirectory="PreserveNewest">
+        <!-- Package gzipped contents -->
+        <Pack>true</Pack>
+        <PackagePath>contentFiles/any/any/%(RelativeDir)%(Filename)%(Extension)</PackagePath>
+      </Content>  
     </ItemGroup>
   </Target>
   

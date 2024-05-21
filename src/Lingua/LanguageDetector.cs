@@ -437,14 +437,18 @@ public sealed partial class LanguageDetector
 	{
 		var isoCode = language.IsoCode6391().ToString().ToLowerInvariant();
 		var nGramName = Ngram.GetNameByLength(ngramLength);
-		var file = $"Lingua.LanguageModels.{isoCode}.{nGramName}s.json.gz";
-		using var stream = typeof(LanguageDetector).Assembly.GetManifestResourceStream(file);
+		var file = Path.Combine("Lingua", "LanguageModels", isoCode, $"{nGramName}s.json.gz");
 
-		if (stream is null)
+		try
+		{
+			using var stream = File.OpenRead(file);
+			using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
+			return LanguageModel.FromJson(gzipStream);
+		}
+		catch (Exception ex) when (ex is FileNotFoundException or IOException)
+		{
 			return new Dictionary<string, double>();
-
-		using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
-		return LanguageModel.FromJson(gzipStream);
+		}
 	}
 
 	internal HashSet<Language> FilterLanguagesByRules(List<string> words)

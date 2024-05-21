@@ -1,4 +1,4 @@
-﻿using static Lingua.Language;
+using static Lingua.Language;
 
 namespace Lingua.Benchmarks;
 

@@ -147,10 +147,10 @@ cmd.SetHandler(async () =>
 
 	Target(Clean, DependsOn(CleanBuildOutput, CleanReportOutput, CleanPackOutput));
 
-	Target(Pack, DependsOn(BuildSln, CleanPackOutput), () =>
+	Target(Pack, DependsOn(Clean, Format), () =>
 	{
 		var outputDir = Directory.CreateDirectory(packOutput);
-		Run("dotnet", $"pack -c Release -o \"{outputDir.FullName}\" --no-build --nologo");
+		Run("dotnet", $"pack -c Release -o \"{outputDir.FullName}\" --nologo");
 	});
 
 	Target(Default, DependsOn(Test));
