@@ -19,6 +19,7 @@
       <None Include="$(SolutionRoot)build\Lingua.targets">
         <Pack>true</Pack>
         <PackagePath>build\Lingua.targets</PackagePath>
+        <Visible>false</Visible>
       </None>
     </ItemGroup>
   
