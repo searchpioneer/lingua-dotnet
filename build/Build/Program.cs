@@ -88,7 +88,7 @@ cmd.SetHandler(async () =>
 
 	Target(Test, DependsOn(BuildSln), () =>
 	{
-		Run("dotnet", "test tests/Lingua.Tests -c Release --no-build  --verbosity normal");
+		Run("dotnet", "test tests/Lingua.Tests -c Release --no-build --verbosity normal");
 	});
 
 	Target(Report, DependsOn(CleanReportOutput, BuildSln), () =>
