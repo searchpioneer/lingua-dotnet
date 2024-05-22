@@ -10,7 +10,15 @@ on:
       language_detection:
         type: boolean
         default: true
-        description: "include LanguageDetection library?"  
+        description: "include LanguageDetection library?"
+      ntextcat:
+        type: boolean
+        default: true
+        description: "include NTextCat library?"
+      compare:
+        type: boolean
+        default: false
+        description: "Allow fair comparison across detectors by using same subset of supported languages?"   
 
 jobs:
   report:
@@ -24,7 +32,7 @@ jobs:
         with:
           dotnet-version: 8.0.x
       - name: Build Accuracy Report
-        run: ./build.sh report ${{ inputs.lingua && '--implementation Lingua' || '' }} ${{ inputs.language_detection && '--implementation LanguageDetection' || '' }}
+        run: ./build.sh report ${{ inputs.lingua && '--implementation Lingua' || '' }} ${{ inputs.language_detection && '--implementation LanguageDetection' || '' }} ${{ inputs.ntextcat && '--implementation NTextCat' || '' }} ${{ inputs.compare && '--compare' || '' }}
       - name: Write Summary
         run: |
           cat accuracy-reports/report.md >> $GITHUB_STEP_SUMMARY
