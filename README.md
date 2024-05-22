@@ -1,23 +1,36 @@
-![lingua](https://raw.githubusercontent.com/russcam/lingua-dotnet/main/images/logo.png) 
+![lingua](https://raw.githubusercontent.com/searchpioneer/lingua-dotnet/main/images/logo.png) 
 
 [![NuGet Release][nuget image]][nuget url]
-[![Build Status](https://github.com/russcam/lingua-dotnet/actions/workflows/dotnet.yml/badge.svg)](https://github.com/russcam/lingua-dotnet/actions/workflows/dotnet.yml)
-[![Accuracy Report](https://github.com/russcam/lingua-dotnet/actions/workflows/accuracy_report.yml/badge.svg)](https://github.com/russcam/lingua-dotnet/actions/workflows/accuracy_report.yml)
+[![Build Status](https://github.com/searchpioneer/lingua-dotnet/actions/workflows/dotnet.yml/badge.svg)](https://github.com/searchpioneer/lingua-dotnet/actions/workflows/dotnet.yml)
+[![Accuracy Report](https://github.com/searchpioneer/lingua-dotnet/actions/workflows/accuracy_report.yml/badge.svg)](https://github.com/searchpioneer/lingua-dotnet/actions/workflows/accuracy_report.yml)
 [![license badge][license badge]][license url]
-[![supported languages][supported languages badge]](#3-which-languages-are-supported)
+[![supported languages][supported languages badge]](#which-languages-are-supported)
 
-## 1. What does this library do?
+## What does this library do?
 Its task is simple: It tells you which language some provided textual data is written in. 
 This is very useful as a preprocessing step for linguistic data in natural language 
 processing applications such as text classification and spell checking. 
 Other use cases, for instance, might include routing e-mails to the right geographically 
 located customer service department, based on the e-mails' languages.
 
-## 2. Why does this library exist?
+This is a .NET port of the [JVM](https://github.com/pemistahl/lingua) and [Rust](https://github.com/pemistahl/lingua-rs) implementations of Lingua.
+
+## Why does this library exist?
 Language detection is often done as part of large machine learning frameworks or natural 
 language processing applications. In cases where you don't need the full-fledged 
 functionality of those systems or don't want to learn the ropes of those, 
-a small flexible library comes in handy. 
+a small flexible library comes in handy.
+
+So far, three other comprehensive open source libraries working on the CLR for this task
+are [LanguageDetection](https://github.com/KRSogaard/language-detection) and 
+[NTextCat](https://github.com/ivanakcheurov/ntextcat).
+Unfortunately these have major drawbacks:
+
+1. Detection only works well with quite lengthy text fragments.
+   For very short text snippets such as Twitter messages, it doesn't provide adequate results.
+2. The more languages take part in the decision process, the less accurate are the detection results.
+3. They don't support as many languages
+4. They are not as fast
 
 *Lingua* nearly doesn't need any configuration and 
 yields pretty accurate results on both long and short text, even on single words and phrases. 
@@ -25,15 +38,16 @@ It draws on both rule-based and statistical methods but does not use any diction
 It does not need a connection to any external API or service either. 
 Once the library has been downloaded, it can be used completely offline. 
 
-## 3. Which languages are supported?
+## Which languages are supported?
 
 Compared to other language detection libraries, *Lingua's* focus is on *quality over quantity*, that is, 
 getting detection right for a small set of languages first before adding new ones. 
-Currently, the following 75 languages are supported:
+Currently, the following 79 languages are supported:
 
 - A
   - Afrikaans
   - Albanian
+  - Amharic
   - Arabic
   - Armenian
   - Azerbaijani
@@ -41,7 +55,7 @@ Currently, the following 75 languages are supported:
   - Basque
   - Belarusian
   - Bengali
-  - Norwegian Bokmal
+  - Bokmal (Norwegian)
   - Bosnian
   - Bulgarian
 - C
@@ -90,7 +104,9 @@ Currently, the following 75 languages are supported:
   - Marathi
   - Mongolian
 - N
-  - Norwegian Nynorsk
+  - Nynorsk (Norwegian)
+- O
+  - Oromo
 - P
   - Persian
   - Polish
@@ -102,6 +118,7 @@ Currently, the following 75 languages are supported:
 - S
   - Serbian
   - Shona
+  - Sinhala
   - Slovak
   - Slovene
   - Somali
@@ -114,6 +131,7 @@ Currently, the following 75 languages are supported:
   - Tamil
   - Telugu
   - Thai
+  - Tigrinya
   - Tsonga
   - Tswana
   - Turkish
@@ -146,7 +164,7 @@ been used for training, each corpus comprising one million sentences. For testin
 chosen websites have been used, each comprising ten thousand sentences. From each test corpus, a random
 unsorted subset of 1000 single words, 1000 word pairs and 1000 sentences has been extracted, respectively.
 
-See the [latest Accuracy Report](https://github.com/russcam/lingua-dotnet/actions/workflows/accuracy_report.yml).
+See the [latest Accuracy Report](https://github.com/searchpioneer/lingua-dotnet/actions/workflows/accuracy_report.yml).
 
 ## 5. How to use
 
@@ -166,7 +184,7 @@ using static Lingua.Language;
 
 var detector = LanguageDetectorBuilder
     .FromLanguages(English, French, German, Spanish)
-		.Build();
+    .Build();
 
 var detectedLanguage = detector.DetectLanguageOf("languages are awesome");
 Assert.Equal(English, detectedLanguage);
@@ -191,7 +209,7 @@ var detector = LanguageDetectorBuilder
   .Build();
 
 var detectedLanguage = detector.DetectLanguageOf("languages are awesome");
-Assert.Equal(None, detectedLanguage);
+Assert.Equal(Unknown, detectedLanguage);
 ```
 
 Be aware that the distance between the language probabilities is dependent on the length of the
@@ -285,4 +303,4 @@ or unlikely to occur.
 [nuget image]: https://img.shields.io/nuget/v/Lingua.svg
 [license badge]: https://img.shields.io/badge/license-Apache%202.0-blue.svg
 [license url]: https://www.apache.org/licenses/LICENSE-2.0
-[supported languages badge]: https://img.shields.io/badge/supported%20languages-75-green.svg
+[supported languages badge]: https://img.shields.io/badge/supported%20languages-79-green.svg

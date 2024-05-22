@@ -5,10 +5,10 @@
     <Authors>Search Pioneer and Contributors</Authors>
     <Copyright>Search Pioneer</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/russcam/lingua-dotnet</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/russcam/lingua-dotnet</PackageProjectUrl>
-    <PackageReleaseNotes>https://github.com/russcam/lingua-dotnet/releases</PackageReleaseNotes>
-    <PackageTags>lingua language-detection nlp language language-recogition language-classification natural-language-processing</PackageTags>
+    <RepositoryUrl>https://github.com/searchpioneer/lingua-dotnet</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/searchpioneer/lingua-dotnet</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/searchpioneer/lingua-dotnet/releases</PackageReleaseNotes>
+    <PackageTags>lingua;language-detection;nlp;language;language-recogition;language-classification;natural-language-processing</PackageTags>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <IsPackable>False</IsPackable>

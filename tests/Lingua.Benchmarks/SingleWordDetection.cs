@@ -4,14 +4,14 @@ using NTextCat;
 
 namespace Lingua.Benchmarks;
 
-public class EnglishSingleWordDetection
+public class SingleWordDetection
 {
 	private readonly LanguageDetector _linguaLanguageDetector;
 	private readonly LanguageDetector _lowAccuracyLinguaLanguageDetector;
 	private readonly LanguageDetection.LanguageDetector _languageDetectionLanguageDetector;
 	private readonly RankedLanguageIdentifier _nTextCatLanguageDetector;
 
-	public EnglishSingleWordDetection()
+	public SingleWordDetection()
 	{
 		var languages = SupportedLanguages.ByAllImplementations;
 
@@ -31,24 +31,24 @@ public class EnglishSingleWordDetection
 			.Build();
 
 		var factory = new RankedLanguageIdentifierFactory();
-		using var stream = typeof(EnglishSingleWordDetection).Assembly
+		using var stream = typeof(Program).Assembly
 			.GetManifestResourceStream("Lingua.Benchmarks.Core14.profile.xml");
 		var nTextCatDetector = factory.Load(stream);
 		_nTextCatLanguageDetector = nTextCatDetector;
 	}
 
-	[Params("suspiciously")]
+	[Params("ialomiţa", "podĺa", "ґрунтовому", "cằm", "suspiciously")]
 	// ReSharper disable once UnassignedField.Global
 	public string? Text;
 
-	[Benchmark(Baseline = true, Description = "Lingua Low Accuracy")]
+	[Benchmark(Baseline = true)]
 	public Language LinguaLowAccuracy() => _lowAccuracyLinguaLanguageDetector.DetectLanguageOf(Text!);
 
 	[Benchmark]
 	public Language Lingua() => _linguaLanguageDetector.DetectLanguageOf(Text!);
 
 	[Benchmark]
-	public string LanguageDetection() => _languageDetectionLanguageDetector.Detect(Text!);
+	public string? LanguageDetection() => _languageDetectionLanguageDetector.Detect(Text!);
 
 	[Benchmark]
 	public Tuple<NTextCat.LanguageInfo, double> NTextCat() => _nTextCatLanguageDetector.Identify(Text!).First();
