@@ -1,23 +1,20 @@
-using Xunit;
-using static Lingua.Language;
-
 namespace Lingua.AccuracyReport.Tests.Lingua;
 
 public class BulgarianDetectionAccuracyReport(LanguageDetectionStatistics<LinguaLanguageDetectorFactory> statistics)
 	: LinguaDetectionAccuracyReport(Bulgarian, statistics),
 		IClassFixture<LanguageDetectionStatistics<LinguaLanguageDetectorFactory>>
 {
-	[Theory(DisplayName = "single word detection")]
+	[SingleWordReportTheory(Implementation.Lingua, Bulgarian)]
 	[SingleWordData(Bulgarian)]
 	public override void SingleWordsAreIdentifiedCorrectly(string singleWord) =>
 		ComputeSingleWordStatistics(singleWord);
 
-	[Theory(DisplayName = "word pair detection")]
+	[WordPairsReportTheory(Implementation.Lingua, Bulgarian)]
 	[WordPairsData(Bulgarian)]
 	public override void WordPairsAreIdentifiedCorrectly(string wordPair) =>
 		ComputeWordPairStatistics(wordPair);
 
-	[Theory(DisplayName = "sentence detection")]
+	[SentenceReportTheory(Implementation.Lingua, Bulgarian)]
 	[SentenceData(Bulgarian)]
 	public override void EntireSentencesAreIdentifiedCorrectly(string sentence) =>
 		ComputeSentenceStatistics(sentence);

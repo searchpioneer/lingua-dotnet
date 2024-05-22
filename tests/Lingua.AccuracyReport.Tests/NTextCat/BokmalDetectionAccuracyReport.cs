@@ -1,6 +1,4 @@
 using Lingua.AccuracyReport.Tests.Lingua;
-using Xunit;
-using static Lingua.Language;
 
 namespace Lingua.AccuracyReport.Tests.NTextCat;
 
@@ -8,17 +6,17 @@ public class BokmalDetectionAccuracyReport(LanguageDetectionStatistics<NTextCatL
 	: NTextCatDetectionAccuracyReport(Bokmal, statistics),
 		IClassFixture<LanguageDetectionStatistics<NTextCatLanguageDetectorFactory>>
 {
-	[Theory(DisplayName = "single word detection")]
+	[SingleWordReportTheory(Implementation.NTextCat, Bokmal)]
 	[SingleWordData(Bokmal)]
 	public override void SingleWordsAreIdentifiedCorrectly(string singleWord) =>
 		ComputeSingleWordStatistics(singleWord);
 
-	[Theory(DisplayName = "word pair detection")]
+	[WordPairsReportTheory(Implementation.NTextCat, Bokmal)]
 	[WordPairsData(Bokmal)]
 	public override void WordPairsAreIdentifiedCorrectly(string wordPair) =>
 		ComputeWordPairStatistics(wordPair);
 
-	[Theory(DisplayName = "sentence detection")]
+	[SentenceReportTheory(Implementation.NTextCat, Bokmal)]
 	[SentenceData(Bokmal)]
 	public override void EntireSentencesAreIdentifiedCorrectly(string sentence) =>
 		ComputeSentenceStatistics(sentence);

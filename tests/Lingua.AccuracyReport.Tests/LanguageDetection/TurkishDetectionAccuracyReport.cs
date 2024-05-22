@@ -1,23 +1,20 @@
-using Xunit;
-using static Lingua.Language;
-
 namespace Lingua.AccuracyReport.Tests.LanguageDetection;
 
 public class TurkishDetectionAccuracyReport(LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory> statistics)
 	: LanguageDetectionDetectionAccuracyReport(Turkish, statistics),
 		IClassFixture<LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory>>
 {
-	[Theory(DisplayName = "single word detection")]
+	[SingleWordReportTheory(Implementation.LanguageDetection, Turkish)]
 	[SingleWordData(Turkish)]
 	public override void SingleWordsAreIdentifiedCorrectly(string singleWord) =>
 		ComputeSingleWordStatistics(singleWord);
 
-	[Theory(DisplayName = "word pair detection")]
+	[WordPairsReportTheory(Implementation.LanguageDetection, Turkish)]
 	[WordPairsData(Turkish)]
 	public override void WordPairsAreIdentifiedCorrectly(string wordPair) =>
 		ComputeWordPairStatistics(wordPair);
 
-	[Theory(DisplayName = "sentence detection")]
+	[SentenceReportTheory(Implementation.LanguageDetection, Turkish)]
 	[SentenceData(Turkish)]
 	public override void EntireSentencesAreIdentifiedCorrectly(string sentence) =>
 		ComputeSentenceStatistics(sentence);

@@ -1,23 +1,20 @@
-using Xunit;
-using static Lingua.Language;
-
 namespace Lingua.AccuracyReport.Tests.LanguageDetection;
 
 public class SloveneDetectionAccuracyReport(LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory> statistics)
 	: LanguageDetectionDetectionAccuracyReport(Slovene, statistics),
 		IClassFixture<LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory>>
 {
-	[Theory(DisplayName = "single word detection")]
+	[SingleWordReportTheory(Implementation.LanguageDetection, Slovene)]
 	[SingleWordData(Slovene)]
 	public override void SingleWordsAreIdentifiedCorrectly(string singleWord) =>
 		ComputeSingleWordStatistics(singleWord);
 
-	[Theory(DisplayName = "word pair detection")]
+	[WordPairsReportTheory(Implementation.LanguageDetection, Slovene)]
 	[WordPairsData(Slovene)]
 	public override void WordPairsAreIdentifiedCorrectly(string wordPair) =>
 		ComputeWordPairStatistics(wordPair);
 
-	[Theory(DisplayName = "sentence detection")]
+	[SentenceReportTheory(Implementation.LanguageDetection, Slovene)]
 	[SentenceData(Slovene)]
 	public override void EntireSentencesAreIdentifiedCorrectly(string sentence) =>
 		ComputeSentenceStatistics(sentence);

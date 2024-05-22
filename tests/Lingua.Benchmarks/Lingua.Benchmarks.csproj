@@ -24,5 +24,9 @@
       <Link>Core14.profile.xml</Link>
     </EmbeddedResource>
   </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="BenchmarkDotNet.Artifacts\**\*" />
+  </ItemGroup>
 
 </Project>

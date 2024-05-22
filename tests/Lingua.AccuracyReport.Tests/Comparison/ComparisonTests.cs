@@ -1,7 +1,6 @@
 using System.Runtime.InteropServices;
 using FluentAssertions;
-using Xunit;
-using static Lingua.Language;
+
 namespace Lingua.AccuracyReport.Tests.Comparison;
 
 public class ComparisonTests

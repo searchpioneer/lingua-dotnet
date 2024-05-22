@@ -1,23 +1,20 @@
-using Xunit;
-using static Lingua.Language;
-
 namespace Lingua.AccuracyReport.Tests.LanguageDetection;
 
 public class MacedonianDetectionAccuracyReport(LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory> statistics)
 	: LanguageDetectionDetectionAccuracyReport(Macedonian, statistics),
 		IClassFixture<LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory>>
 {
-	[Theory(DisplayName = "single word detection")]
+	[SingleWordReportTheory(Implementation.LanguageDetection, Macedonian)]
 	[SingleWordData(Macedonian)]
 	public override void SingleWordsAreIdentifiedCorrectly(string singleWord) =>
 		ComputeSingleWordStatistics(singleWord);
 
-	[Theory(DisplayName = "word pair detection")]
+	[WordPairsReportTheory(Implementation.LanguageDetection, Macedonian)]
 	[WordPairsData(Macedonian)]
 	public override void WordPairsAreIdentifiedCorrectly(string wordPair) =>
 		ComputeWordPairStatistics(wordPair);
 
-	[Theory(DisplayName = "sentence detection")]
+	[SentenceReportTheory(Implementation.LanguageDetection, Macedonian)]
 	[SentenceData(Macedonian)]
 	public override void EntireSentencesAreIdentifiedCorrectly(string sentence) =>
 		ComputeSentenceStatistics(sentence);

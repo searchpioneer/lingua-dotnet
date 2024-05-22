@@ -1,23 +1,20 @@
-using Xunit;
-using static Lingua.Language;
-
 namespace Lingua.AccuracyReport.Tests.LanguageDetection;
 
 public class GujaratiDetectionAccuracyReport(LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory> statistics)
 	: LanguageDetectionDetectionAccuracyReport(Gujarati, statistics),
 		IClassFixture<LanguageDetectionStatistics<LanguageDetectionLanguageDetectorFactory>>
 {
-	[Theory(DisplayName = "single word detection")]
+	[SingleWordReportTheory(Implementation.LanguageDetection, Gujarati)]
 	[SingleWordData(Gujarati)]
 	public override void SingleWordsAreIdentifiedCorrectly(string singleWord) =>
 		ComputeSingleWordStatistics(singleWord);
 
-	[Theory(DisplayName = "word pair detection")]
+	[WordPairsReportTheory(Implementation.LanguageDetection, Gujarati)]
 	[WordPairsData(Gujarati)]
 	public override void WordPairsAreIdentifiedCorrectly(string wordPair) =>
 		ComputeWordPairStatistics(wordPair);
 
-	[Theory(DisplayName = "sentence detection")]
+	[SentenceReportTheory(Implementation.LanguageDetection, Gujarati)]
 	[SentenceData(Gujarati)]
 	public override void EntireSentencesAreIdentifiedCorrectly(string sentence) =>
 		ComputeSentenceStatistics(sentence);

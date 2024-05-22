@@ -1,6 +1,4 @@
 using Lingua.AccuracyReport.Tests.Lingua;
-using Xunit;
-using static Lingua.Language;
 
 namespace Lingua.AccuracyReport.Tests.NTextCat;
 
@@ -8,17 +6,17 @@ public class RussianDetectionAccuracyReport(LanguageDetectionStatistics<NTextCat
 	: NTextCatDetectionAccuracyReport(Russian, statistics),
 		IClassFixture<LanguageDetectionStatistics<NTextCatLanguageDetectorFactory>>
 {
-	[Theory(DisplayName = "single word detection")]
+	[SingleWordReportTheory(Implementation.NTextCat, Russian)]
 	[SingleWordData(Russian)]
 	public override void SingleWordsAreIdentifiedCorrectly(string singleWord) =>
 		ComputeSingleWordStatistics(singleWord);
 
-	[Theory(DisplayName = "word pair detection")]
+	[WordPairsReportTheory(Implementation.NTextCat, Russian)]
 	[WordPairsData(Russian)]
 	public override void WordPairsAreIdentifiedCorrectly(string wordPair) =>
 		ComputeWordPairStatistics(wordPair);
 
-	[Theory(DisplayName = "sentence detection")]
+	[SentenceReportTheory(Implementation.NTextCat, Russian)]
 	[SentenceData(Russian)]
 	public override void EntireSentencesAreIdentifiedCorrectly(string sentence) =>
 		ComputeSentenceStatistics(sentence);

@@ -14,6 +14,8 @@ public class LanguageDetectionStatistics<TDetectorFactory> : IDisposable
 	// ReSharper disable StaticMemberInGenericType
 	private static readonly ILanguageDetector LowAccuracyDetector;
 	private static readonly ILanguageDetector HighAccuracyDetector;
+	private static readonly Language[] Languages;
+	private static readonly Language[] FilteredLanguages;
 	// ReSharper restore StaticMemberInGenericType
 
 	private static string Implementation => Factory.Implementation.ToString();
@@ -23,6 +25,8 @@ public class LanguageDetectionStatistics<TDetectorFactory> : IDisposable
 	{
 		Factory = new TDetectorFactory();
 		(LowAccuracyDetector, HighAccuracyDetector) = Factory.Create();
+		FilteredLanguages = SupportedLanguages.GetLanguagesForTest(Factory.Implementation);
+		Languages = SupportedLanguages.LanguagesByImplementation[Factory.Implementation];
 	}
 
 	private readonly Dictionary<Language, int[]> _singleWordsStatistics = new();
@@ -39,6 +43,10 @@ public class LanguageDetectionStatistics<TDetectorFactory> : IDisposable
 
 	public void Dispose()
 	{
+		// only write a report if we actually tested this language
+		if (!FilteredLanguages.Contains(Language))
+			return;
+
 		var accuracyReportsDirectoryPath = Path.Combine(
 			SolutionPaths.Root,
 			"accuracy-reports",
@@ -51,7 +59,15 @@ public class LanguageDetectionStatistics<TDetectorFactory> : IDisposable
 
 		var statisticsReport = StatisticsReport();
 		Directory.CreateDirectory(accuracyReportsDirectoryPath);
-		File.WriteAllText(accuracyReportFilePath, statisticsReport);
+
+		try
+		{
+			File.WriteAllText(accuracyReportFilePath, statisticsReport);
+		}
+		catch (IOException e)
+		{
+			throw new Exception($"error writing file for {Implementation} {Language}", e);
+		}
 	}
 
 	private static string Anchor(string text, string id) => $"<a id=\"{id}\">{text}</a>";
@@ -61,6 +77,11 @@ public class LanguageDetectionStatistics<TDetectorFactory> : IDisposable
 		var newlines = new string('\n', 2);
 		var language = Language.ToString();
 		var report = new StringBuilder($"## {Anchor(language, $"{ImplementationLowercase}-{language.ToLowerInvariant()}")}");
+
+		report.AppendLine();
+		report.AppendLine();
+		report.AppendLine(
+			$"Configured with {FilteredLanguages.Length} out of {Languages.Length} supported languages");
 
 		var singleWordsAccuracyvalues = MapCountsToAccuracies(_singleWordsStatistics);
 		var wordPairsAccuracyvalues = MapCountsToAccuracies(_wordPairsStatistics);

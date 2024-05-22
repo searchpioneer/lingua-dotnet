@@ -1,6 +1,4 @@
 using Lingua.AccuracyReport.Tests.Lingua;
-using Xunit;
-using static Lingua.Language;
 
 namespace Lingua.AccuracyReport.Tests.NTextCat;
 
@@ -8,17 +6,17 @@ public class DutchDetectionAccuracyReport(LanguageDetectionStatistics<NTextCatLa
 	: NTextCatDetectionAccuracyReport(Dutch, statistics),
 		IClassFixture<LanguageDetectionStatistics<NTextCatLanguageDetectorFactory>>
 {
-	[Theory(DisplayName = "single word detection")]
+	[SingleWordReportTheory(Implementation.NTextCat, Dutch)]
 	[SingleWordData(Dutch)]
 	public override void SingleWordsAreIdentifiedCorrectly(string singleWord) =>
 		ComputeSingleWordStatistics(singleWord);
 
-	[Theory(DisplayName = "word pair detection")]
+	[WordPairsReportTheory(Implementation.NTextCat, Dutch)]
 	[WordPairsData(Dutch)]
 	public override void WordPairsAreIdentifiedCorrectly(string wordPair) =>
 		ComputeWordPairStatistics(wordPair);
 
-	[Theory(DisplayName = "sentence detection")]
+	[SentenceReportTheory(Implementation.NTextCat, Dutch)]
 	[SentenceData(Dutch)]
 	public override void EntireSentencesAreIdentifiedCorrectly(string sentence) =>
 		ComputeSentenceStatistics(sentence);

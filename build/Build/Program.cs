@@ -11,18 +11,23 @@ const string reportOutput = "accuracy-reports";
 
 var language = new Option<string[]>(["--language"], "languages to generate an accuracy report for")
 {
-	Arity = ArgumentArity.ZeroOrMore
+	Arity = ArgumentArity.ZeroOrMore,
 };
 
 var detector = new Option<string[]>(["--implementation"], "implementations to generate an accuracy report for")
 {
 	Arity = ArgumentArity.ZeroOrMore,
 };
+detector.FromAmong("Lingua", "NTextCat", "LanguageDetection");
+
+var compare = new Option<bool>("--compare",
+	"whether implementations should use the same subset of supported languages when generating an accuracy report");
 
 var cmd = new RootCommand
 {
 	language,
 	detector,
+	compare,
 	new Argument<string[]>("targets")
 	{
 		Description =
@@ -90,7 +95,7 @@ cmd.SetHandler(async () =>
 	{
 		var filter = new StringBuilder();
 		var languages = cmdLine.GetValueForOption(language);
-		if (languages is not null)
+		if (languages?.Length > 0)
 		{
 			foreach (var l in languages)
 			{
@@ -104,23 +109,34 @@ cmd.SetHandler(async () =>
 		}
 
 		var detectors = cmdLine.GetValueForOption(detector);
-		if (detectors is not null)
+		if (detectors?.Length > 0)
 		{
-			foreach (var d in detectors)
-			{
-				if (filter.Length > 0)
-					filter.Append(" & ");
+			if (filter.Length > 0)
+				filter.Append(" & ");
 
+			filter.Append('(');
+
+			for (var index = 0; index < detectors.Length; index++)
+			{
+				if (index > 0)
+					filter.Append(" | ");
+
+				var d = detectors[index];
 				filter.Append("(FullyQualifiedName~.");
 				filter.Append(d);
 				filter.Append(')');
 			}
+
+			filter.Append(')');
 		}
 
-		Run("dotnet",
-			filter.Length > 0
-				? $"test tests/Lingua.AccuracyReport.Tests -c Release --no-build --filter \"{filter}\""
-				: "test tests/Lingua.AccuracyReport.Tests -c Release --no-build");
+		var additionalArgs = new StringBuilder();
+		if (cmdLine.GetValueForOption(compare))
+			additionalArgs.Append(" --environment TEST_COMPARE=\"true\"");
+		if (filter.Length > 0)
+			additionalArgs.Append($" --filter \"{filter}\" --environment TEST_FILTER=\"{filter}\"");
+
+		Run("dotnet", $"test tests/Lingua.AccuracyReport.Tests -c Release{additionalArgs}");
 
 		CombinedAccuracyReport.Create();
 	});

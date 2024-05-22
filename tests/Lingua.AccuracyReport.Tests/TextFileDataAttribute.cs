@@ -16,6 +16,11 @@ public class TextFileDataDiscoverer : DataDiscoverer
 	public override bool SupportsDiscoveryEnumeration(IAttributeInfo dataAttribute, IMethodInfo testMethod) => false;
 }
 
+/// <summary>
+/// Data source for a parameterized test from a text file.
+/// </summary>
+/// <param name="testDirectoryName">The name of the sub-directory containing the text file.</param>
+/// <param name="language">The language of the text file.</param>
 [DataDiscoverer("Lingua.AccuracyReport.Tests.TextFileDataDiscoverer", "Lingua.AccuracyReport.Tests")]
 [AttributeUsage(AttributeTargets.Method)]
 public class TextFileDataAttribute(string testDirectoryName, Language language) : DataAttribute
