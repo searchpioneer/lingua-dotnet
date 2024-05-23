@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Text;
 using FluentAssertions;
 using Lingua.IO;
@@ -117,7 +118,7 @@ public class LanguageModelWriterTests : IDisposable
 
 		var modelFilePaths = RetrieveAndSortModelFiles(outputDirectoryPath);
 
-		modelFilePaths.Should().HaveCount(5);
+		modelFilePaths.Should().HaveCount(10);
 
 		var bigrams = modelFilePaths[0];
 		var fivegrams = modelFilePaths[1];
@@ -159,12 +160,24 @@ public class LanguageModelWriterTests : IDisposable
 			Language.English
 		));
 
-	private static void TestModelFile(FileSystemInfo modelFilePath, string expectedFileName, string expectedModelContent)
+	private static void TestModelFile(FileSystemInfo modelFilePath, string expectedFileName, string expectedModelContent, bool compressed = false)
 	{
 		modelFilePath.Name.Should().Be(expectedFileName);
 		File.ReadAllText(modelFilePath.FullName).Should().Be(expectedModelContent);
+
+		var compressedFilePath = modelFilePath.FullName + ".br";
+		using var fs = File.OpenRead(compressedFilePath);
+		using var brotliStream = new BrotliStream(fs, CompressionMode.Decompress);
+		using var streamReader = new StreamReader(brotliStream);
+
+		var compressedContent = streamReader.ReadToEnd();
+		compressedContent.Should().Be(expectedModelContent);
 	}
 
 	private static List<FileInfo> RetrieveAndSortModelFiles(DirectoryInfo outputDirectoryPath) =>
-		outputDirectoryPath.GetFiles().OrderBy(f => f.Name).ToList();
+		outputDirectoryPath.GetFiles()
+			.OrderByDescending(f => f.Extension == ".json")
+			.ThenBy(f => f.Name)
+			.ToList();
+
 }

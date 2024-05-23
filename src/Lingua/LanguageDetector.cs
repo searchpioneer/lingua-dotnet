@@ -437,13 +437,13 @@ public sealed partial class LanguageDetector
 	{
 		var isoCode = language.IsoCode6391().ToString().ToLowerInvariant();
 		var nGramName = Ngram.GetNameByLength(ngramLength);
-		var file = Path.Combine("Lingua", "LanguageModels", isoCode, $"{nGramName}s.json.gz");
+		var file = Path.Combine("Lingua", "LanguageModels", isoCode, $"{nGramName}s.json.br");
 
 		try
 		{
 			using var stream = File.OpenRead(file);
-			using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
-			return LanguageModel.FromJson(gzipStream);
+			using var brotliStream = new BrotliStream(stream, CompressionMode.Decompress);
+			return LanguageModel.FromJson(brotliStream);
 		}
 		catch (FileNotFoundException)
 		{

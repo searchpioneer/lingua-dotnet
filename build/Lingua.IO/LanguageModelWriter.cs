@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Text;
 using Lingua.Internal;
 using static Lingua.IO.PathValidation;
@@ -103,9 +104,12 @@ public static class LanguageModelWriter
 	)
 	{
 		var modelFilePath = Path.Combine(outputDirectoryPath, fileName);
-		if (File.Exists(modelFilePath))
-			File.Delete(modelFilePath);
 
 		File.WriteAllText(modelFilePath, model.ToJson());
+
+		using var readStream = File.OpenRead(modelFilePath);
+		using var writeStream = File.OpenWrite(modelFilePath + ".br");
+		using var brotliStream = new BrotliStream(writeStream, CompressionMode.Compress);
+		readStream.CopyTo(brotliStream);
 	}
 }

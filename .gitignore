@@ -12,7 +12,7 @@ nuget
 accuracy-reports
  
 # Don't check in gzipped files
-/src/Lingua/Lingua/LanguageModels/**/*.json.gz
+/src/Lingua/Lingua/LanguageModels/**/*.json
 
 # don't check in benchmarking artifacts
 BenchmarkDotNet.Artifacts/
