@@ -5,8 +5,8 @@ on:
   release:
     types: [ "published" ]  
     
-permissions:
-  checks: write
+# permissions:
+#   checks: write
 
 jobs:
   build:
