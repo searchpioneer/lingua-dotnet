@@ -3,6 +3,7 @@
 [![NuGet Release][nuget image]][nuget url]
 [![Build Status](https://github.com/searchpioneer/lingua-dotnet/actions/workflows/dotnet.yml/badge.svg)](https://github.com/searchpioneer/lingua-dotnet/actions/workflows/dotnet.yml)
 [![Accuracy Report](https://github.com/searchpioneer/lingua-dotnet/actions/workflows/accuracy_report.yml/badge.svg)](https://github.com/searchpioneer/lingua-dotnet/actions/workflows/accuracy_report.yml)
+[![Benchmark](https://github.com/searchpioneer/lingua-dotnet/actions/workflows/benchmark.yml/badge.svg)](https://github.com/searchpioneer/lingua-dotnet/actions/workflows/benchmark.yml)
 [![license badge][license badge]][license url]
 [![supported languages][supported languages badge]](#which-languages-are-supported)
 
@@ -21,7 +22,7 @@ language processing applications. In cases where you don't need the full-fledged
 functionality of those systems or don't want to learn the ropes of those, 
 a small flexible library comes in handy.
 
-So far, three other comprehensive open source libraries working on the CLR for this task
+So far, two other comprehensive open source libraries working on the CLR for this task
 are [LanguageDetection](https://github.com/KRSogaard/language-detection) and 
 [NTextCat](https://github.com/ivanakcheurov/ntextcat).
 Unfortunately these have major drawbacks:
@@ -30,7 +31,7 @@ Unfortunately these have major drawbacks:
    For very short text snippets such as Twitter messages, it doesn't provide adequate results.
 2. The more languages take part in the decision process, the less accurate are the detection results.
 3. They don't support as many languages
-4. They are not as fast
+4. They are not as fast overall
 
 *Lingua* nearly doesn't need any configuration and 
 yields pretty accurate results on both long and short text, even on single words and phrases. 
