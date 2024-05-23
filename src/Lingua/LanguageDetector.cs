@@ -445,8 +445,9 @@ public sealed partial class LanguageDetector
 			using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
 			return LanguageModel.FromJson(gzipStream);
 		}
-		catch (Exception ex) when (ex is FileNotFoundException or IOException)
+		catch (FileNotFoundException)
 		{
+			// there may not be a model for a given ngram/language
 			return new Dictionary<string, double>();
 		}
 	}

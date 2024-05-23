@@ -1,0 +1,28 @@
+name: Benchmark
+
+on:
+  workflow_dispatch:
+    inputs: 
+      tests:
+        type: string
+        required: true
+        default: "*English*Detection*"
+        description: "filter for tests to run"
+ 
+jobs:
+  report:
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Run Benchmarks
+        run: ./build.sh benchmark --filter ${{ inputs.tests }} --exporters GitHub --job Short
+      - name: Write Summary
+        run: |
+          cat BenchmarkDotNet.Artifacts/results/*github.md >> $GITHUB_STEP_SUMMARY
+          

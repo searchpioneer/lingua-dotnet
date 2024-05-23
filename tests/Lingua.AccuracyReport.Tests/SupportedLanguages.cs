@@ -19,10 +19,6 @@ public static class SupportedLanguages
 				languagesSupportedByLanguageDetection.Add(Nynorsk);
 				languagesSupportedByLanguageDetection.Add(Bokmal);
 			}
-			else
-			{
-				var foo = isoCode;
-			}
 		}
 
 		var languageDetection = languagesSupportedByLanguageDetection.ToArray();

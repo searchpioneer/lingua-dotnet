@@ -76,7 +76,7 @@
     </GZip>
     <ItemGroup>
       <Content Remove="@(Content)" />
-      <Content Include="@(GZipContent)" CopyToOutputDirectory="PreserveNewest">
+      <Content Include="@(GZipContent)" CopyToOutputDirectory="Always">
         <!-- Package gzipped contents -->
         <Pack>true</Pack>
         <PackagePath>contentFiles/any/any/%(RelativeDir)%(Filename)%(Extension)</PackagePath>
