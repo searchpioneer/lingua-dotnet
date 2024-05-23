@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  workflow_dispatch:  
+  release:
+    types: [ "published" ]  
+    
+permissions:
+  checks: write
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Pack
+      run: ./build.sh pack
+      shell: bash
+
+    # - name: Publish NuGet package
+    #   env:
+    #     NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+    #   run: dotnet nuget push nuget/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+    #   shell: bash
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+          name: LinguaNugetPkg
+          path: nuget
