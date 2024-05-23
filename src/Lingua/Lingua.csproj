@@ -80,6 +80,7 @@
         <!-- Package gzipped contents -->
         <Pack>true</Pack>
         <PackagePath>contentFiles/any/any/%(RelativeDir)%(Filename)%(Extension)</PackagePath>
+        <Visible>false</Visible>
       </Content>  
     </ItemGroup>
   </Target>
