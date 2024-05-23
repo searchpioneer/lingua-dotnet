@@ -26,9 +26,12 @@ jobs:
 
     - name: Sign Nuget package
       env:
-        NUGET_API_KEY: ${{ secrets.NUGET_SIGNING_PFX }}
+        NUGET_SIGNING_PFX: ${{ secrets.NUGET_SIGNING_PFX }}
+        NUGET_ROOT_SIGNING_CERT: ${{ secrets.NUGET_ROOT_SIGNING_CERT }}
       run: |
-        echo "${secrets.NUGET_SIGNING_PFX}" | base64 --decode > private.pfx
+        sudo mkdir -p /etc/pki/ca-trust/extracted/pem/
+        echo "$NUGET_ROOT_SIGNING_CERT" | sudo tee -a /etc/pki/ca-trust/extracted/pem/objsign-ca-bundle.pem  > /dev/null
+        echo "$NUGET_SIGNING_PFX" | openssl base64 -d -out private.pfx
         dotnet nuget sign nuget/*.nupkg --certificate-path private.pfx --timestamper http://timestamp.sectigo.com
       shell: bash  
 
