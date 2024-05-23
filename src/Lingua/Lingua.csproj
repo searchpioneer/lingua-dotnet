@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <PackageId>SearchPioneer.Lingua</PackageId>
         <Title>Lingua</Title>
         <Description>Natural language detection library for .NET, suitable for long and short text alike</Description>
         <TargetFramework>net8.0</TargetFramework>
@@ -18,14 +19,14 @@
     </ItemGroup>
   
     <ItemGroup>
-      <None Include="$(SolutionRoot)build\Lingua.targets">
+      <None Include="$(SolutionRoot)build\$(PackageId).targets">
         <Pack>true</Pack>
-        <PackagePath>build\Lingua.targets</PackagePath>
+        <PackagePath>build\$(PackageId).targets</PackagePath>
         <Visible>false</Visible>
       </None>
-      <None Include="$(SolutionRoot)build\Lingua.props">
+      <None Include="$(SolutionRoot)build\$(PackageId).props">
         <Pack>true</Pack>
-        <PackagePath>build\Lingua.props</PackagePath>
+        <PackagePath>build\$(PackageId).props</PackagePath>
         <Visible>false</Visible>
       </None>
     </ItemGroup>

@@ -24,6 +24,14 @@ jobs:
       run: ./build.sh pack
       shell: bash
 
+    - name: Sign Nuget package
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_SIGNING_PFX }}
+      run: |
+        echo "${secrets.NUGET_SIGNING_PFX}" | base64 --decode > private.pfx
+        dotnet nuget sign nuget/*.nupkg --certificate-path private.pfx --timestamper http://timestamp.sectigo.com
+      shell: bash  
+
     - name: Publish NuGet package
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
