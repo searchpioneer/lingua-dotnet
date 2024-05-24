@@ -150,7 +150,7 @@ Currently, the following 79 languages are supported:
 - Z
   - Zulu
 
-## 4. How accurate is it?
+## How accurate is it?
 
 Lingua is able to report accuracy statistics for some bundled test data available for each supported language.
 The test data for each language is split into three parts:
@@ -167,7 +167,7 @@ unsorted subset of 1000 single words, 1000 word pairs and 1000 sentences has bee
 
 See the [latest Accuracy Report](https://github.com/searchpioneer/lingua-dotnet/actions/workflows/accuracy_report.yml).
 
-## 5. How to use
+## How to use
 
 ### Installation
 
@@ -300,8 +300,8 @@ build the detector from all supported languages. When you have knowledge about
 the texts you want to classify you can almost always rule out certain languages as impossible
 or unlikely to occur.
 
-[nuget url]: https://www.nuget.org/packages/Lingua/
-[nuget image]: https://img.shields.io/nuget/v/Lingua.svg
+[nuget url]: https://www.nuget.org/packages/SearchPioneer.Lingua/
+[nuget image]: https://img.shields.io/nuget/v/SearchPioneer.Lingua.svg
 [license badge]: https://img.shields.io/badge/license-Apache%202.0-blue.svg
 [license url]: https://www.apache.org/licenses/LICENSE-2.0
 [supported languages badge]: https://img.shields.io/badge/supported%20languages-79-green.svg
