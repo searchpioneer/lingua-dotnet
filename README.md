@@ -174,7 +174,7 @@ See the [latest Accuracy Report](https://github.com/searchpioneer/lingua-dotnet/
 Install with nuget
 
 ```sh
-dotnet add package Lingua
+dotnet add package SearchPioneer.Lingua
 ```
 
 ### Basic Usage
