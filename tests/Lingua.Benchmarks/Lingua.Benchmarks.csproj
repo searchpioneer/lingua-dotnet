@@ -8,11 +8,11 @@
     </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
-    <PackageReference Include="BenchmarkDotNet.Diagnostics.dotTrace" Version="0.13.12" />
-    <PackageReference Include="NTextCat" Version="0.3.65" />
-    <PackageReference Include="StrongNamer" Version="0.2.5" />
-    <PackageReference Include="LanguageDetection.Ai" Version="1.1.0" />
+    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.dotTrace" />
+    <PackageReference Include="NTextCat" />
+    <PackageReference Include="StrongNamer" />
+    <PackageReference Include="LanguageDetection.Ai" />
   </ItemGroup>
   
   <ItemGroup>
