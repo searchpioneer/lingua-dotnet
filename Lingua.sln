@@ -26,6 +26,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lingua.IO", "build\Lingua.IO\Lingua.IO.csproj", "{0621700A-BB0D-4A24-95FB-28FF37F4D1D9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{79ABD769-B649-43AF-8EDB-4663C6A3CFE7}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{456E3B5A-9369-47BF-9475-35291F4BC2AD}"
 EndProject
