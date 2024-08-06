@@ -84,11 +84,11 @@ internal static class AlphabetExtensions
 		};
 
 	/// <summary>
-	/// Whether the the alphabet script matches character script.
+	/// Whether the alphabet script matches character script.
 	/// </summary>
 	/// <param name="alphabet">The alphabet to check</param>
 	/// <param name="ch">The character to check</param>
-	/// <returns><c>true</c> if the scripts match, false otherwise</returns>
+	/// <returns><c>true</c> if the scripts match, <c>false</c> otherwise</returns>
 	public static bool Matches(this Alphabet alphabet, char ch) => ch.GetScript() == alphabet.Script();
 
 	/// <summary>
@@ -96,7 +96,7 @@ internal static class AlphabetExtensions
 	/// </summary>
 	/// <param name="alphabet">The alphabet to check</param>
 	/// <param name="script">The script to check</param>
-	/// <returns><c>true</c> if the scripts match, false otherwise</returns>
+	/// <returns><c>true</c> if the scripts match, <c>false</c> otherwise</returns>
 	public static bool Matches(this Alphabet alphabet, UnicodeScript script) => script == alphabet.Script();
 
 	/// <summary>
@@ -104,7 +104,7 @@ internal static class AlphabetExtensions
 	/// </summary>
 	/// <param name="alphabet">The alphabet to check</param>
 	/// <param name="text">The text to check</param>
-	/// <returns><c>true</c> if the scripts match for all characters, false otherwise</returns>
+	/// <returns><c>true</c> if the scripts match for all characters, <c>false</c> otherwise</returns>
 	public static bool Matches(this Alphabet alphabet, string text)
 	{
 		var unicodeScript = alphabet.Script();

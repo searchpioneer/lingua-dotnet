@@ -31,6 +31,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{79ABD769-B64
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{456E3B5A-9369-47BF-9475-35291F4BC2AD}"
+	ProjectSection(SolutionItems) = preProject
+		build\SearchPioneer.Lingua.props = build\SearchPioneer.Lingua.props
+		build\SearchPioneer.Lingua.targets = build\SearchPioneer.Lingua.targets
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E1B88B6E-C9A6-41FF-8448-20626D3E9FDB}"
 EndProject

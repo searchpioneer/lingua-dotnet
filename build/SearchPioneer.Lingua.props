@@ -4,7 +4,7 @@
          Can be removed once https://github.com/NuGet/Home/issues/4856 is resolved -->
     <ItemGroup>
         <Content Update="@(Content)">
-            <Visible Condition="'%(NuGetItemType)' == 'Content' and '%(NuGetPackageId)' == 'Lingua'">False</Visible>
+            <Visible Condition="'%(NuGetItemType)' == 'Content' and '%(NuGetPackageId)' == 'SearchPioneer.Lingua'">False</Visible>
         </Content>
     </ItemGroup>
 </Project>
