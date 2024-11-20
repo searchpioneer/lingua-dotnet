@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
 using Lingua.Internal;
@@ -73,11 +74,11 @@ public sealed partial class LanguageDetector
 		["Éé"] = [Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Portuguese, Slovak, Spanish, Vietnamese, Yoruba],
 	};
 
-	internal static readonly ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>> UnigramLanguageModels = new();
-	internal static readonly ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>> BigramLanguageModels = new();
-	internal static readonly ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>> TrigramLanguageModels = new();
-	internal static readonly ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>> QuadrigramLanguageModels = new();
-	internal static readonly ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>> FivegramLanguageModels = new();
+	internal static readonly ConcurrentDictionary<Language, Lazy<FrozenDictionary<string, double>>> UnigramLanguageModels = new();
+	internal static readonly ConcurrentDictionary<Language, Lazy<FrozenDictionary<string, double>>> BigramLanguageModels = new();
+	internal static readonly ConcurrentDictionary<Language, Lazy<FrozenDictionary<string, double>>> TrigramLanguageModels = new();
+	internal static readonly ConcurrentDictionary<Language, Lazy<FrozenDictionary<string, double>>> QuadrigramLanguageModels = new();
+	internal static readonly ConcurrentDictionary<Language, Lazy<FrozenDictionary<string, double>>> FivegramLanguageModels = new();
 
 	private readonly HashSet<Language> _languages;
 	private readonly double _minimumRelativeDistance;
@@ -87,6 +88,8 @@ public sealed partial class LanguageDetector
 
 	private static readonly int[] LowAccuracyRange = [3];
 	private static readonly int[] HighAccuracyRange = [1, 2, 3, 4, 5];
+	private static readonly Lazy<FrozenDictionary<string, double>> Empty = new(() =>
+		Enumerable.Empty<KeyValuePair<string, double>>().ToFrozenDictionary());
 
 	internal LanguageDetector(
 		HashSet<Language> languages,
@@ -366,11 +369,12 @@ public sealed partial class LanguageDetector
 		var lookup = model.GetAlternateLookup<ReadOnlySpan<char>>();
 		return lookup.TryGetValue(ngram, out var result) ? result : 0;
 #else
-		return model.GetValueOrDefault(ngram.ToString(), 0);
+		// ReSharper disable once CanSimplifyDictionaryTryGetValueWithGetValueOrDefault - skip the null check
+		return model.TryGetValue(ngram.ToString(), out var result) ? result : 0;
 #endif
 	}
 
-	private static Dictionary<string, double> LoadLanguageModel(Language language, int ngramLength)
+	private static FrozenDictionary<string, double> LoadLanguageModel(Language language, int ngramLength)
 	{
 		var languageModels = ngramLength switch
 		{
@@ -419,11 +423,11 @@ public sealed partial class LanguageDetector
 		});
 	}
 
-	private static Dictionary<string, double> LoadLanguageModels(ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>> languageModels, Language language, int ngramLength) =>
+	private static FrozenDictionary<string, double> LoadLanguageModels(ConcurrentDictionary<Language, Lazy<FrozenDictionary<string, double>>> languageModels, Language language, int ngramLength) =>
 		languageModels.GetOrAdd(language, static (l, nl) =>
-			new Lazy<Dictionary<string, double>>(() => ReadLanguageModel(l, nl)), ngramLength).Value;
+			new Lazy<FrozenDictionary<string, double>>(() => ReadLanguageModel(l, nl)), ngramLength).Value;
 
-	private static Dictionary<string, double> ReadLanguageModel(Language language, int ngramLength)
+	private static FrozenDictionary<string, double> ReadLanguageModel(Language language, int ngramLength)
 	{
 		var isoCode = language.IsoCode6391().ToString().ToLowerInvariant();
 		var nGramName = Ngram.GetNameByLength(ngramLength);
@@ -438,7 +442,7 @@ public sealed partial class LanguageDetector
 		catch (FileNotFoundException)
 		{
 			// there may not be a model for a given ngram/language
-			return new Dictionary<string, double>();
+			return Empty.Value;
 		}
 	}
 

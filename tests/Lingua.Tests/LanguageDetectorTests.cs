@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using FluentAssertions;
 using Lingua.Internal;
 using Xunit;
@@ -7,7 +8,7 @@ namespace Lingua.Tests;
 
 public class LanguageDetectorTests : IDisposable
 {
-	private static readonly Dictionary<string, double> UnigramLanguageModelForEnglish = new()
+	private static readonly FrozenDictionary<string, double> UnigramLanguageModelForEnglish = new Dictionary<string, double>
 	{
 		["a"] = 0.01,
 		["l"] = 0.02,
@@ -16,9 +17,9 @@ public class LanguageDetectorTests : IDisposable
 		["r"] = 0.05,
 		// unknown unigram in model
 		["w"] = 0
-	};
+	}.ToFrozenDictionary();
 
-	private static readonly Dictionary<string, double> BigramLanguageModelForEnglish = new()
+	private static readonly FrozenDictionary<string, double> BigramLanguageModelForEnglish = new Dictionary<string, double>
 	{
 		["al"] = 0.11,
 		["lt"] = 0.12,
@@ -27,9 +28,9 @@ public class LanguageDetectorTests : IDisposable
 		// unknown bigrams in model
 		["aq"] = 0,
 		["wx"] = 0
-	};
+	}.ToFrozenDictionary();
 
-	private static readonly Dictionary<string, double> TrigramLanguageModelForEnglish = new()
+	private static readonly FrozenDictionary<string, double> TrigramLanguageModelForEnglish = new Dictionary<string, double>
 	{
 		["alt"] = 0.19,
 		["lte"] = 0.2,
@@ -38,25 +39,25 @@ public class LanguageDetectorTests : IDisposable
 		["aqu"] = 0,
 		["tez"] = 0,
 		["wxy"] = 0
-	};
+	}.ToFrozenDictionary();
 
-	private static readonly Dictionary<string, double> QuadrigramLanguageModelForEnglish = new()
+	private static readonly FrozenDictionary<string, double> QuadrigramLanguageModelForEnglish = new Dictionary<string, double>
 	{
 		["alte"] = 0.25,
 		["lter"] = 0.26,
 		// unknown quadrigrams in model
 		["aqua"] = 0,
 		["wxyz"] = 0
-	};
+	}.ToFrozenDictionary();
 
-	private static readonly Dictionary<string, double> FivegramLanguageModelForEnglish = new()
+	private static readonly FrozenDictionary<string, double> FivegramLanguageModelForEnglish = new Dictionary<string, double>
 	{
 		["alter"] = 0.29,
 		// unknown fivegrams in model
 		["aquas"] = 0
-	};
+	}.ToFrozenDictionary();
 
-	private static readonly Dictionary<string, double> UnigramLanguageModelForGerman = new()
+	private static readonly FrozenDictionary<string, double> UnigramLanguageModelForGerman = new Dictionary<string, double>
 	{
 		["a"] = 0.06,
 		["l"] = 0.07,
@@ -65,9 +66,9 @@ public class LanguageDetectorTests : IDisposable
 		["r"] = 0.1,
 		// unknown unigrams in model
 		["w"] = 0
-	};
+	}.ToFrozenDictionary();
 
-	private static readonly Dictionary<string, double> BigramLanguageModelForGerman = new()
+	private static readonly FrozenDictionary<string, double> BigramLanguageModelForGerman = new Dictionary<string, double>
 	{
 		["al"] = 0.15,
 		["lt"] = 0.16,
@@ -75,29 +76,29 @@ public class LanguageDetectorTests : IDisposable
 		["er"] = 0.18,
 		// unknown bigrams in model
 		["wx"] = 0
-	};
+	}.ToFrozenDictionary();
 
-	private static readonly Dictionary<string, double> TrigramLanguageModelForGerman = new()
+	private static readonly FrozenDictionary<string, double> TrigramLanguageModelForGerman = new Dictionary<string, double>
 	{
 		["alt"] = 0.22,
 		["lte"] = 0.23,
 		["ter"] = 0.24,
 		// unknown trigrams in model
 		["wxy"] = 0
-	};
+	}.ToFrozenDictionary();
 
-	private static readonly Dictionary<string, double> QuadrigramLanguageModelForGerman = new()
+	private static readonly FrozenDictionary<string, double> QuadrigramLanguageModelForGerman = new Dictionary<string, double>
 	{
 		["alte"] = 0.27,
 		["lter"] = 0.28,
 		// unknown quadrigrams in model
 		["wxyz"] = 0
-	};
+	}.ToFrozenDictionary();
 
-	private static readonly Dictionary<string, double> FivegramLanguageModelForGerman = new()
+	private static readonly FrozenDictionary<string, double> FivegramLanguageModelForGerman = new Dictionary<string, double>
 	{
 		["alter"] = 0.3
-	};
+	}.ToFrozenDictionary();
 
 	private readonly LanguageDetector _detectorForEnglishAndGerman = new(
 		[English, German],
@@ -748,7 +749,7 @@ public class LanguageDetectorTests : IDisposable
 	[Fact]
 	public void ZeroConfidenceValuesReturnedWhenNoNgramProbabilitiesAvailable() =>
 		_detectorForEnglishAndGerman.ComputeLanguageConfidenceValues("проарплап").Should().BeEquivalentTo(
-			new Dictionary<Language, double>()
+			new Dictionary<Language, double>
 			{
 				[English] = 0,
 				[German] = 0
@@ -888,20 +889,20 @@ public class LanguageDetectorTests : IDisposable
 
 	private void AddLanguageModelsToDetector()
 	{
-		LanguageDetector.UnigramLanguageModels[English] = new Lazy<Dictionary<string, double>>(UnigramLanguageModelForEnglish);
-		LanguageDetector.UnigramLanguageModels[German] = new Lazy<Dictionary<string, double>>(UnigramLanguageModelForGerman);
+		LanguageDetector.UnigramLanguageModels[English] = new Lazy<FrozenDictionary<string, double>>(UnigramLanguageModelForEnglish);
+		LanguageDetector.UnigramLanguageModels[German] = new Lazy<FrozenDictionary<string, double>>(UnigramLanguageModelForGerman);
 
-		LanguageDetector.BigramLanguageModels[English] = new Lazy<Dictionary<string, double>>(BigramLanguageModelForEnglish);
-		LanguageDetector.BigramLanguageModels[German] = new Lazy<Dictionary<string, double>>(BigramLanguageModelForGerman);
+		LanguageDetector.BigramLanguageModels[English] = new Lazy<FrozenDictionary<string, double>>(BigramLanguageModelForEnglish);
+		LanguageDetector.BigramLanguageModels[German] = new Lazy<FrozenDictionary<string, double>>(BigramLanguageModelForGerman);
 
-		LanguageDetector.TrigramLanguageModels[English] = new Lazy<Dictionary<string, double>>(TrigramLanguageModelForEnglish);
-		LanguageDetector.TrigramLanguageModels[German] = new Lazy<Dictionary<string, double>>(TrigramLanguageModelForGerman);
+		LanguageDetector.TrigramLanguageModels[English] = new Lazy<FrozenDictionary<string, double>>(TrigramLanguageModelForEnglish);
+		LanguageDetector.TrigramLanguageModels[German] = new Lazy<FrozenDictionary<string, double>>(TrigramLanguageModelForGerman);
 
-		LanguageDetector.QuadrigramLanguageModels[English] = new Lazy<Dictionary<string, double>>(QuadrigramLanguageModelForEnglish);
-		LanguageDetector.QuadrigramLanguageModels[German] = new Lazy<Dictionary<string, double>>(QuadrigramLanguageModelForGerman);
+		LanguageDetector.QuadrigramLanguageModels[English] = new Lazy<FrozenDictionary<string, double>>(QuadrigramLanguageModelForEnglish);
+		LanguageDetector.QuadrigramLanguageModels[German] = new Lazy<FrozenDictionary<string, double>>(QuadrigramLanguageModelForGerman);
 
-		LanguageDetector.FivegramLanguageModels[English] = new Lazy<Dictionary<string, double>>(FivegramLanguageModelForEnglish);
-		LanguageDetector.FivegramLanguageModels[German] = new Lazy<Dictionary<string, double>>(FivegramLanguageModelForGerman);
+		LanguageDetector.FivegramLanguageModels[English] = new Lazy<FrozenDictionary<string, double>>(FivegramLanguageModelForEnglish);
+		LanguageDetector.FivegramLanguageModels[German] = new Lazy<FrozenDictionary<string, double>>(FivegramLanguageModelForGerman);
 	}
 
 	private void RemoveLanguageModelsFromDetector()

@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.Collections.Frozen;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
@@ -6,7 +7,7 @@ namespace Lingua.Internal;
 
 internal static class LanguageModel
 {
-	public static Dictionary<string, double> FromJson(Stream stream)
+	public static FrozenDictionary<string, double> FromJson(Stream stream)
 	{
 		using var memoryStream = new MemoryStream();
 		stream.CopyTo(memoryStream);
@@ -48,7 +49,7 @@ internal static class LanguageModel
 		}
 
 		frequencies.TrimExcess();
-		return frequencies;
+		return frequencies.ToFrozenDictionary();
 	}
 }
 
