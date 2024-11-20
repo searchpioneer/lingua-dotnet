@@ -318,7 +318,7 @@ public sealed partial class LanguageDetector
 		{
 			foreach (var unigram in unigramLanguageModel.Ngrams)
 			{
-				var probability = LookupNgramProbability(language, unigram.Value);
+				var probability = LookupNgramProbability(language, unigram.AsSpan());
 				if (probability > 0)
 					unigramCounts.IncrementCounter(language);
 			}
@@ -359,41 +359,31 @@ public sealed partial class LanguageDetector
 		return sum;
 	}
 
-	private static double LookupNgramProbability(Language language, ReadOnlySpan<char> ngram) =>
-		// ideally we can look up in a Dictionary<string, TValue> using a ReadOnlySpan<char> key
-		// see https://github.com/dotnet/runtime/issues/27229.
-		// For now, .ToString() the span...
-		LookupNgramProbability(language, ngram.ToString());
-
-	internal static double LookupNgramProbability(Language language, string ngram)
+	internal static double LookupNgramProbability(Language language, ReadOnlySpan<char> ngram)
 	{
-		var ngramLength = ngram.Length;
-		ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>>? languageModels;
-		switch (ngramLength)
-		{
-			case 5:
-				languageModels = FivegramLanguageModels;
-				break;
-			case 4:
-				languageModels = QuadrigramLanguageModels;
-				break;
-			case 3:
-				languageModels = TrigramLanguageModels;
-				break;
-			case 2:
-				languageModels = BigramLanguageModels;
-				break;
-			case 1:
-				languageModels = UnigramLanguageModels;
-				break;
-			case 0:
-				throw new ArgumentException("Zerogram detected");
-			default:
-				throw new ArgumentException($"unsupported ngram length detected: ${ngramLength}");
-		}
+		var model = LoadLanguageModel(language, ngram.Length);
+#if NET9_0
+		var lookup = model.GetAlternateLookup<ReadOnlySpan<char>>();
+		return lookup.TryGetValue(ngram, out var result) ? result : 0;
+#else
+		return model.GetValueOrDefault(ngram.ToString(), 0);
+#endif
+	}
 
-		var model = LoadLanguageModels(languageModels, language, ngramLength);
-		return model.GetValueOrDefault(ngram, 0);
+	private static Dictionary<string, double> LoadLanguageModel(Language language, int ngramLength)
+	{
+		var languageModels = ngramLength switch
+		{
+			5 => FivegramLanguageModels,
+			4 => QuadrigramLanguageModels,
+			3 => TrigramLanguageModels,
+			2 => BigramLanguageModels,
+			1 => UnigramLanguageModels,
+			0 => throw new ArgumentException("Zerogram detected"),
+			_ => throw new ArgumentException($"unsupported ngram length detected: ${ngramLength}")
+		};
+
+		return LoadLanguageModels(languageModels, language, ngramLength);
 	}
 
 	private void PreloadLanguageModels()
@@ -431,9 +421,9 @@ public sealed partial class LanguageDetector
 
 	private static Dictionary<string, double> LoadLanguageModels(ConcurrentDictionary<Language, Lazy<Dictionary<string, double>>> languageModels, Language language, int ngramLength) =>
 		languageModels.GetOrAdd(language, static (l, nl) =>
-			new Lazy<Dictionary<string, double>>(() => LoadLanguageModel(l, nl)), ngramLength).Value;
+			new Lazy<Dictionary<string, double>>(() => ReadLanguageModel(l, nl)), ngramLength).Value;
 
-	private static Dictionary<string, double> LoadLanguageModel(Language language, int ngramLength)
+	private static Dictionary<string, double> ReadLanguageModel(Language language, int ngramLength)
 	{
 		var isoCode = language.IsoCode6391().ToString().ToLowerInvariant();
 		var nGramName = Ngram.GetNameByLength(ngramLength);
