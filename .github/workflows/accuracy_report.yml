@@ -30,7 +30,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
       - name: Build Accuracy Report
         run: ./build.sh report ${{ inputs.lingua && '--implementation Lingua' || '' }} ${{ inputs.language_detection && '--implementation LanguageDetection' || '' }} ${{ inputs.ntextcat && '--implementation NTextCat' || '' }} ${{ inputs.compare && '--compare' || '' }}
       - name: Write Summary
