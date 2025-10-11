@@ -9,19 +9,23 @@ using static SimpleExec.Command;
 const string packOutput = "nuget";
 const string reportOutput = "accuracy-reports";
 
-var language = new Option<string[]>(["--language"], "languages to generate an accuracy report for")
+var language = new Option<string[]>("--language")
 {
 	Arity = ArgumentArity.ZeroOrMore,
+	Description = "languages to generate an accuracy report for"
 };
 
-var detector = new Option<string[]>(["--implementation"], "implementations to generate an accuracy report for")
+var detector = new Option<string[]>("--implementation")
 {
 	Arity = ArgumentArity.ZeroOrMore,
+	Description = "implementations to generate an accuracy report for"
 };
-detector.FromAmong("Lingua", "NTextCat", "LanguageDetection");
+detector.AcceptOnlyFromAmong("Lingua", "NTextCat", "LanguageDetection");
 
-var compare = new Option<bool>("--compare",
-	"whether implementations should use the same subset of supported languages when generating an accuracy report");
+var compare = new Option<bool>("--compare")
+{
+	Description = "whether implementations should use the same subset of supported languages when generating an accuracy report"
+};
 
 var cmd = new RootCommand
 {
@@ -36,11 +40,13 @@ var cmd = new RootCommand
 };
 
 foreach (var (aliases, description) in Options.Definitions)
-	cmd.Add(new Option<bool>(aliases.ToArray(), description));
-
-cmd.SetHandler(async () =>
 {
-	var cmdLine = cmd.Parse(args);
+	var option = new Option<bool>(aliases[0], aliases.Skip(1).ToArray()) { Description = description };
+	cmd.Add(option);
+}
+
+cmd.SetAction(async (cmdLine) =>
+{
 	var tokens = cmdLine.CommandResult.Tokens.Select(token => token.Value).ToList();
 	var targets = new List<string>();
 	var seen = false;
@@ -62,8 +68,8 @@ cmd.SetHandler(async () =>
 			targets.Add(t);
 	}
 
-	var options = new Options(Options.Definitions.Select(d => (d.Aliases[0],
-		cmdLine.GetValueForOption(cmd.Options.OfType<Option<bool>>().Single(o => o.HasAlias(d.Aliases[0]))))));
+	var options = new Options(Options.Definitions.Select(d =>
+		(d.Aliases[0], cmdLine.GetValue<bool>(d.Aliases[0]))));
 
 	Target(Restore, () =>
 	{
@@ -71,30 +77,30 @@ cmd.SetHandler(async () =>
 		Run("dotnet", "tool restore");
 	});
 
-	Target(CleanBuildOutput, DependsOn(Restore), () =>
+	Target(CleanBuildOutput, [Restore], () =>
 	{
 		Run("dotnet", "clean -c Release -v m --nologo");
 	});
 
-	Target(Format, DependsOn(Restore), () =>
+	Target(Format, [Restore], () =>
 	{
 		Run("dotnet", "format");
 	});
 
-	Target(BuildSln, DependsOn(CleanBuildOutput, Format), () =>
+	Target(BuildSln, [CleanBuildOutput, Format], () =>
 	{
 		Run("dotnet", "build -c Release --nologo");
 	});
 
-	Target(Test, DependsOn(BuildSln), () =>
+	Target(Test, [BuildSln], () =>
 	{
 		Run("dotnet", "test tests/Lingua.Tests -c Release --no-build --verbosity normal");
 	});
 
-	Target(Report, DependsOn(CleanReportOutput, BuildSln), () =>
+	Target(Report, [CleanReportOutput, BuildSln], () =>
 	{
 		var filter = new StringBuilder();
-		var languages = cmdLine.GetValueForOption(language);
+		var languages = cmdLine.GetValue(language);
 		if (languages?.Length > 0)
 		{
 			foreach (var l in languages)
@@ -108,7 +114,7 @@ cmd.SetHandler(async () =>
 			}
 		}
 
-		var detectors = cmdLine.GetValueForOption(detector);
+		var detectors = cmdLine.GetValue(detector);
 		if (detectors?.Length > 0)
 		{
 			if (filter.Length > 0)
@@ -131,7 +137,7 @@ cmd.SetHandler(async () =>
 		}
 
 		var additionalArgs = new StringBuilder();
-		if (cmdLine.GetValueForOption(compare))
+		if (cmdLine.GetValue(compare))
 			additionalArgs.Append(" --environment TEST_COMPARE=\"true\"");
 		if (filter.Length > 0)
 			additionalArgs.Append($" --filter \"{filter}\" --environment TEST_FILTER=\"{filter}\"");
@@ -161,20 +167,29 @@ cmd.SetHandler(async () =>
 			Directory.Delete(packOutput, true);
 	});
 
-	Target(Clean, DependsOn(CleanBuildOutput, CleanReportOutput, CleanPackOutput));
+	Target(Clean, [CleanBuildOutput, CleanReportOutput, CleanPackOutput]);
 
-	Target(Pack, DependsOn(Clean, Format), () =>
+	Target(Pack, [Clean, Format], () =>
 	{
 		var outputDir = Directory.CreateDirectory(packOutput);
 		Run("dotnet", $"pack -c Release -o \"{outputDir.FullName}\" --nologo");
 	});
 
-	Target(Default, DependsOn(Test));
+	Target(Default, [Test]);
 
-	await RunTargetsAndExitAsync(targets, options, messageOnly: ex => ex is SimpleExec.ExitCodeException);
+	try
+	{
+		await RunTargetsAndExitAsync(targets, options, messageOnly: ex => ex is SimpleExec.ExitCodeException);
+		return 0;
+	}
+	catch
+	{
+		return 1;
+	}
 });
 
-return await cmd.InvokeAsync(args);
+var parseResult = cmd.Parse(args);
+return await parseResult.InvokeAsync();
 
 internal static class BuildTargets
 {
