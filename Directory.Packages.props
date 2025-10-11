@@ -10,25 +10,25 @@
 
   <!-- Test -->
   <ItemGroup>
-    <PackageVersion Include="BenchmarkDotNet" Version="0.14.0" />
-    <PackageVersion Include="BenchmarkDotNet.Diagnostics.dotTrace" Version="0.14.0" />
-    <PackageVersion Include="FluentAssertions" Version="6.12.2" />
+    <PackageVersion Include="BenchmarkDotNet" Version="0.15.4" />
+    <PackageVersion Include="BenchmarkDotNet.Diagnostics.dotTrace" Version="0.15.4" />
+    <PackageVersion Include="FluentAssertions" Version="[7.0.0]" />
     <PackageVersion Include="LanguageDetection.Ai" Version="1.1.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageVersion Include="NTextCat" Version="0.3.65" />
     <PackageVersion Include="StrongNamer" Version="0.2.5" />
     <PackageVersion Include="System.Net.Http" Version="4.3.4" />
     <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageVersion Include="xunit" Version="2.9.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>
   
   <!-- Build -->
   <ItemGroup>
-    <PackageVersion Include="Bullseye" Version="5.0.0" />
-    <PackageVersion Include="Fractions" Version="8.0.4" />
+    <PackageVersion Include="Bullseye" Version="6.0.0" />
+    <PackageVersion Include="Fractions" Version="8.3.2" />
     <PackageVersion Include="SimpleExec" Version="12.0.0" />
-    <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageVersion Include="System.CommandLine" Version="2.0.0-rc.1.25451.107" />
     <PackageVersion Include="MinVer" Version="6.0.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
     <PackageVersion Include="ConfigureAwaitChecker.Analyzer" Version="5.0.0.1" />
