@@ -3,7 +3,7 @@ using static Lingua.UnicodeScript;
 
 namespace Lingua;
 
-///<summary>Unicode script information, version 16.0.0</summary>
+///<summary>Unicode script information, version 17.0.0</summary>
 public enum UnicodeScript
 {
     ///<summary>Unicode script for "Unknown"</summary>
@@ -348,6 +348,14 @@ public enum UnicodeScript
     Todhri,
     ///<summary>Unicode script for "Tulu Tigalari"</summary>
     TuluTigalari,
+    ///<summary>Unicode script for "Sidetic"</summary>
+    Sidetic,
+    ///<summary>Unicode script for "Tai Yo"</summary>
+    TaiYo,
+    ///<summary>Unicode script for "Tolong Siki"</summary>
+    TolongSiki,
+    ///<summary>Unicode script for "Beria Erfe"</summary>
+    BeriaErfe,
 }
 
 /// <summary>
@@ -452,9 +460,7 @@ public static class UnicodeScriptInfo
         0x085F, // 085F; Unknown
         0x0860, // 0860..086A; Syriac
         0x086B, // 086B..086F; Unknown
-        0x0870, // 0870..088E; Arabic
-        0x088F, // 088F; Unknown
-        0x0890, // 0890..0891; Arabic
+        0x0870, // 0870..0891; Arabic
         0x0892, // 0892..0896; Unknown
         0x0897, // 0897..08E1; Arabic
         0x08E2, // 08E2; Common
@@ -629,8 +635,8 @@ public static class UnicodeScriptInfo
         0x0C55, // 0C55..0C56; Telugu
         0x0C57, // 0C57; Unknown
         0x0C58, // 0C58..0C5A; Telugu
-        0x0C5B, // 0C5B..0C5C; Unknown
-        0x0C5D, // 0C5D; Telugu
+        0x0C5B, // 0C5B; Unknown
+        0x0C5C, // 0C5C..0C5D; Telugu
         0x0C5E, // 0C5E..0C5F; Unknown
         0x0C60, // 0C60..0C63; Telugu
         0x0C64, // 0C64..0C65; Unknown
@@ -654,8 +660,8 @@ public static class UnicodeScriptInfo
         0x0CCA, // 0CCA..0CCD; Kannada
         0x0CCE, // 0CCE..0CD4; Unknown
         0x0CD5, // 0CD5..0CD6; Kannada
-        0x0CD7, // 0CD7..0CDC; Unknown
-        0x0CDD, // 0CDD..0CDE; Kannada
+        0x0CD7, // 0CD7..0CDB; Unknown
+        0x0CDC, // 0CDC..0CDE; Kannada
         0x0CDF, // 0CDF; Unknown
         0x0CE0, // 0CE0..0CE3; Kannada
         0x0CE4, // 0CE4..0CE5; Unknown
@@ -866,8 +872,10 @@ public static class UnicodeScriptInfo
         0x1A9A, // 1A9A..1A9F; Unknown
         0x1AA0, // 1AA0..1AAD; Tai_Tham
         0x1AAE, // 1AAE..1AAF; Unknown
-        0x1AB0, // 1AB0..1ACE; Inherited
-        0x1ACF, // 1ACF..1AFF; Unknown
+        0x1AB0, // 1AB0..1ADD; Inherited
+        0x1ADE, // 1ADE..1ADF; Unknown
+        0x1AE0, // 1AE0..1AEB; Inherited
+        0x1AEC, // 1AEC..1AFF; Unknown
         0x1B00, // 1B00..1B4C; Balinese
         0x1B4D, // 1B4D; Unknown
         0x1B4E, // 1B4E..1B7F; Balinese
@@ -959,8 +967,8 @@ public static class UnicodeScriptInfo
         0x208F, // 208F; Unknown
         0x2090, // 2090..209C; Latin
         0x209D, // 209D..209F; Unknown
-        0x20A0, // 20A0..20C0; Common
-        0x20C1, // 20C1..20CF; Unknown
+        0x20A0, // 20A0..20C1; Common
+        0x20C2, // 20C2..20CF; Unknown
         0x20D0, // 20D0..20F0; Inherited
         0x20F1, // 20F1..20FF; Unknown
         0x2100, // 2100..2125; Common
@@ -983,9 +991,7 @@ public static class UnicodeScriptInfo
         0x2800, // 2800..28FF; Braille
         0x2900, // 2900..2B73; Common
         0x2B74, // 2B74..2B75; Unknown
-        0x2B76, // 2B76..2B95; Common
-        0x2B96, // 2B96; Unknown
-        0x2B97, // 2B97..2BFF; Common
+        0x2B76, // 2B76..2BFF; Common
         0x2C00, // 2C00..2C5F; Glagolitic
         0x2C60, // 2C60..2C7F; Latin
         0x2C80, // 2C80..2CF3; Coptic
@@ -1086,15 +1092,9 @@ public static class UnicodeScriptInfo
         0xA700, // A700..A721; Common
         0xA722, // A722..A787; Latin
         0xA788, // A788..A78A; Common
-        0xA78B, // A78B..A7CD; Latin
-        0xA7CE, // A7CE..A7CF; Unknown
-        0xA7D0, // A7D0..A7D1; Latin
-        0xA7D2, // A7D2; Unknown
-        0xA7D3, // A7D3; Latin
-        0xA7D4, // A7D4; Unknown
-        0xA7D5, // A7D5..A7DC; Latin
-        0xA7DD, // A7DD..A7F1; Unknown
-        0xA7F2, // A7F2..A7FF; Latin
+        0xA78B, // A78B..A7DC; Latin
+        0xA7DD, // A7DD..A7F0; Unknown
+        0xA7F1, // A7F1..A7FF; Latin
         0xA800, // A800..A82C; Syloti_Nagri
         0xA82D, // A82D..A82F; Unknown
         0xA830, // A830..A839; Common
@@ -1182,15 +1182,9 @@ public static class UnicodeScriptInfo
         0xFB43, // FB43..FB44; Hebrew
         0xFB45, // FB45; Unknown
         0xFB46, // FB46..FB4F; Hebrew
-        0xFB50, // FB50..FBC2; Arabic
-        0xFBC3, // FBC3..FBD2; Unknown
-        0xFBD3, // FBD3..FD3D; Arabic
+        0xFB50, // FB50..FD3D; Arabic
         0xFD3E, // FD3E..FD3F; Common
-        0xFD40, // FD40..FD8F; Arabic
-        0xFD90, // FD90..FD91; Unknown
-        0xFD92, // FD92..FDC7; Arabic
-        0xFDC8, // FDC8..FDCE; Unknown
-        0xFDCF, // FDCF; Arabic
+        0xFD40, // FD40..FDCF; Arabic
         0xFDD0, // FDD0..FDEF; Unknown
         0xFDF0, // FDF0..FDFF; Arabic
         0xFE00, // FE00..FE0F; Inherited
@@ -1359,7 +1353,8 @@ public static class UnicodeScriptInfo
         0x10920, // 10920..10939; Lydian
         0x1093A, // 1093A..1093E; Unknown
         0x1093F, // 1093F; Lydian
-        0x10940, // 10940..1097F; Unknown
+        0x10940, // 10940..10959; Sidetic
+        0x1095A, // 1095A..1097F; Unknown
         0x10980, // 10980..1099F; Meroitic_Hieroglyphs
         0x109A0, // 109A0..109B7; Meroitic_Cursive
         0x109B8, // 109B8..109BB; Unknown
@@ -1429,9 +1424,11 @@ public static class UnicodeScriptInfo
         0x10EAE, // 10EAE..10EAF; Unknown
         0x10EB0, // 10EB0..10EB1; Yezidi
         0x10EB2, // 10EB2..10EC1; Unknown
-        0x10EC2, // 10EC2..10EC4; Arabic
-        0x10EC5, // 10EC5..10EFB; Unknown
-        0x10EFC, // 10EFC..10EFF; Arabic
+        0x10EC2, // 10EC2..10EC7; Arabic
+        0x10EC8, // 10EC8..10ECF; Unknown
+        0x10ED0, // 10ED0..10ED8; Arabic
+        0x10ED9, // 10ED9..10EF9; Unknown
+        0x10EFA, // 10EFA..10EFF; Arabic
         0x10F00, // 10F00..10F27; Old_Sogdian
         0x10F28, // 10F28..10F2F; Unknown
         0x10F30, // 10F30..10F59; Sogdian
@@ -1601,7 +1598,9 @@ public static class UnicodeScriptInfo
         0x11AC0, // 11AC0..11AF8; Pau_Cin_Hau
         0x11AF9, // 11AF9..11AFF; Unknown
         0x11B00, // 11B00..11B09; Devanagari
-        0x11B0A, // 11B0A..11BBF; Unknown
+        0x11B0A, // 11B0A..11B5F; Unknown
+        0x11B60, // 11B60..11B67; Sharada
+        0x11B68, // 11B68..11BBF; Unknown
         0x11BC0, // 11BC0..11BE1; Sunuwar
         0x11BE2, // 11BE2..11BEF; Unknown
         0x11BF0, // 11BF0..11BF9; Sunuwar
@@ -1645,7 +1644,11 @@ public static class UnicodeScriptInfo
         0x11D93, // 11D93..11D98; Gunjala_Gondi
         0x11D99, // 11D99..11D9F; Unknown
         0x11DA0, // 11DA0..11DA9; Gunjala_Gondi
-        0x11DAA, // 11DAA..11EDF; Unknown
+        0x11DAA, // 11DAA..11DAF; Unknown
+        0x11DB0, // 11DB0..11DDB; Tolong_Siki
+        0x11DDC, // 11DDC..11DDF; Unknown
+        0x11DE0, // 11DE0..11DE9; Tolong_Siki
+        0x11DEA, // 11DEA..11EDF; Unknown
         0x11EE0, // 11EE0..11EF8; Makasar
         0x11EF9, // 11EF9..11EFF; Unknown
         0x11F00, // 11F00..11F10; Kawi
@@ -1705,7 +1708,11 @@ public static class UnicodeScriptInfo
         0x16D40, // 16D40..16D79; Kirat_Rai
         0x16D7A, // 16D7A..16E3F; Unknown
         0x16E40, // 16E40..16E9A; Medefaidrin
-        0x16E9B, // 16E9B..16EFF; Unknown
+        0x16E9B, // 16E9B..16E9F; Unknown
+        0x16EA0, // 16EA0..16EB8; Beria_Erfe
+        0x16EB9, // 16EB9..16EBA; Unknown
+        0x16EBB, // 16EBB..16ED3; Beria_Erfe
+        0x16ED4, // 16ED4..16EFF; Unknown
         0x16F00, // 16F00..16F4A; Miao
         0x16F4B, // 16F4B..16F4E; Unknown
         0x16F4F, // 16F4F..16F87; Miao
@@ -1717,16 +1724,16 @@ public static class UnicodeScriptInfo
         0x16FE2, // 16FE2..16FE3; Han
         0x16FE4, // 16FE4; Khitan_Small_Script
         0x16FE5, // 16FE5..16FEF; Unknown
-        0x16FF0, // 16FF0..16FF1; Han
-        0x16FF2, // 16FF2..16FFF; Unknown
-        0x17000, // 17000..187F7; Tangut
-        0x187F8, // 187F8..187FF; Unknown
-        0x18800, // 18800..18AFF; Tangut
+        0x16FF0, // 16FF0..16FF6; Han
+        0x16FF7, // 16FF7..16FFF; Unknown
+        0x17000, // 17000..18AFF; Tangut
         0x18B00, // 18B00..18CD5; Khitan_Small_Script
         0x18CD6, // 18CD6..18CFE; Unknown
         0x18CFF, // 18CFF; Khitan_Small_Script
-        0x18D00, // 18D00..18D08; Tangut
-        0x18D09, // 18D09..1AFEF; Unknown
+        0x18D00, // 18D00..18D1E; Tangut
+        0x18D1F, // 18D1F..18D7F; Unknown
+        0x18D80, // 18D80..18DF2; Tangut
+        0x18DF3, // 18DF3..1AFEF; Unknown
         0x1AFF0, // 1AFF0..1AFF3; Katakana
         0x1AFF4, // 1AFF4; Unknown
         0x1AFF5, // 1AFF5..1AFFB; Katakana
@@ -1758,10 +1765,14 @@ public static class UnicodeScriptInfo
         0x1BC9C, // 1BC9C..1BC9F; Duployan
         0x1BCA0, // 1BCA0..1BCA3; Common
         0x1BCA4, // 1BCA4..1CBFF; Unknown
-        0x1CC00, // 1CC00..1CCF9; Common
-        0x1CCFA, // 1CCFA..1CCFF; Unknown
+        0x1CC00, // 1CC00..1CCFC; Common
+        0x1CCFD, // 1CCFD..1CCFF; Unknown
         0x1CD00, // 1CD00..1CEB3; Common
-        0x1CEB4, // 1CEB4..1CEFF; Unknown
+        0x1CEB4, // 1CEB4..1CEB9; Unknown
+        0x1CEBA, // 1CEBA..1CED0; Common
+        0x1CED1, // 1CED1..1CEDF; Unknown
+        0x1CEE0, // 1CEE0..1CEF0; Common
+        0x1CEF1, // 1CEF1..1CEFF; Unknown
         0x1CF00, // 1CF00..1CF2D; Inherited
         0x1CF2E, // 1CF2E..1CF2F; Unknown
         0x1CF30, // 1CF30..1CF46; Inherited
@@ -1876,7 +1887,13 @@ public static class UnicodeScriptInfo
         0x1E5D0, // 1E5D0..1E5FA; Ol_Onal
         0x1E5FB, // 1E5FB..1E5FE; Unknown
         0x1E5FF, // 1E5FF; Ol_Onal
-        0x1E600, // 1E600..1E7DF; Unknown
+        0x1E600, // 1E600..1E6BF; Unknown
+        0x1E6C0, // 1E6C0..1E6DE; Tai_Yo
+        0x1E6DF, // 1E6DF; Unknown
+        0x1E6E0, // 1E6E0..1E6F5; Tai_Yo
+        0x1E6F6, // 1E6F6..1E6FD; Unknown
+        0x1E6FE, // 1E6FE..1E6FF; Tai_Yo
+        0x1E700, // 1E700..1E7DF; Unknown
         0x1E7E0, // 1E7E0..1E7E6; Ethiopic
         0x1E7E7, // 1E7E7; Unknown
         0x1E7E8, // 1E7E8..1E7EB; Ethiopic
@@ -1993,15 +2010,13 @@ public static class UnicodeScriptInfo
         0x1F252, // 1F252..1F25F; Unknown
         0x1F260, // 1F260..1F265; Common
         0x1F266, // 1F266..1F2FF; Unknown
-        0x1F300, // 1F300..1F6D7; Common
-        0x1F6D8, // 1F6D8..1F6DB; Unknown
+        0x1F300, // 1F300..1F6D8; Common
+        0x1F6D9, // 1F6D9..1F6DB; Unknown
         0x1F6DC, // 1F6DC..1F6EC; Common
         0x1F6ED, // 1F6ED..1F6EF; Unknown
         0x1F6F0, // 1F6F0..1F6FC; Common
         0x1F6FD, // 1F6FD..1F6FF; Unknown
-        0x1F700, // 1F700..1F776; Common
-        0x1F777, // 1F777..1F77A; Unknown
-        0x1F77B, // 1F77B..1F7D9; Common
+        0x1F700, // 1F700..1F7D9; Common
         0x1F7DA, // 1F7DA..1F7DF; Unknown
         0x1F7E0, // 1F7E0..1F7EB; Common
         0x1F7EC, // 1F7EC..1F7EF; Unknown
@@ -2020,35 +2035,37 @@ public static class UnicodeScriptInfo
         0x1F8B0, // 1F8B0..1F8BB; Common
         0x1F8BC, // 1F8BC..1F8BF; Unknown
         0x1F8C0, // 1F8C0..1F8C1; Common
-        0x1F8C2, // 1F8C2..1F8FF; Unknown
-        0x1F900, // 1F900..1FA53; Common
-        0x1FA54, // 1FA54..1FA5F; Unknown
+        0x1F8C2, // 1F8C2..1F8CF; Unknown
+        0x1F8D0, // 1F8D0..1F8D8; Common
+        0x1F8D9, // 1F8D9..1F8FF; Unknown
+        0x1F900, // 1F900..1FA57; Common
+        0x1FA58, // 1FA58..1FA5F; Unknown
         0x1FA60, // 1FA60..1FA6D; Common
         0x1FA6E, // 1FA6E..1FA6F; Unknown
         0x1FA70, // 1FA70..1FA7C; Common
         0x1FA7D, // 1FA7D..1FA7F; Unknown
-        0x1FA80, // 1FA80..1FA89; Common
-        0x1FA8A, // 1FA8A..1FA8E; Unknown
-        0x1FA8F, // 1FA8F..1FAC6; Common
-        0x1FAC7, // 1FAC7..1FACD; Unknown
-        0x1FACE, // 1FACE..1FADC; Common
+        0x1FA80, // 1FA80..1FA8A; Common
+        0x1FA8B, // 1FA8B..1FA8D; Unknown
+        0x1FA8E, // 1FA8E..1FAC6; Common
+        0x1FAC7, // 1FAC7; Unknown
+        0x1FAC8, // 1FAC8; Common
+        0x1FAC9, // 1FAC9..1FACC; Unknown
+        0x1FACD, // 1FACD..1FADC; Common
         0x1FADD, // 1FADD..1FADE; Unknown
-        0x1FADF, // 1FADF..1FAE9; Common
-        0x1FAEA, // 1FAEA..1FAEF; Unknown
-        0x1FAF0, // 1FAF0..1FAF8; Common
+        0x1FADF, // 1FADF..1FAEA; Common
+        0x1FAEB, // 1FAEB..1FAEE; Unknown
+        0x1FAEF, // 1FAEF..1FAF8; Common
         0x1FAF9, // 1FAF9..1FAFF; Unknown
         0x1FB00, // 1FB00..1FB92; Common
         0x1FB93, // 1FB93; Unknown
-        0x1FB94, // 1FB94..1FBF9; Common
-        0x1FBFA, // 1FBFA..1FFFF; Unknown
+        0x1FB94, // 1FB94..1FBFA; Common
+        0x1FBFB, // 1FBFB..1FFFF; Unknown
         0x20000, // 20000..2A6DF; Han
         0x2A6E0, // 2A6E0..2A6FF; Unknown
-        0x2A700, // 2A700..2B739; Han
-        0x2B73A, // 2B73A..2B73F; Unknown
-        0x2B740, // 2B740..2B81D; Han
+        0x2A700, // 2A700..2B81D; Han
         0x2B81E, // 2B81E..2B81F; Unknown
-        0x2B820, // 2B820..2CEA1; Han
-        0x2CEA2, // 2CEA2..2CEAF; Unknown
+        0x2B820, // 2B820..2CEAD; Han
+        0x2CEAE, // 2CEAE..2CEAF; Unknown
         0x2CEB0, // 2CEB0..2EBE0; Han
         0x2EBE1, // 2EBE1..2EBEF; Unknown
         0x2EBF0, // 2EBF0..2EE5D; Han
@@ -2057,8 +2074,8 @@ public static class UnicodeScriptInfo
         0x2FA1E, // 2FA1E..2FFFF; Unknown
         0x30000, // 30000..3134A; Han
         0x3134B, // 3134B..3134F; Unknown
-        0x31350, // 31350..323AF; Han
-        0x323B0, // 323B0..E0000; Unknown
+        0x31350, // 31350..33479; Han
+        0x3347A, // 3347A..E0000; Unknown
         0xE0001, // E0001; Common
         0xE0002, // E0002..E001F; Unknown
         0xE0020, // E0020..E007F; Common
@@ -2164,9 +2181,7 @@ public static class UnicodeScriptInfo
         Unknown,	// 085F
         Syriac,	// 0860..086A
         Unknown,	// 086B..086F
-        Arabic,	// 0870..088E
-        Unknown,	// 088F
-        Arabic,	// 0890..0891
+        Arabic,	// 0870..0891
         Unknown,	// 0892..0896
         Arabic,	// 0897..08E1
         Common,	// 08E2
@@ -2341,8 +2356,8 @@ public static class UnicodeScriptInfo
         Telugu,	// 0C55..0C56
         Unknown,	// 0C57
         Telugu,	// 0C58..0C5A
-        Unknown,	// 0C5B..0C5C
-        Telugu,	// 0C5D
+        Unknown,	// 0C5B
+        Telugu,	// 0C5C..0C5D
         Unknown,	// 0C5E..0C5F
         Telugu,	// 0C60..0C63
         Unknown,	// 0C64..0C65
@@ -2366,8 +2381,8 @@ public static class UnicodeScriptInfo
         Kannada,	// 0CCA..0CCD
         Unknown,	// 0CCE..0CD4
         Kannada,	// 0CD5..0CD6
-        Unknown,	// 0CD7..0CDC
-        Kannada,	// 0CDD..0CDE
+        Unknown,	// 0CD7..0CDB
+        Kannada,	// 0CDC..0CDE
         Unknown,	// 0CDF
         Kannada,	// 0CE0..0CE3
         Unknown,	// 0CE4..0CE5
@@ -2578,8 +2593,10 @@ public static class UnicodeScriptInfo
         Unknown,	// 1A9A..1A9F
         TaiTham,	// 1AA0..1AAD
         Unknown,	// 1AAE..1AAF
-        Inherited,	// 1AB0..1ACE
-        Unknown,	// 1ACF..1AFF
+        Inherited,	// 1AB0..1ADD
+        Unknown,	// 1ADE..1ADF
+        Inherited,	// 1AE0..1AEB
+        Unknown,	// 1AEC..1AFF
         Balinese,	// 1B00..1B4C
         Unknown,	// 1B4D
         Balinese,	// 1B4E..1B7F
@@ -2671,8 +2688,8 @@ public static class UnicodeScriptInfo
         Unknown,	// 208F
         Latin,	// 2090..209C
         Unknown,	// 209D..209F
-        Common,	// 20A0..20C0
-        Unknown,	// 20C1..20CF
+        Common,	// 20A0..20C1
+        Unknown,	// 20C2..20CF
         Inherited,	// 20D0..20F0
         Unknown,	// 20F1..20FF
         Common,	// 2100..2125
@@ -2695,9 +2712,7 @@ public static class UnicodeScriptInfo
         Braille,	// 2800..28FF
         Common,	// 2900..2B73
         Unknown,	// 2B74..2B75
-        Common,	// 2B76..2B95
-        Unknown,	// 2B96
-        Common,	// 2B97..2BFF
+        Common,	// 2B76..2BFF
         Glagolitic,	// 2C00..2C5F
         Latin,	// 2C60..2C7F
         Coptic,	// 2C80..2CF3
@@ -2798,15 +2813,9 @@ public static class UnicodeScriptInfo
         Common,	// A700..A721
         Latin,	// A722..A787
         Common,	// A788..A78A
-        Latin,	// A78B..A7CD
-        Unknown,	// A7CE..A7CF
-        Latin,	// A7D0..A7D1
-        Unknown,	// A7D2
-        Latin,	// A7D3
-        Unknown,	// A7D4
-        Latin,	// A7D5..A7DC
-        Unknown,	// A7DD..A7F1
-        Latin,	// A7F2..A7FF
+        Latin,	// A78B..A7DC
+        Unknown,	// A7DD..A7F0
+        Latin,	// A7F1..A7FF
         SylotiNagri,	// A800..A82C
         Unknown,	// A82D..A82F
         Common,	// A830..A839
@@ -2894,15 +2903,9 @@ public static class UnicodeScriptInfo
         Hebrew,	// FB43..FB44
         Unknown,	// FB45
         Hebrew,	// FB46..FB4F
-        Arabic,	// FB50..FBC2
-        Unknown,	// FBC3..FBD2
-        Arabic,	// FBD3..FD3D
+        Arabic,	// FB50..FD3D
         Common,	// FD3E..FD3F
-        Arabic,	// FD40..FD8F
-        Unknown,	// FD90..FD91
-        Arabic,	// FD92..FDC7
-        Unknown,	// FDC8..FDCE
-        Arabic,	// FDCF
+        Arabic,	// FD40..FDCF
         Unknown,	// FDD0..FDEF
         Arabic,	// FDF0..FDFF
         Inherited,	// FE00..FE0F
@@ -3071,7 +3074,8 @@ public static class UnicodeScriptInfo
         Lydian,	// 10920..10939
         Unknown,	// 1093A..1093E
         Lydian,	// 1093F
-        Unknown,	// 10940..1097F
+        Sidetic,	// 10940..10959
+        Unknown,	// 1095A..1097F
         MeroiticHieroglyphs,	// 10980..1099F
         MeroiticCursive,	// 109A0..109B7
         Unknown,	// 109B8..109BB
@@ -3141,9 +3145,11 @@ public static class UnicodeScriptInfo
         Unknown,	// 10EAE..10EAF
         Yezidi,	// 10EB0..10EB1
         Unknown,	// 10EB2..10EC1
-        Arabic,	// 10EC2..10EC4
-        Unknown,	// 10EC5..10EFB
-        Arabic,	// 10EFC..10EFF
+        Arabic,	// 10EC2..10EC7
+        Unknown,	// 10EC8..10ECF
+        Arabic,	// 10ED0..10ED8
+        Unknown,	// 10ED9..10EF9
+        Arabic,	// 10EFA..10EFF
         OldSogdian,	// 10F00..10F27
         Unknown,	// 10F28..10F2F
         Sogdian,	// 10F30..10F59
@@ -3313,7 +3319,9 @@ public static class UnicodeScriptInfo
         PauCinHau,	// 11AC0..11AF8
         Unknown,	// 11AF9..11AFF
         Devanagari,	// 11B00..11B09
-        Unknown,	// 11B0A..11BBF
+        Unknown,	// 11B0A..11B5F
+        Sharada,	// 11B60..11B67
+        Unknown,	// 11B68..11BBF
         Sunuwar,	// 11BC0..11BE1
         Unknown,	// 11BE2..11BEF
         Sunuwar,	// 11BF0..11BF9
@@ -3357,7 +3365,11 @@ public static class UnicodeScriptInfo
         GunjalaGondi,	// 11D93..11D98
         Unknown,	// 11D99..11D9F
         GunjalaGondi,	// 11DA0..11DA9
-        Unknown,	// 11DAA..11EDF
+        Unknown,	// 11DAA..11DAF
+        TolongSiki,	// 11DB0..11DDB
+        Unknown,	// 11DDC..11DDF
+        TolongSiki,	// 11DE0..11DE9
+        Unknown,	// 11DEA..11EDF
         Makasar,	// 11EE0..11EF8
         Unknown,	// 11EF9..11EFF
         Kawi,	// 11F00..11F10
@@ -3417,7 +3429,11 @@ public static class UnicodeScriptInfo
         KiratRai,	// 16D40..16D79
         Unknown,	// 16D7A..16E3F
         Medefaidrin,	// 16E40..16E9A
-        Unknown,	// 16E9B..16EFF
+        Unknown,	// 16E9B..16E9F
+        BeriaErfe,	// 16EA0..16EB8
+        Unknown,	// 16EB9..16EBA
+        BeriaErfe,	// 16EBB..16ED3
+        Unknown,	// 16ED4..16EFF
         Miao,	// 16F00..16F4A
         Unknown,	// 16F4B..16F4E
         Miao,	// 16F4F..16F87
@@ -3429,16 +3445,16 @@ public static class UnicodeScriptInfo
         Han,	// 16FE2..16FE3
         KhitanSmallScript,	// 16FE4
         Unknown,	// 16FE5..16FEF
-        Han,	// 16FF0..16FF1
-        Unknown,	// 16FF2..16FFF
-        Tangut,	// 17000..187F7
-        Unknown,	// 187F8..187FF
-        Tangut,	// 18800..18AFF
+        Han,	// 16FF0..16FF6
+        Unknown,	// 16FF7..16FFF
+        Tangut,	// 17000..18AFF
         KhitanSmallScript,	// 18B00..18CD5
         Unknown,	// 18CD6..18CFE
         KhitanSmallScript,	// 18CFF
-        Tangut,	// 18D00..18D08
-        Unknown,	// 18D09..1AFEF
+        Tangut,	// 18D00..18D1E
+        Unknown,	// 18D1F..18D7F
+        Tangut,	// 18D80..18DF2
+        Unknown,	// 18DF3..1AFEF
         Katakana,	// 1AFF0..1AFF3
         Unknown,	// 1AFF4
         Katakana,	// 1AFF5..1AFFB
@@ -3470,10 +3486,14 @@ public static class UnicodeScriptInfo
         Duployan,	// 1BC9C..1BC9F
         Common,	// 1BCA0..1BCA3
         Unknown,	// 1BCA4..1CBFF
-        Common,	// 1CC00..1CCF9
-        Unknown,	// 1CCFA..1CCFF
+        Common,	// 1CC00..1CCFC
+        Unknown,	// 1CCFD..1CCFF
         Common,	// 1CD00..1CEB3
-        Unknown,	// 1CEB4..1CEFF
+        Unknown,	// 1CEB4..1CEB9
+        Common,	// 1CEBA..1CED0
+        Unknown,	// 1CED1..1CEDF
+        Common,	// 1CEE0..1CEF0
+        Unknown,	// 1CEF1..1CEFF
         Inherited,	// 1CF00..1CF2D
         Unknown,	// 1CF2E..1CF2F
         Inherited,	// 1CF30..1CF46
@@ -3588,7 +3608,13 @@ public static class UnicodeScriptInfo
         OlOnal,	// 1E5D0..1E5FA
         Unknown,	// 1E5FB..1E5FE
         OlOnal,	// 1E5FF
-        Unknown,	// 1E600..1E7DF
+        Unknown,	// 1E600..1E6BF
+        TaiYo,	// 1E6C0..1E6DE
+        Unknown,	// 1E6DF
+        TaiYo,	// 1E6E0..1E6F5
+        Unknown,	// 1E6F6..1E6FD
+        TaiYo,	// 1E6FE..1E6FF
+        Unknown,	// 1E700..1E7DF
         Ethiopic,	// 1E7E0..1E7E6
         Unknown,	// 1E7E7
         Ethiopic,	// 1E7E8..1E7EB
@@ -3705,15 +3731,13 @@ public static class UnicodeScriptInfo
         Unknown,	// 1F252..1F25F
         Common,	// 1F260..1F265
         Unknown,	// 1F266..1F2FF
-        Common,	// 1F300..1F6D7
-        Unknown,	// 1F6D8..1F6DB
+        Common,	// 1F300..1F6D8
+        Unknown,	// 1F6D9..1F6DB
         Common,	// 1F6DC..1F6EC
         Unknown,	// 1F6ED..1F6EF
         Common,	// 1F6F0..1F6FC
         Unknown,	// 1F6FD..1F6FF
-        Common,	// 1F700..1F776
-        Unknown,	// 1F777..1F77A
-        Common,	// 1F77B..1F7D9
+        Common,	// 1F700..1F7D9
         Unknown,	// 1F7DA..1F7DF
         Common,	// 1F7E0..1F7EB
         Unknown,	// 1F7EC..1F7EF
@@ -3732,35 +3756,37 @@ public static class UnicodeScriptInfo
         Common,	// 1F8B0..1F8BB
         Unknown,	// 1F8BC..1F8BF
         Common,	// 1F8C0..1F8C1
-        Unknown,	// 1F8C2..1F8FF
-        Common,	// 1F900..1FA53
-        Unknown,	// 1FA54..1FA5F
+        Unknown,	// 1F8C2..1F8CF
+        Common,	// 1F8D0..1F8D8
+        Unknown,	// 1F8D9..1F8FF
+        Common,	// 1F900..1FA57
+        Unknown,	// 1FA58..1FA5F
         Common,	// 1FA60..1FA6D
         Unknown,	// 1FA6E..1FA6F
         Common,	// 1FA70..1FA7C
         Unknown,	// 1FA7D..1FA7F
-        Common,	// 1FA80..1FA89
-        Unknown,	// 1FA8A..1FA8E
-        Common,	// 1FA8F..1FAC6
-        Unknown,	// 1FAC7..1FACD
-        Common,	// 1FACE..1FADC
+        Common,	// 1FA80..1FA8A
+        Unknown,	// 1FA8B..1FA8D
+        Common,	// 1FA8E..1FAC6
+        Unknown,	// 1FAC7
+        Common,	// 1FAC8
+        Unknown,	// 1FAC9..1FACC
+        Common,	// 1FACD..1FADC
         Unknown,	// 1FADD..1FADE
-        Common,	// 1FADF..1FAE9
-        Unknown,	// 1FAEA..1FAEF
-        Common,	// 1FAF0..1FAF8
+        Common,	// 1FADF..1FAEA
+        Unknown,	// 1FAEB..1FAEE
+        Common,	// 1FAEF..1FAF8
         Unknown,	// 1FAF9..1FAFF
         Common,	// 1FB00..1FB92
         Unknown,	// 1FB93
-        Common,	// 1FB94..1FBF9
-        Unknown,	// 1FBFA..1FFFF
+        Common,	// 1FB94..1FBFA
+        Unknown,	// 1FBFB..1FFFF
         Han,	// 20000..2A6DF
         Unknown,	// 2A6E0..2A6FF
-        Han,	// 2A700..2B739
-        Unknown,	// 2B73A..2B73F
-        Han,	// 2B740..2B81D
+        Han,	// 2A700..2B81D
         Unknown,	// 2B81E..2B81F
-        Han,	// 2B820..2CEA1
-        Unknown,	// 2CEA2..2CEAF
+        Han,	// 2B820..2CEAD
+        Unknown,	// 2CEAE..2CEAF
         Han,	// 2CEB0..2EBE0
         Unknown,	// 2EBE1..2EBEF
         Han,	// 2EBF0..2EE5D
@@ -3769,8 +3795,8 @@ public static class UnicodeScriptInfo
         Unknown,	// 2FA1E..2FFFF
         Han,	// 30000..3134A
         Unknown,	// 3134B..3134F
-        Han,	// 31350..323AF
-        Unknown,	// 323B0..E0000
+        Han,	// 31350..33479
+        Unknown,	// 3347A..E0000
         Common,	// E0001
         Unknown,	// E0002..E001F
         Common,	// E0020..E007F
