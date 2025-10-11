@@ -13,8 +13,6 @@
     <PackageReference Include="NTextCat" />
     <PackageReference Include="StrongNamer" />
     <PackageReference Include="LanguageDetection.Ai" />
-    <PackageReference Include="System.Net.Http" />
-    <PackageReference Include="System.Text.RegularExpressions" />
   </ItemGroup>
   
   <ItemGroup>
