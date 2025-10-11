@@ -5,10 +5,6 @@
         <Description>Natural language detection library for .NET, suitable for long and short text alike</Description>
         <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     </PropertyGroup>
-
-    <ItemGroup>
-      <PackageReference Include="System.Text.Json" />
-    </ItemGroup>
   
     <ItemGroup>
       <Content Include="Lingua\LanguageModels\**\*.json.br" CopyToOutputDirectory="PreserveNewest">

@@ -5,5 +5,5 @@ namespace Lingua.AccuracyReport.Tests;
 /// </summary>
 public interface ILanguageDetector
 {
-	public Language DetectLanguageOf(string text, Language expectedLanguage);
+	Language DetectLanguageOf(string text, Language expectedLanguage);
 }
