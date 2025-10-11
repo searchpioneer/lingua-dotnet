@@ -8,8 +8,8 @@ using static Lingua.Language;
 namespace Lingua;
 
 /// <summary>
-/// Detects language of given input text, and computes confidence values for every language considered possible
-/// for given input text.
+/// Detects language of a given input text and computes confidence values for every language considered possible
+/// for the given input text.
 /// </summary>
 public sealed partial class LanguageDetector
 {
@@ -85,6 +85,7 @@ public sealed partial class LanguageDetector
 	private readonly bool _isLowAccuracyModeEnabled;
 	private readonly Dictionary<Alphabet, Language> _oneLanguageAlphabets;
 	private readonly IEnumerable<Language> _languagesWithUniqueCharacters;
+	private readonly string _languageModelsDirectory;
 
 	private static readonly int[] LowAccuracyRange = [3];
 	private static readonly int[] HighAccuracyRange = [1, 2, 3, 4, 5];
@@ -95,7 +96,8 @@ public sealed partial class LanguageDetector
 		HashSet<Language> languages,
 		double minimumRelativeDistance = 0,
 		bool isEveryLanguageModelPreloaded = false,
-		bool isLowAccuracyModeEnabled = false)
+		bool isLowAccuracyModeEnabled = false,
+		string? languageModelsDirectory = null)
 	{
 		_languages = languages;
 		_minimumRelativeDistance = minimumRelativeDistance;
@@ -103,6 +105,7 @@ public sealed partial class LanguageDetector
 		_oneLanguageAlphabets = AlphabetExtensions.AllSupportingExactlyOneLanguage()
 			.Where(a => languages.Contains(a.Value)).ToDictionary();
 		_languagesWithUniqueCharacters = languages.Where(l => !string.IsNullOrWhiteSpace(l.UniqueCharacters()));
+		_languageModelsDirectory = languageModelsDirectory ?? Path.Combine(AppContext.BaseDirectory, "Lingua", "LanguageModels");
 
 		if (isEveryLanguageModelPreloaded)
 			PreloadLanguageModels();
@@ -195,13 +198,13 @@ public sealed partial class LanguageDetector
 		Parallel.ForEach(ngramSizeRange, i =>
 		{
 			var testDataModel = TestLanguageModel.FromText(cleanedUpText, i);
-			var probabilities = ComputeLanguageProbabilities(testDataModel, filteredLanguages);
+			var probabilities = ComputeLanguageProbabilities(testDataModel, filteredLanguages, _languageModelsDirectory);
 			if (i == 1)
 			{
 				var unigramFilteredLanguages = _languages.Count > 0
 					? filteredLanguages.Where(f => _languages.Contains(f)).ToHashSet()
 					: filteredLanguages;
-				unigramCounts = CountUnigrams(testDataModel, unigramFilteredLanguages);
+				unigramCounts = CountUnigrams(testDataModel, unigramFilteredLanguages, _languageModelsDirectory);
 			}
 			allProbabilities[i - startValue] = probabilities;
 		});
@@ -314,14 +317,14 @@ public sealed partial class LanguageDetector
 		return summedUpProbabilities;
 	}
 
-	private static Dictionary<Language, int> CountUnigrams(TestLanguageModel unigramLanguageModel, HashSet<Language> filteredLanguages)
+	private static Dictionary<Language, int> CountUnigrams(TestLanguageModel unigramLanguageModel, HashSet<Language> filteredLanguages, string languageModelDirectory)
 	{
 		var unigramCounts = new Dictionary<Language, int>();
 		foreach (var language in filteredLanguages)
 		{
 			foreach (var unigram in unigramLanguageModel.Ngrams)
 			{
-				var probability = LookupNgramProbability(language, unigram.AsSpan());
+				var probability = LookupNgramProbability(language, unigram.AsSpan(), languageModelDirectory);
 				if (probability > 0)
 					unigramCounts.IncrementCounter(language);
 			}
@@ -330,12 +333,12 @@ public sealed partial class LanguageDetector
 		return unigramCounts;
 	}
 
-	internal static Dictionary<Language, double> ComputeLanguageProbabilities(TestLanguageModel testModel, IReadOnlySet<Language> filteredLanguages)
+	internal static Dictionary<Language, double> ComputeLanguageProbabilities(TestLanguageModel testModel, IReadOnlySet<Language> filteredLanguages, string languageModelDirectory)
 	{
 		var probabilities = new Dictionary<Language, double>();
 		foreach (var language in filteredLanguages)
 		{
-			var sum = ComputeSumOfNgramProbabilities(language, testModel.Ngrams);
+			var sum = ComputeSumOfNgramProbabilities(language, testModel.Ngrams, languageModelDirectory);
 			if (sum < 0)
 				probabilities[language] = sum;
 		}
@@ -343,14 +346,14 @@ public sealed partial class LanguageDetector
 		return probabilities;
 	}
 
-	internal static double ComputeSumOfNgramProbabilities(Language language, HashSet<Ngram> ngrams)
+	internal static double ComputeSumOfNgramProbabilities(Language language, HashSet<Ngram> ngrams, string languageModelDirectory)
 	{
 		var sum = 0d;
 		foreach (var ngram in ngrams)
 		{
 			foreach (var elem in ngram.LowerOrderNGrams())
 			{
-				var probability = LookupNgramProbability(language, elem);
+				var probability = LookupNgramProbability(language, elem, languageModelDirectory);
 				if (probability > 0)
 				{
 					sum += Math.Log(probability);
@@ -362,9 +365,9 @@ public sealed partial class LanguageDetector
 		return sum;
 	}
 
-	internal static double LookupNgramProbability(Language language, ReadOnlySpan<char> ngram)
+	internal static double LookupNgramProbability(Language language, ReadOnlySpan<char> ngram, string languageModelDirectory)
 	{
-		var model = LoadLanguageModel(language, ngram.Length);
+		var model = LoadLanguageModel(language, ngram.Length, languageModelDirectory);
 #if NET9_0
 		var lookup = model.GetAlternateLookup<ReadOnlySpan<char>>();
 		return lookup.TryGetValue(ngram, out var result) ? result : 0;
@@ -374,7 +377,7 @@ public sealed partial class LanguageDetector
 #endif
 	}
 
-	private static FrozenDictionary<string, double> LoadLanguageModel(Language language, int ngramLength)
+	private static FrozenDictionary<string, double> LoadLanguageModel(Language language, int ngramLength, string languageModelDirectory)
 	{
 		var languageModels = ngramLength switch
 		{
@@ -387,7 +390,7 @@ public sealed partial class LanguageDetector
 			_ => throw new ArgumentException($"unsupported ngram length detected: ${ngramLength}")
 		};
 
-		return LoadLanguageModels(languageModels, language, ngramLength);
+		return LoadLanguageModels(languageModels, language, ngramLength, languageModelDirectory);
 	}
 
 	private void PreloadLanguageModels()
@@ -405,33 +408,34 @@ public sealed partial class LanguageDetector
 			switch (ngramLength)
 			{
 				case 1:
-					LoadLanguageModels(UnigramLanguageModels, language, ngramLength);
+					LoadLanguageModels(UnigramLanguageModels, language, ngramLength, _languageModelsDirectory);
 					break;
 				case 2:
-					LoadLanguageModels(BigramLanguageModels, language, ngramLength);
+					LoadLanguageModels(BigramLanguageModels, language, ngramLength, _languageModelsDirectory);
 					break;
 				case 3:
-					LoadLanguageModels(TrigramLanguageModels, language, ngramLength);
+					LoadLanguageModels(TrigramLanguageModels, language, ngramLength, _languageModelsDirectory);
 					break;
 				case 4:
-					LoadLanguageModels(QuadrigramLanguageModels, language, ngramLength);
+					LoadLanguageModels(QuadrigramLanguageModels, language, ngramLength, _languageModelsDirectory);
 					break;
 				case 5:
-					LoadLanguageModels(FivegramLanguageModels, language, ngramLength);
+					LoadLanguageModels(FivegramLanguageModels, language, ngramLength, _languageModelsDirectory);
 					break;
 			}
 		});
 	}
 
-	private static FrozenDictionary<string, double> LoadLanguageModels(ConcurrentDictionary<Language, Lazy<FrozenDictionary<string, double>>> languageModels, Language language, int ngramLength) =>
-		languageModels.GetOrAdd(language, static (l, nl) =>
-			new Lazy<FrozenDictionary<string, double>>(() => ReadLanguageModel(l, nl)), ngramLength).Value;
+	private static FrozenDictionary<string, double> LoadLanguageModels(ConcurrentDictionary<Language, Lazy<FrozenDictionary<string, double>>> languageModels, Language language, int ngramLength, string languageModelDirectory) =>
+		languageModels.GetOrAdd(language, static (l, arg) =>
+			new Lazy<FrozenDictionary<string, double>>(() =>
+				ReadLanguageModel(l, arg.ngramLength, arg.languageModelDirectory)), (ngramLength, languageModelDirectory)).Value;
 
-	private static FrozenDictionary<string, double> ReadLanguageModel(Language language, int ngramLength)
+	private static FrozenDictionary<string, double> ReadLanguageModel(Language language, int ngramLength, string languageModelDirectory)
 	{
 		var isoCode = language.IsoCode6391().ToString().ToLowerInvariant();
 		var nGramName = Ngram.GetNameByLength(ngramLength);
-		var file = Path.Combine("Lingua", "LanguageModels", isoCode, $"{nGramName}s.json.br");
+		var file = Path.Combine(languageModelDirectory, isoCode, $"{nGramName}s.json.br");
 
 		try
 		{

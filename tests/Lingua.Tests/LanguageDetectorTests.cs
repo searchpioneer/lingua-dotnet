@@ -8,6 +8,8 @@ namespace Lingua.Tests;
 
 public class LanguageDetectorTests : IDisposable
 {
+	private static readonly string LanguageModelsDirectory = Path.Combine("Lingua", "LanguageModels");
+
 	private static readonly FrozenDictionary<string, double> UnigramLanguageModelForEnglish = new Dictionary<string, double>
 	{
 		["a"] = 0.01,
@@ -189,14 +191,14 @@ public class LanguageDetectorTests : IDisposable
 	[InlineData(German, "lter", 0.28)]
 	[InlineData(German, "alter", 0.30)]
 	public void NgramProbabilityLookupWorksCorrectly(Language language, string ngram, double expectedProbability) =>
-		LanguageDetector.LookupNgramProbability(language, ngram).Should()
+		LanguageDetector.LookupNgramProbability(language, ngram, LanguageModelsDirectory).Should()
 			.Be(expectedProbability);
 
 	[Fact]
 	public void NgramProbabilityLookupThrowsForZerogram()
 	{
 		var exception = Assert.Throws<ArgumentException>(() =>
-				LanguageDetector.LookupNgramProbability(English, ""));
+				LanguageDetector.LookupNgramProbability(English, "", LanguageModelsDirectory));
 
 		exception.Message.Should().Be("Zerogram detected");
 	}
@@ -225,7 +227,7 @@ public class LanguageDetectorTests : IDisposable
 	[Theory]
 	[MemberData(nameof(NgramProbabilityProvider))]
 	internal void SumOfNgramProbabilitiesComputedCorrectly(HashSet<Ngram> ngrams, double expectedSumOfProbabilities) =>
-		LanguageDetector.ComputeSumOfNgramProbabilities(English, ngrams)
+		LanguageDetector.ComputeSumOfNgramProbabilities(English, ngrams, LanguageModelsDirectory)
 			.Should()
 			.Be(expectedSumOfProbabilities);
 
@@ -266,7 +268,7 @@ public class LanguageDetectorTests : IDisposable
 	[MemberData(nameof(LanguageProbabilitiesProvider))]
 	internal void LanguageProbabilitiesComputedCorrectly(TestLanguageModel model,
 		Dictionary<Language, double> expectedProbabilities) =>
-		LanguageDetector.ComputeLanguageProbabilities(model, _detectorForEnglishAndGerman.Languages)
+		LanguageDetector.ComputeLanguageProbabilities(model, _detectorForEnglishAndGerman.Languages, LanguageModelsDirectory)
 			.Should().BeEquivalentTo(expectedProbabilities);
 
 	[Theory]
@@ -860,7 +862,74 @@ public class LanguageDetectorTests : IDisposable
 		AddLanguageModelsToDetector();
 	}
 
-	private void AssertThatAllLanguageModelsAreUnloaded()
+	[Fact]
+	public void LanguageModelsCanBeLoadedFromSpecifiedDirectory()
+	{
+		RemoveLanguageModelsFromDetector();
+
+		var detector = LanguageDetectorBuilder
+			.FromAllSpokenLanguages()
+			.WithPreloadedLanguageModels()
+			.WithLanguageModelsDirectory(Path.Combine(SolutionPaths.Root, "src", "Lingua", "Lingua", "LanguageModels"))
+			.Build();
+
+		detector.DetectLanguageOf("persevere").Should().Be(English);
+
+		AddLanguageModelsToDetector();
+	}
+
+	[Fact]
+	public void LanguageDetectorBuilderThrowsWhenLanguageModelsDirectoryDoesNotExist()
+	{
+		RemoveLanguageModelsFromDetector();
+
+		Assert.Throws<DirectoryNotFoundException>(() =>
+			LanguageDetectorBuilder
+				.FromAllSpokenLanguages()
+				.WithPreloadedLanguageModels()
+				.WithLanguageModelsDirectory(Path.Combine(SolutionPaths.Root, "foo"))
+				.Build()
+		);
+
+		AddLanguageModelsToDetector();
+	}
+
+	[Theory]
+	[InlineData(1)]
+	[InlineData(-1)]
+	public void LanguageDetectorBuilderThrowsWhenMinimumRelativeDistanceNotInRange(double distance)
+	{
+		RemoveLanguageModelsFromDetector();
+
+		var exception = Assert.Throws<ArgumentException>(() =>
+			LanguageDetectorBuilder
+				.FromAllSpokenLanguages()
+				.WithMinimumRelativeDistance(distance)
+				.Build()
+		);
+
+		exception.Message.Should().Be("minimum relative distance must lie in between 0.0 and 0.99");
+
+		AddLanguageModelsToDetector();
+	}
+
+	[Fact]
+	public void LanguageDetectorBuilderThrowsWhenLessThanTwoLanguages()
+	{
+		RemoveLanguageModelsFromDetector();
+
+		var exception = Assert.Throws<ArgumentException>(() =>
+			LanguageDetectorBuilder
+				.FromLanguages(English)
+				.Build()
+		);
+
+		exception.Message.Should().Be("LanguageDetector needs at least 2 languages to choose from");
+
+		AddLanguageModelsToDetector();
+	}
+
+	private static void AssertThatAllLanguageModelsAreUnloaded()
 	{
 		LanguageDetector.UnigramLanguageModels.Should().BeEmpty();
 		LanguageDetector.BigramLanguageModels.Should().BeEmpty();
@@ -869,7 +938,7 @@ public class LanguageDetectorTests : IDisposable
 		LanguageDetector.FivegramLanguageModels.Should().BeEmpty();
 	}
 
-	private void AssertThatOnlyTrigramLanguageModelsAreLoaded()
+	private static void AssertThatOnlyTrigramLanguageModelsAreLoaded()
 	{
 		LanguageDetector.UnigramLanguageModels.Should().BeEmpty();
 		LanguageDetector.BigramLanguageModels.Should().BeEmpty();
@@ -878,7 +947,7 @@ public class LanguageDetectorTests : IDisposable
 		LanguageDetector.FivegramLanguageModels.Should().BeEmpty();
 	}
 
-	private void AssertThatAllLanguageModelsAreLoaded()
+	private static void AssertThatAllLanguageModelsAreLoaded()
 	{
 		LanguageDetector.UnigramLanguageModels.Should().NotBeEmpty();
 		LanguageDetector.BigramLanguageModels.Should().NotBeEmpty();
@@ -887,7 +956,7 @@ public class LanguageDetectorTests : IDisposable
 		LanguageDetector.FivegramLanguageModels.Should().NotBeEmpty();
 	}
 
-	private void AddLanguageModelsToDetector()
+	private static void AddLanguageModelsToDetector()
 	{
 		LanguageDetector.UnigramLanguageModels[English] = new Lazy<FrozenDictionary<string, double>>(UnigramLanguageModelForEnglish);
 		LanguageDetector.UnigramLanguageModels[German] = new Lazy<FrozenDictionary<string, double>>(UnigramLanguageModelForGerman);
@@ -905,7 +974,7 @@ public class LanguageDetectorTests : IDisposable
 		LanguageDetector.FivegramLanguageModels[German] = new Lazy<FrozenDictionary<string, double>>(FivegramLanguageModelForGerman);
 	}
 
-	private void RemoveLanguageModelsFromDetector()
+	private static void RemoveLanguageModelsFromDetector()
 	{
 		LanguageDetector.UnigramLanguageModels.Clear();
 		LanguageDetector.BigramLanguageModels.Clear();

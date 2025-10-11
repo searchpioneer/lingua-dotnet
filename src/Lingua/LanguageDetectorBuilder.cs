@@ -9,6 +9,7 @@ public class LanguageDetectorBuilder
 	private double _minimumRelativeDistance;
 	private bool _isEveryLanguageModelPreloaded;
 	private bool _isLowAccuracyModeEnabled;
+	private string? _languageModelsDirectory;
 
 	private LanguageDetectorBuilder(HashSet<Language> languages) => _languages = languages;
 
@@ -96,7 +97,7 @@ public class LanguageDetectorBuilder
 	/// <summary>
 	/// Sets the desired value for the minimum relative distance measure.
 	/// <para />
-	/// By default, *Lingua* returns the most likely language for a given
+	/// By default, Lingua returns the most likely language for a given
 	/// input text. However, there are certain words that are spelled the
 	/// same in more than one language. The word *prologue*, for instance,
 	/// is both a valid English and French word. Lingua would output either
@@ -127,7 +128,7 @@ public class LanguageDetectorBuilder
 	/// <summary>
 	/// Preloads all language models when creating the instance of <see cref="Lingua.LanguageDetector"/>.
 	/// <para />
-	/// By default, *Lingua* uses lazy-loading to load only those language models
+	/// By default, Lingua uses lazy-loading to load only those language models
 	/// on demand which are considered relevant by the rule-based filter engine.
 	/// For web services, for instance, it is rather beneficial to preload all language
 	/// models into memory to avoid unexpected latency while waiting for the
@@ -142,7 +143,7 @@ public class LanguageDetectorBuilder
 	/// <summary>
 	/// Disables the high accuracy mode in order to save memory and increase performance.
 	/// <para />
-	/// By default, *Lingua's* high detection accuracy comes at the cost of
+	/// By default, Lingua's high detection accuracy comes at the cost of
 	/// loading large language models into memory which might not be feasible
 	/// for systems running low on resources.
 	/// <para />
@@ -159,6 +160,39 @@ public class LanguageDetectorBuilder
 	}
 
 	/// <summary>
+	/// The directory from which to load language models.
+	/// <para />
+	/// By default, Lingua loads language models from the directory "Lingua/LanguageModels" relative
+	/// to <see cref="AppContext.BaseDirectory"/>.
+	/// <para />
+	/// Lingua expects language models to be stored in the directory following directory structure:
+	/// <code>
+	/// &lt;languageModelsDirectory>/&lt;ISO639-1 code>/&lt;Ngram length name>.br.json
+	/// </code>
+	/// where
+	/// <list type="bullet">
+	/// <item>
+	/// &lt;languageModelsDirectory> is the directory specified by this method
+	/// </item>
+	/// <item>
+	/// &lt;ISO639-1 code> is a directory with the ISO 639-1 code of the language models stored in it
+	/// </item>
+	/// <item>
+	/// &lt;Ngram length name> is the name of the ngram length: unigrams, bigrams, trigrams, quadrigrams, fivegrams
+	/// </item>
+	/// </list>
+	/// </summary>
+	/// <exception cref="DirectoryNotFoundException">If the specified directory does not exist</exception>
+	public LanguageDetectorBuilder WithLanguageModelsDirectory(string languageModelsDirectory)
+	{
+		if (!Directory.Exists(languageModelsDirectory))
+			throw new DirectoryNotFoundException($"Directory '{languageModelsDirectory}' does not exist");
+
+		_languageModelsDirectory = languageModelsDirectory;
+		return this;
+	}
+
+	/// <summary>
 	/// Builds a new instance of <see cref="Lingua.LanguageDetector"/>.
 	/// </summary>
 	/// <returns>a new instance of <see cref="Lingua.LanguageDetector"/></returns>
@@ -166,5 +200,6 @@ public class LanguageDetectorBuilder
 		new(_languages,
 			_minimumRelativeDistance,
 			_isEveryLanguageModelPreloaded,
-			_isLowAccuracyModeEnabled);
+			_isLowAccuracyModeEnabled,
+			_languageModelsDirectory);
 }
