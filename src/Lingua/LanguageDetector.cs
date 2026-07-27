@@ -42,6 +42,7 @@ public sealed partial class LanguageDetector
 		["ÐðÞþ"] = [Icelandic, Turkish],
 		["Ûû"] = [French, Hungarian],
 		["Ōō"] = [Maori, Yoruba],
+		["ӨөҮү"] = [Kazakh, Mongolian],
 		["ĀāĒēĪī"] = [Latvian, Maori, Yoruba],
 		["Şş"] = [Azerbaijani, Romanian, Turkish],
 		["Ďď"] = [Czech, Romanian, Slovak],
@@ -121,24 +122,109 @@ public sealed partial class LanguageDetector
 	/// </summary>
 	/// <param name="text">The input text to detect the language for.</param>
 	/// <returns>The identified language or <see cref="Language.Unknown"/></returns>
-	public Language DetectLanguageOf(string text)
+	public Language DetectLanguageOf(string text) => DetectLanguageFromLanguages(text, _languages) ?? Unknown;
+
+	/// <summary>
+	/// Attempts to detect multiple languages in mixed-language text.
+	/// <para />
+	/// This feature is experimental and under continuous development.
+	/// <para />
+	/// A list of <see cref="DetectionResult"/> is returned containing an entry for each contiguous
+	/// single-language text section as identified by the library. Each entry consists of the identified
+	/// language, a start index and an end index. The indices denote the substring that has been
+	/// identified as a contiguous single-language text section.
+	/// </summary>
+	/// <param name="text">The input text to detect multiple languages for.</param>
+	/// <returns>The list of detection results, in the order in which the sections appear in the text.</returns>
+	public IReadOnlyList<DetectionResult> DetectMultipleLanguagesOf(string text)
 	{
-		var confidenceValues = ComputeLanguageConfidenceValues(text);
-		if (confidenceValues.Count == 0)
-			return Unknown;
+		if (text.Length == 0)
+			return [];
 
-		var mostLikelyLanguage = confidenceValues.First().Key;
-		if (confidenceValues.Count == 1)
-			return mostLikelyLanguage;
+		var tokensWithoutWhitespace = Tokenizer.FindTokensWithoutWhitespace(text);
+		if (tokensWithoutWhitespace.Count == 0)
+			return [];
 
-		var mostLikelyLanguageProbability = confidenceValues[mostLikelyLanguage];
-		var secondMostLikelyLanguageProbability = confidenceValues.ElementAt(1).Value;
+		var results = new List<DetectionResult>();
+		var languages = new HashSet<Language>();
 
-		return mostLikelyLanguageProbability.Equals(secondMostLikelyLanguageProbability)
-			? Unknown
-			: mostLikelyLanguageProbability - secondMostLikelyLanguageProbability < _minimumRelativeDistance
-				? Unknown
-				: mostLikelyLanguage;
+		var languageOfWholeText = DetectLanguageOf(text);
+		if (languageOfWholeText != Unknown)
+			languages.Add(languageOfWholeText);
+
+		foreach (var word in tokensWithoutWhitespace)
+		{
+			if (word.Length < 5)
+				continue;
+
+			var languageOfWord = DetectLanguageOf(word);
+			if (languageOfWord != Unknown)
+				languages.Add(languageOfWord);
+		}
+
+		if (languages.Count == 1)
+		{
+			results.Add(new DetectionResult(0, text.Length, tokensWithoutWhitespace.Count, languages.Single()));
+			return results;
+		}
+
+		var currentStartIndex = 0;
+		var currentEndIndex = 0;
+		var wordCount = 0;
+		Language? currentLanguage = null;
+
+		var tokenMatches = Tokenizer.FindTokensWithOptionalWhitespace(text);
+		var lastIndex = tokenMatches.Count - 1;
+
+		for (var i = 0; i < tokenMatches.Count; i++)
+		{
+			var tokenMatch = tokenMatches[i];
+			var word = text[tokenMatch];
+			var language = DetectLanguageFromLanguages(word, languages);
+
+			if (i == 0 || (currentLanguage == null && language != null))
+				currentLanguage = language;
+
+			if (language != null && currentLanguage != null && language != currentLanguage)
+			{
+				results.Add(new DetectionResult(currentStartIndex, currentEndIndex, wordCount, currentLanguage.Value));
+				currentStartIndex = currentEndIndex;
+				currentLanguage = language;
+				wordCount = 0;
+			}
+
+			currentEndIndex = tokenMatch.End.Value;
+			wordCount++;
+
+			if (i == lastIndex && currentLanguage != null)
+				results.Add(new DetectionResult(currentStartIndex, text.Length, wordCount, currentLanguage.Value));
+		}
+
+		if (results.Count > 1)
+		{
+			var mergeableResultIndices = new List<int>();
+			for (var i = 0; i < results.Count; i++)
+			{
+				if (results[i].WordCount == 1)
+					mergeableResultIndices.Add(i);
+			}
+
+			MergeAdjacentResults(results, mergeableResultIndices);
+
+			if (results.Count > 1)
+			{
+				mergeableResultIndices.Clear();
+				for (var i = 0; i < results.Count - 1; i++)
+				{
+					if (results[i].Language == results[i + 1].Language)
+						mergeableResultIndices.Add(i + 1);
+				}
+
+				MergeAdjacentResults(results, mergeableResultIndices);
+			}
+		}
+
+		return results;
 	}
 
 	/// <summary>
@@ -155,10 +241,33 @@ public sealed partial class LanguageDetector
 	/// </summary>
 	/// <param name="text">The input text to detect the language for.</param>
 	/// <returns>A dictionary of all possible languages, sorted by their confidence value in descending order.</returns>
-	public IDictionary<Language, double> ComputeLanguageConfidenceValues(string text)
+	public IDictionary<Language, double> ComputeLanguageConfidenceValues(string text) =>
+		ComputeLanguageConfidenceValues(text, _languages);
+
+	private Language? DetectLanguageFromLanguages(string text, HashSet<Language> languages)
 	{
-		var values = new Dictionary<Language, double>(_languages.Count);
-		foreach (var language in _languages)
+		var confidenceValues = ComputeLanguageConfidenceValues(text, languages);
+		if (confidenceValues.Count == 0)
+			return null;
+
+		var mostLikelyLanguage = confidenceValues.First().Key;
+		if (confidenceValues.Count == 1)
+			return mostLikelyLanguage;
+
+		var mostLikelyLanguageProbability = confidenceValues[mostLikelyLanguage];
+		var secondMostLikelyLanguageProbability = confidenceValues.ElementAt(1).Value;
+
+		return mostLikelyLanguageProbability.Equals(secondMostLikelyLanguageProbability)
+			? null
+			: mostLikelyLanguageProbability - secondMostLikelyLanguageProbability < _minimumRelativeDistance
+				? null
+				: mostLikelyLanguage;
+	}
+
+	private IDictionary<Language, double> ComputeLanguageConfidenceValues(string text, HashSet<Language> languages)
+	{
+		var values = new Dictionary<Language, double>(languages.Count);
+		foreach (var language in languages)
 			values[language] = 0;
 
 		var cleanedUpText = CleanUpInputText(text);
@@ -166,7 +275,7 @@ public sealed partial class LanguageDetector
 			return values;
 
 		var words = SplitTextIntoWords(cleanedUpText);
-		var languageDetectedByRules = DetectLanguageWithRules(words);
+		var languageDetectedByRules = DetectLanguageWithRules(words, languages);
 
 		if (languageDetectedByRules != Unknown)
 		{
@@ -174,7 +283,7 @@ public sealed partial class LanguageDetector
 			return values.OrderByDescending(p => p.Value).ToIndexedDictionary();
 		}
 
-		var filteredLanguages = FilterLanguagesByRules(words);
+		var filteredLanguages = FilterLanguagesByRules(words, languages);
 		if (filteredLanguages.Count == 1)
 		{
 			var filteredLanguage = filteredLanguages.Single();
@@ -201,8 +310,8 @@ public sealed partial class LanguageDetector
 			var probabilities = ComputeLanguageProbabilities(testDataModel, filteredLanguages, _languageModelsDirectory);
 			if (i == 1)
 			{
-				var unigramFilteredLanguages = _languages.Count > 0
-					? filteredLanguages.Where(f => _languages.Contains(f)).ToHashSet()
+				var unigramFilteredLanguages = languages.Count > 0
+					? filteredLanguages.Where(f => languages.Contains(f)).ToHashSet()
 					: filteredLanguages;
 				unigramCounts = CountUnigrams(testDataModel, unigramFilteredLanguages, _languageModelsDirectory);
 			}
@@ -289,6 +398,37 @@ public sealed partial class LanguageDetector
 				values[language] = probability;
 				break;
 			}
+		}
+	}
+
+	private static void MergeAdjacentResults(List<DetectionResult> results, List<int> mergeableResultIndices)
+	{
+		mergeableResultIndices.Sort();
+		mergeableResultIndices.Reverse();
+
+		foreach (var i in mergeableResultIndices)
+		{
+			if (i == 0)
+			{
+				results[i + 1] = new DetectionResult(
+					results[i].StartIndex,
+					results[i + 1].EndIndex,
+					results[i].WordCount + results[i + 1].WordCount,
+					results[i + 1].Language);
+			}
+			else
+			{
+				results[i - 1] = new DetectionResult(
+					results[i - 1].StartIndex,
+					results[i].EndIndex,
+					results[i - 1].WordCount + results[i].WordCount,
+					results[i - 1].Language);
+			}
+
+			results.RemoveAt(i);
+
+			if (results.Count == 1)
+				break;
 		}
 	}
 
@@ -450,7 +590,7 @@ public sealed partial class LanguageDetector
 		}
 	}
 
-	internal HashSet<Language> FilterLanguagesByRules(List<string> words)
+	internal HashSet<Language> FilterLanguagesByRules(List<string> words, HashSet<Language> languages)
 	{
 		var detectedAlphabets = new Dictionary<Alphabet, int>();
 		foreach (var word in words)
@@ -468,7 +608,7 @@ public sealed partial class LanguageDetector
 		switch (detectedAlphabets.Count)
 		{
 			case 0:
-				return _languages;
+				return languages;
 			case > 1:
 				{
 					var distinctAlphabets = new HashSet<int>();
@@ -476,21 +616,21 @@ public sealed partial class LanguageDetector
 						distinctAlphabets.Add(count);
 
 					if (distinctAlphabets.Count == 1)
-						return _languages;
+						return languages;
 
 					break;
 				}
 		}
 
 		var mostFrequentAlphabet = detectedAlphabets.MaxBy(a => a.Value).Key;
-		var filteredLanguages = _languages
+		var filteredLanguages = languages
 			.Where(l => l.Alphabets().Contains(mostFrequentAlphabet))
 			.ToHashSet();
 		var languageCounts = new Dictionary<Language, int>();
 
-		foreach (var (characters, languages) in CharsToLanguagesMapping)
+		foreach (var (characters, mappedLanguages) in CharsToLanguagesMapping)
 		{
-			var relevantLanguages = languages.Intersect(filteredLanguages).ToList();
+			var relevantLanguages = mappedLanguages.Intersect(filteredLanguages).ToList();
 			var charactersSpan = characters.AsSpan();
 
 			foreach (var word in words)
@@ -516,7 +656,7 @@ public sealed partial class LanguageDetector
 		return languagesSubset.Count == 0 ? filteredLanguages : languagesSubset;
 	}
 
-	internal Language DetectLanguageWithRules(List<string> words)
+	internal Language DetectLanguageWithRules(List<string> words, HashSet<Language> languages)
 	{
 		var totalLanguageCounts = new Dictionary<Language, int>();
 		foreach (var word in words)
@@ -558,7 +698,7 @@ public sealed partial class LanguageDetector
 				case 1:
 					{
 						var language = wordLanguageCounts.Single().Key;
-						totalLanguageCounts.IncrementCounter(_languages.Contains(language) ? language : Unknown);
+						totalLanguageCounts.IncrementCounter(languages.Contains(language) ? language : Unknown);
 						break;
 					}
 				default:
@@ -572,7 +712,7 @@ public sealed partial class LanguageDetector
 						sortedWordLanguageCounts.MoveNext();
 						var (_, secondCharCount) = sortedWordLanguageCounts.Current;
 
-						if (firstCharCount > secondCharCount && _languages.Contains(mostFrequentLanguage))
+						if (firstCharCount > secondCharCount && languages.Contains(mostFrequentLanguage))
 							totalLanguageCounts.IncrementCounter(mostFrequentLanguage);
 						else
 							totalLanguageCounts.IncrementCounter(Unknown);

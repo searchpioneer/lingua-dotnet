@@ -305,8 +305,6 @@ public class LanguageDetectorTests : IDisposable
 	[InlineData("ќерка", Macedonian)]
 	[InlineData("џамиите", Macedonian)]
 	[InlineData("मिळते", Marathi)]
-	[InlineData("үндсэн", Mongolian)]
-	[InlineData("дөхөж", Mongolian)]
 	[InlineData("zmieniły", Polish)]
 	[InlineData("państwowych", Polish)]
 	[InlineData("mniejszości", Polish)]
@@ -374,7 +372,7 @@ public class LanguageDetectorTests : IDisposable
 	public void LanguageOfSingleWordWithUniqueCharactersCanBeUnambiguouslyIdentifiedWithRules(
 		string word,
 		Language expectedLanguage) =>
-		_detectorForAllLanguages.DetectLanguageWithRules([word]).Should().Be(expectedLanguage);
+		_detectorForAllLanguages.DetectLanguageWithRules([word], LanguageInfo.All()).Should().Be(expectedLanguage);
 
 	[Theory]
 	[InlineData("ունենա", Armenian)]
@@ -392,7 +390,7 @@ public class LanguageDetectorTests : IDisposable
 	public void LanguageOfSingleWordWithUniqueAlphabetCanBeUnambiguouslyIdentifiedWithRules(
 		string word,
 		Language expectedLanguage) =>
-		_detectorForAllLanguages.DetectLanguageWithRules([word]).Should().Be(expectedLanguage);
+		_detectorForAllLanguages.DetectLanguageWithRules([word], LanguageInfo.All()).Should().Be(expectedLanguage);
 
 	public static IEnumerable<object[]> FilteredLanguagesProvider()
 	{
@@ -435,6 +433,16 @@ public class LanguageDetectorTests : IDisposable
 		[
 			"павінен",
 			new HashSet<Language> { Belarusian, Kazakh, Ukrainian }
+		];
+		yield return
+		[
+			"үндсэн",
+			new HashSet<Language> { Belarusian, Kazakh, Mongolian, Russian }
+		];
+		yield return
+		[
+			"дөхөж",
+			new HashSet<Language> { Kazakh, Mongolian }
 		];
 		yield return
 		[
@@ -716,7 +724,7 @@ public class LanguageDetectorTests : IDisposable
 	[Theory]
 	[MemberData(nameof(FilteredLanguagesProvider))]
 	public void LanguagesCanBeCorrectlyFilteredByRules(string word, HashSet<Language> expectedLanguages) =>
-		_detectorForAllLanguages.FilterLanguagesByRules([word]).Should().BeEquivalentTo(expectedLanguages);
+		_detectorForAllLanguages.FilterLanguagesByRules([word], LanguageInfo.All()).Should().BeEquivalentTo(expectedLanguages);
 
 	[Theory]
 	[InlineData("")]
@@ -803,6 +811,105 @@ public class LanguageDetectorTests : IDisposable
 		AddLanguageModelsToDetector();
 
 		AssertThatAllLanguageModelsAreLoaded();
+	}
+
+	[Fact]
+	public void DetectMultipleLanguagesForEmptyString() =>
+		_detectorForAllLanguages.DetectMultipleLanguagesOf("").Should().BeEmpty();
+
+	[Theory]
+	[InlineData("I'm really not sure whether multi-language detection is a good idea.", 11, English)]
+	[InlineData("I'm frightened! 🙈", 3, English)]
+	[InlineData("V төзімділік спорт", 3, Kazakh)]
+	public void DetectMultipleLanguagesWithOneLanguage(string sentence, int expectedWordCount, Language expectedLanguage)
+	{
+		RemoveLanguageModelsFromDetector();
+
+		var results = _detectorForAllLanguages.DetectMultipleLanguagesOf(sentence);
+		results.Should().ContainSingle();
+
+		var result = results[0];
+		sentence[result.StartIndex..result.EndIndex].Should().Be(sentence);
+		result.WordCount.Should().Be(expectedWordCount);
+		result.Language.Should().Be(expectedLanguage);
+
+		AddLanguageModelsToDetector();
+	}
+
+	[Theory]
+	[InlineData(
+		"  He   turned around and asked: \"Entschuldigen Sie, sprechen Sie Deutsch?\"",
+		"  He   turned around and asked: ", 5, English,
+		"\"Entschuldigen Sie, sprechen Sie Deutsch?\"", 5, German)]
+	[InlineData(
+		"上海大学是一个好大学. It is such a great university.",
+		"上海大学是一个好大学. ", 10, Chinese,
+		"It is such a great university.", 6, English)]
+	[InlineData(
+		"English German French - Английский язык",
+		"English German French - ", 4, English,
+		"Английский язык", 2, Russian)]
+	public void DetectMultipleLanguagesWithTwoLanguages(
+		string sentence,
+		string expectedFirstSubstring, int expectedFirstWordCount, Language expectedFirstLanguage,
+		string expectedSecondSubstring, int expectedSecondWordCount, Language expectedSecondLanguage)
+	{
+		RemoveLanguageModelsFromDetector();
+
+		var results = _detectorForAllLanguages.DetectMultipleLanguagesOf(sentence);
+		results.Should().HaveCount(2);
+
+		var firstResult = results[0];
+		sentence[firstResult.StartIndex..firstResult.EndIndex].Should().Be(expectedFirstSubstring);
+		firstResult.WordCount.Should().Be(expectedFirstWordCount);
+		firstResult.Language.Should().Be(expectedFirstLanguage);
+
+		var secondResult = results[1];
+		sentence[secondResult.StartIndex..secondResult.EndIndex].Should().Be(expectedSecondSubstring);
+		secondResult.WordCount.Should().Be(expectedSecondWordCount);
+		secondResult.Language.Should().Be(expectedSecondLanguage);
+
+		AddLanguageModelsToDetector();
+	}
+
+	[Theory]
+	[InlineData(
+		"Parlez-vous français? Ich spreche Französisch nur ein bisschen. A little bit is better than nothing.",
+		"Parlez-vous français? ", 2, French,
+		"Ich spreche Französisch nur ein bisschen. ", 6, German,
+		"A little bit is better than nothing.", 7, English)]
+	[InlineData(
+		"Płaszczowo-rurowe wymienniki ciepła Uszczelkowe der blaue himmel über berlin 中文 the quick brown fox jumps over the lazy dog",
+		"Płaszczowo-rurowe wymienniki ciepła Uszczelkowe ", 4, Polish,
+		"der blaue himmel über berlin 中文 ", 7, German,
+		"the quick brown fox jumps over the lazy dog", 9, English)]
+	public void DetectMultipleLanguagesWithThreeLanguages(
+		string sentence,
+		string expectedFirstSubstring, int expectedFirstWordCount, Language expectedFirstLanguage,
+		string expectedSecondSubstring, int expectedSecondWordCount, Language expectedSecondLanguage,
+		string expectedThirdSubstring, int expectedThirdWordCount, Language expectedThirdLanguage)
+	{
+		RemoveLanguageModelsFromDetector();
+
+		var results = _detectorForAllLanguages.DetectMultipleLanguagesOf(sentence);
+		results.Should().HaveCount(3);
+
+		var firstResult = results[0];
+		sentence[firstResult.StartIndex..firstResult.EndIndex].Should().Be(expectedFirstSubstring);
+		firstResult.WordCount.Should().Be(expectedFirstWordCount);
+		firstResult.Language.Should().Be(expectedFirstLanguage);
+
+		var secondResult = results[1];
+		sentence[secondResult.StartIndex..secondResult.EndIndex].Should().Be(expectedSecondSubstring);
+		secondResult.WordCount.Should().Be(expectedSecondWordCount);
+		secondResult.Language.Should().Be(expectedSecondLanguage);
+
+		var thirdResult = results[2];
+		sentence[thirdResult.StartIndex..thirdResult.EndIndex].Should().Be(expectedThirdSubstring);
+		thirdResult.WordCount.Should().Be(expectedThirdWordCount);
+		thirdResult.Language.Should().Be(expectedThirdLanguage);
+
+		AddLanguageModelsToDetector();
 	}
 
 	[Fact]

@@ -252,6 +252,44 @@ The probabilities of all languages will sum to 1.0. If the language is unambiguo
 the rule engine, the value 1.0 will always be returned for this language. 
 The other languages will receive a value of 0.0.
 
+### Detection of multiple languages in mixed-language texts
+
+In contrast to most other language detectors, *Lingua* is able to detect multiple languages in mixed-language texts.
+This feature is experimental and under continuous development.
+
+A list of `DetectionResult` is returned containing an entry for each contiguous single-language text section as identified by the library.
+Each entry consists of the identified language, a start index and an end index.
+The indices denote the substring that has been identified as a contiguous single-language text section.
+
+```csharp
+using Lingua;
+using static Lingua.Language;
+
+var detector = LanguageDetectorBuilder
+  .FromLanguages(English, French, German)
+  .Build();
+
+var sentence = "Parlez-vous français? " +
+  "Ich spreche Französisch nur ein bisschen. " +
+  "A little bit is better than nothing.";
+
+var results = detector.DetectMultipleLanguagesOf(sentence);
+
+Assert.Equal(3, results.Count);
+
+var first = results[0];
+Assert.Equal(French, first.Language);
+Assert.Equal("Parlez-vous français? ", sentence[first.StartIndex..first.EndIndex]);
+
+var second = results[1];
+Assert.Equal(German, second.Language);
+Assert.Equal("Ich spreche Französisch nur ein bisschen. ", sentence[second.StartIndex..second.EndIndex]);
+
+var third = results[2];
+Assert.Equal(English, third.Language);
+Assert.Equal("A little bit is better than nothing.", sentence[third.StartIndex..third.EndIndex]);
+```
+
 ### Eager loading versus lazy loading
 
 By default, *Lingua* uses lazy-loading to load only those language models on demand which are
