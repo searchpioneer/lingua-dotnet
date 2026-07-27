@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using System.Text.RegularExpressions;
 using FluentAssertions;
 using Lingua.Internal;
 using Xunit;
@@ -153,6 +154,51 @@ public class LanguageDetectorTests : IDisposable
 			"weltweit gibt es ungefähr sprachen wobei laut schätzungen zufolge ungefähr " +
 			"prozent davon am ende dieses jahrhunderts verdrängt sein werden"
 		);
+
+	public static IEnumerable<object[]> CleanUpInputTextProvider()
+	{
+		string[] texts =
+		[
+			"",
+			"   ",
+			"\t\n \r\n",
+			"123",
+			"3<856%)§",
+			"1 abc 2",
+			"a .1. b",
+			"don't-stop",
+			"  He   turned around and asked: \"Entschuldigen Sie, sprechen Sie Deutsch?\"",
+			"Parlez-vous français? Ich spreche Französisch nur ein bisschen.",
+			"Płaszczowo-rurowe wymienniki ciepła Uszczelkowe",
+			"上海大学是一个好大学. It is such a great university.",
+			"京橋創生館で1日とめても安い駐車場！",
+			"สตูล จัดพิธีมอบบ้านนักเรียน คืนความสุข สู่ลูก สพฐ.",
+			"그러나 아름다움은 또한 아주 가까이 있다.",
+			"ਉਹ ਬੱਸ ਗਏ ਤੇ ਹੀਰੋਸ਼ੀਮਾ ਨਾਗਾਸਾਕੀ ਤੇ ਬੰਬ ਸੁੱਟ ਦਿੱਤੇ।",
+			"I'm frightened! 🙈",
+			" Weltweit gibt es ungefähr 6.000 Sprachen ",
+			"İstanbul VE ANKARA",
+			"𐐀𐐁 DESERET 𝒜ℬ𝒞 letters",
+			"a\u200Bb\u200Dc",
+		];
+
+		foreach (var text in texts)
+			yield return [text];
+
+		// exceeds the stack-allocated buffer to exercise the pooled path
+		yield return [string.Concat(Enumerable.Repeat("Weltweit gibt es ungefähr 6.000 Sprachen! ", 40))];
+	}
+
+	[Theory]
+	[MemberData(nameof(CleanUpInputTextProvider))]
+	public void CleanedUpTextMatchesRegexReplacementPipeline(string text)
+	{
+		var expected = Regex.Replace(
+			Regex.Replace(
+				Regex.Replace(text.Trim().ToLowerInvariant(), "\\p{P}", ""), "\\p{N}", ""), "\\s+", " ");
+
+		LanguageDetector.CleanUpInputText(text).Should().Be(expected);
+	}
 
 	[Fact]
 	public void TextIsSplitIntoWordsCorrectly()

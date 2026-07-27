@@ -1,6 +1,8 @@
+using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Frozen;
 using System.IO.Compression;
+using System.Text;
 using System.Text.RegularExpressions;
 using Lingua.Internal;
 using static Lingua.Language;
@@ -15,17 +17,8 @@ public sealed partial class LanguageDetector
 {
 	private const int HighAccuracyModeMaxTextLength = 120;
 
-	[GeneratedRegex("\\s+")]
-	private static partial Regex MultipleWhitespace();
-
 	[GeneratedRegex("^[^\\p{L}]+$")]
 	private static partial Regex NoLetter();
-
-	[GeneratedRegex("\\p{N}")]
-	private static partial Regex Numbers();
-
-	[GeneratedRegex("\\p{P}")]
-	private static partial Regex Punctuation();
 
 	private static readonly Dictionary<string, HashSet<Language>> CharsToLanguagesMapping = new()
 	{
@@ -785,10 +778,74 @@ public sealed partial class LanguageDetector
 		return words;
 	}
 
-	internal static string CleanUpInputText(string text) =>
-		MultipleWhitespace().Replace(
-			Numbers().Replace(
-				Punctuation().Replace(text.Trim().ToLowerInvariant(), ""), ""), " ");
+	// Equivalent to trimming, lowercasing invariantly and then applying the regex replacements
+	// \p{P} -> "", \p{N} -> "" and \s+ -> " " in that order, in a single pass over the text.
+	internal static string CleanUpInputText(string text)
+	{
+		var start = 0;
+		var end = text.Length;
+		while (start < end && char.IsWhiteSpace(text[start]))
+			start++;
+		while (end > start && char.IsWhiteSpace(text[end - 1]))
+			end--;
+
+		var length = end - start;
+		if (length == 0)
+			return string.Empty;
+
+		char[]? rented = null;
+		var buffer = length <= 512 ? stackalloc char[512] : rented = ArrayPool<char>.Shared.Rent(length);
+		var count = 0;
+		var pendingWhitespace = false;
+
+		for (var i = start; i < end; i++)
+		{
+			var ch = text[i];
+			if (char.IsWhiteSpace(ch))
+			{
+				pendingWhitespace = true;
+				continue;
+			}
+
+			if (char.IsHighSurrogate(ch) && i + 1 < end && char.IsLowSurrogate(text[i + 1]))
+			{
+				// surrogate pairs are lowercased as a single code point but are never removed,
+				// because the character classes above operate on UTF-16 code units and
+				// surrogates are neither punctuation, numbers nor whitespace
+				var lowered = Rune.ToLowerInvariant(new Rune(ch, text[i + 1]));
+				if (pendingWhitespace)
+				{
+					buffer[count++] = ' ';
+					pendingWhitespace = false;
+				}
+
+				count += lowered.EncodeToUtf16(buffer[count..]);
+				i++;
+				continue;
+			}
+
+			var lowerCh = char.ToLowerInvariant(ch);
+			if (char.IsPunctuation(lowerCh) || char.IsNumber(lowerCh))
+				continue;
+
+			if (pendingWhitespace)
+			{
+				buffer[count++] = ' ';
+				pendingWhitespace = false;
+			}
+
+			buffer[count++] = lowerCh;
+		}
+
+		if (pendingWhitespace)
+			buffer[count++] = ' ';
+
+		var cleanedUpText = new string(buffer[..count]);
+		if (rented != null)
+			ArrayPool<char>.Shared.Return(rented);
+
+		return cleanedUpText;
+	}
 
 	private bool Equals(LanguageDetector other) =>
 		_languages.SetEquals(other._languages)
