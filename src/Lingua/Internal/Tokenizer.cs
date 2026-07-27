@@ -5,18 +5,27 @@ namespace Lingua.Internal;
 /// <c>TOKENS_WITH_OPTIONAL_WHITESPACE</c> regular expressions in the Rust implementation of Lingua.
 /// .NET regular expressions do not support Unicode script character classes,
 /// so tokens are matched against <see cref="UnicodeScript"/> data instead.
+/// <para />
+/// Scanning is char-based and therefore limited to the Basic Multilingual Plane, consistent with
+/// the rest of the library: supplementary-plane characters such as CJK extension ideographs are
+/// surrogate pairs without a script of their own and are skipped, whereas the Rust implementation
+/// matches them as scalar values.
 /// </summary>
 internal static class Tokenizer
 {
+	// The first character of the Devanagari block; every script matched alone or as a
+	// same-script run lies at or above it, an invariant locked by a test.
+	private const char FirstCharWithSpecialScript = '\u0900';
+
 	/// <summary>
 	/// Finds all tokens in the text that match the pattern
 	/// <c>\p{Bengali}+|\p{Devanagari}+|\p{Gujarati}+|\p{Gurmukhi}+|\p{Han}|\p{Hangul}+|\p{Hiragana}|\p{Katakana}|\p{Tamil}+|\p{Telugu}+|\p{Thai}+|\p{L}+</c>
 	/// </summary>
 	/// <param name="text">The text to tokenize.</param>
-	/// <returns>The matched tokens.</returns>
-	public static List<string> FindTokensWithoutWhitespace(string text)
+	/// <returns>The ranges of the matched tokens.</returns>
+	public static List<Range> FindTokensWithoutWhitespace(string text)
 	{
-		var tokens = new List<string>();
+		var tokens = new List<Range>();
 		var pos = 0;
 		while (pos < text.Length)
 		{
@@ -27,7 +36,7 @@ internal static class Tokenizer
 				continue;
 			}
 
-			tokens.Add(text[pos..end]);
+			tokens.Add(new Range(pos, end));
 			pos = end;
 		}
 
@@ -60,8 +69,14 @@ internal static class Tokenizer
 				continue;
 			}
 
-			while (end < text.Length && (char.IsNumber(text[end]) || char.IsPunctuation(text[end])))
+			while (end < text.Length)
+			{
+				var trailing = text[end];
+				if (!char.IsNumber(trailing) && !char.IsPunctuation(trailing))
+					break;
+
 				end++;
+			}
 			while (end < text.Length && char.IsWhiteSpace(text[end]))
 				end++;
 
@@ -82,28 +97,32 @@ internal static class Tokenizer
 	private static int MatchToken(string text, int start, bool includeApostropheAndHyphen)
 	{
 		var ch = text[start];
-		var script = ch.GetScript();
 
-		if (script is UnicodeScript.Han or UnicodeScript.Hiragana or UnicodeScript.Katakana)
-			return start + 1;
-
-		if (script is UnicodeScript.Bengali
-			or UnicodeScript.Devanagari
-			or UnicodeScript.Gujarati
-			or UnicodeScript.Gurmukhi
-			or UnicodeScript.Hangul
-			or UnicodeScript.Tamil
-			or UnicodeScript.Telugu
-			or UnicodeScript.Thai)
+		if (ch >= FirstCharWithSpecialScript)
 		{
-			var end = start + 1;
-			while (end < text.Length && text[end].GetScript() == script)
-				end++;
+			var script = ch.GetScript();
 
-			return end;
+			if (script is UnicodeScript.Han or UnicodeScript.Hiragana or UnicodeScript.Katakana)
+				return start + 1;
+
+			if (script is UnicodeScript.Bengali
+				or UnicodeScript.Devanagari
+				or UnicodeScript.Gujarati
+				or UnicodeScript.Gurmukhi
+				or UnicodeScript.Hangul
+				or UnicodeScript.Tamil
+				or UnicodeScript.Telugu
+				or UnicodeScript.Thai)
+			{
+				var end = start + 1;
+				while (end < text.Length && text[end].GetScript() == script)
+					end++;
+
+				return end;
+			}
 		}
 
-		if (!IsLetterClass(text[start], includeApostropheAndHyphen))
+		if (!IsLetterClass(ch, includeApostropheAndHyphen))
 			return -1;
 
 		var letterEnd = start + 1;

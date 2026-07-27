@@ -5,6 +5,8 @@
         <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
+        <!-- Needs to be signed for InternalsVisibleTo -->
+        <SignAssembly>true</SignAssembly>
     </PropertyGroup>
   
   <ItemGroup>
