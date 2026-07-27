@@ -501,7 +501,7 @@ public sealed partial class LanguageDetector
 	internal static double LookupNgramProbability(Language language, ReadOnlySpan<char> ngram, string languageModelDirectory)
 	{
 		var model = LoadLanguageModel(language, ngram.Length, languageModelDirectory);
-#if NET9_0
+#if NET9_0_OR_GREATER
 		var lookup = model.GetAlternateLookup<ReadOnlySpan<char>>();
 		return lookup.TryGetValue(ngram, out var result) ? result : 0;
 #else
