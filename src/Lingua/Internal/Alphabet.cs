@@ -84,14 +84,6 @@ internal static class AlphabetExtensions
 		};
 
 	/// <summary>
-	/// Whether the alphabet script matches character script.
-	/// </summary>
-	/// <param name="alphabet">The alphabet to check</param>
-	/// <param name="ch">The character to check</param>
-	/// <returns><c>true</c> if the scripts match, <c>false</c> otherwise</returns>
-	public static bool Matches(this Alphabet alphabet, char ch) => ch.GetScript() == alphabet.Script();
-
-	/// <summary>
 	/// Whether the alphabet script matches the given script.
 	/// </summary>
 	/// <param name="alphabet">The alphabet to check</param>
