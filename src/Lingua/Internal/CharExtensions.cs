@@ -2,9 +2,12 @@ namespace Lingua.Internal;
 
 internal static class CharExtensions
 {
-	private static readonly HashSet<Alphabet> AlphabetsWithLogograms = LanguageInfo.LanguagesSupportingLogograms
+	private static readonly UnicodeScript[] ScriptsWithLogograms = LanguageInfo.LanguagesSupportingLogograms
 		.SelectMany(l => l.Alphabets())
-		.ToHashSet();
+		.Select(a => a.Script())
+		.OfType<UnicodeScript>()
+		.Distinct()
+		.ToArray();
 
 	public static bool IsLogogram(this char ch)
 	{
@@ -12,6 +15,12 @@ internal static class CharExtensions
 			return false;
 
 		var charScript = ch.GetScript();
-		return AlphabetsWithLogograms.Any(a => a.Matches(charScript));
+		foreach (var script in ScriptsWithLogograms)
+		{
+			if (script == charScript)
+				return true;
+		}
+
+		return false;
 	}
 }

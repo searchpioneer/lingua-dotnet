@@ -152,12 +152,12 @@ public sealed partial class LanguageDetector
 		if (languageOfWholeText != Unknown)
 			languages.Add(languageOfWholeText);
 
-		foreach (var word in tokensWithoutWhitespace)
+		foreach (var tokenRange in tokensWithoutWhitespace)
 		{
-			if (word.Length < 5)
+			if (tokenRange.End.Value - tokenRange.Start.Value < 5)
 				continue;
 
-			var languageOfWord = DetectLanguageOf(word);
+			var languageOfWord = DetectLanguageOf(text[tokenRange]);
 			if (languageOfWord != Unknown)
 				languages.Add(languageOfWord);
 		}
@@ -665,10 +665,11 @@ public sealed partial class LanguageDetector
 
 			foreach (var ch in word)
 			{
+				var script = ch.GetScript();
 				var isMatch = false;
 				foreach (var (alphabet, language) in _oneLanguageAlphabets)
 				{
-					if (alphabet.Matches(ch))
+					if (alphabet.Matches(script))
 					{
 						wordLanguageCounts.IncrementCounter(language);
 						isMatch = true;
@@ -678,11 +679,11 @@ public sealed partial class LanguageDetector
 
 				if (!isMatch)
 				{
-					if (Alphabet.Han.Matches(ch))
+					if (Alphabet.Han.Matches(script))
 						wordLanguageCounts.IncrementCounter(Chinese);
-					else if (IsJapaneseAlphabet(ch))
+					else if (IsJapaneseAlphabet(script))
 						wordLanguageCounts.IncrementCounter(Japanese);
-					else if (Alphabet.Latin.Matches(ch) || Alphabet.Cyrillic.Matches(ch) || Alphabet.Devanagari.Matches(ch))
+					else if (Alphabet.Latin.Matches(script) || Alphabet.Cyrillic.Matches(script) || Alphabet.Devanagari.Matches(script))
 					{
 						foreach (var language in _languagesWithUniqueCharacters.Where(l => l.UniqueCharacters()?.Contains(ch) ?? false))
 							wordLanguageCounts.IncrementCounter(language);
@@ -751,8 +752,8 @@ public sealed partial class LanguageDetector
 		return firstTotalCharCount == secondTotalCharCount ? Unknown : mostFrequentTotalLanguage;
 	}
 
-	private static bool IsJapaneseAlphabet(char ch) =>
-		ch.GetScript() is UnicodeScript.Hiragana or UnicodeScript.Katakana or UnicodeScript.Han;
+	private static bool IsJapaneseAlphabet(UnicodeScript script) =>
+		script is UnicodeScript.Hiragana or UnicodeScript.Katakana or UnicodeScript.Han;
 
 	internal static List<string> SplitTextIntoWords(string text)
 	{

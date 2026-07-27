@@ -30,6 +30,7 @@
     <ItemGroup>
       <InternalsVisibleTo Include="$(AssemblyName).IO" Key="$(PublicKey)" />
       <InternalsVisibleTo Include="$(AssemblyName).Tests" Key="$(PublicKey)" />
+      <InternalsVisibleTo Include="$(AssemblyName).Benchmarks" Key="$(PublicKey)" />
     </ItemGroup>
   
 </Project>

@@ -41,7 +41,7 @@ public class TokenizerTests
 	[InlineData(" \n  \t;", new string[0])]
 	[InlineData("3<856%)§", new string[0])]
 	public void TokensWithoutWhitespaceFoundCorrectly(string text, string[] expectedTokens) =>
-		Tokenizer.FindTokensWithoutWhitespace(text).Should().Equal(expectedTokens);
+		Tokenizer.FindTokensWithoutWhitespace(text).Select(range => text[range]).Should().Equal(expectedTokens);
 
 	[Theory]
 	[InlineData(
@@ -68,4 +68,29 @@ public class TokenizerTests
 	[InlineData("3<856%)§", new string[0])]
 	public void TokensWithOptionalWhitespaceFoundCorrectly(string text, string[] expectedTokens) =>
 		Tokenizer.FindTokensWithOptionalWhitespace(text).Select(range => text[range]).Should().Equal(expectedTokens);
+
+	// The tokenizer skips the script lookup for characters below the Devanagari block
+	// on the invariant that no script matched alone or as a same-script run occurs there.
+	// This locks that invariant against future Unicode data regenerations.
+	[Fact]
+	public void ScriptsMatchedAloneOrAsRunsDoNotOccurBelowDevanagariBlock()
+	{
+		for (var ch = '\0'; ch < '\u0900'; ch++)
+		{
+			var script = ch.GetScript();
+			var matchedAloneOrAsRun = script is UnicodeScript.Bengali
+				or UnicodeScript.Devanagari
+				or UnicodeScript.Gujarati
+				or UnicodeScript.Gurmukhi
+				or UnicodeScript.Han
+				or UnicodeScript.Hangul
+				or UnicodeScript.Hiragana
+				or UnicodeScript.Katakana
+				or UnicodeScript.Tamil
+				or UnicodeScript.Telugu
+				or UnicodeScript.Thai;
+
+			matchedAloneOrAsRun.Should().BeFalse($"character U+{(int)ch:X4} has script {script}");
+		}
+	}
 }
