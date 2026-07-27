@@ -150,9 +150,9 @@ cmd.SetAction(async (cmdLine) =>
 	Target(Benchmark, () =>
 	{
 		if (targetOptions.Count != 0)
-			Run("dotnet", "run --project tests/Lingua.Benchmarks --framework net9.0 -c Release " + string.Join(' ', targetOptions));
+			Run("dotnet", "run --project tests/Lingua.Benchmarks --framework net10.0 -c Release " + string.Join(' ', targetOptions));
 		else
-			Run("dotnet", "run --project tests/Lingua.Benchmarks --framework net9.0 -c Release");
+			Run("dotnet", "run --project tests/Lingua.Benchmarks --framework net10.0 -c Release");
 	});
 
 	Target(CleanReportOutput, () =>
