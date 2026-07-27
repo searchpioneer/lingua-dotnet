@@ -223,7 +223,7 @@ public static class LanguageInfo
 			[Malay] = new(Lingua.IsoCode6391.Ms, Lingua.IsoCode6393.Msa, [Alphabet.Latin]),
 			[Maori] = new(Lingua.IsoCode6391.Mi, Lingua.IsoCode6393.Mri, [Alphabet.Latin]),
 			[Marathi] = new(Lingua.IsoCode6391.Mr, Lingua.IsoCode6393.Mar, [Alphabet.Devanagari], "ळ"),
-			[Mongolian] = new(Lingua.IsoCode6391.Mn, Lingua.IsoCode6393.Mon, [Alphabet.Cyrillic], "ӨөҮү"),
+			[Mongolian] = new(Lingua.IsoCode6391.Mn, Lingua.IsoCode6393.Mon, [Alphabet.Cyrillic]),
 			[Nynorsk] = new(Lingua.IsoCode6391.Nn, Lingua.IsoCode6393.Nno, [Alphabet.Latin]),
 			[Oromo] = new(Lingua.IsoCode6391.Om, Lingua.IsoCode6393.Orm, [Alphabet.Latin]),
 			[Persian] = new(Lingua.IsoCode6391.Fa, Lingua.IsoCode6393.Fas, [Alphabet.Arabic]),
