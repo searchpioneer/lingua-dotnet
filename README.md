@@ -258,8 +258,8 @@ In contrast to most other language detectors, *Lingua* is able to detect multipl
 This feature is experimental and under continuous development.
 
 A list of `DetectionResult` is returned containing an entry for each contiguous single-language text section as identified by the library.
-Each entry consists of the identified language, a start index and an end index.
-The indices denote the substring that has been identified as a contiguous single-language text section.
+Each entry consists of the identified language and a range.
+The range denotes the substring that has been identified as a contiguous single-language text section, and can be used to slice the input text directly.
 
 ```csharp
 using Lingua;
@@ -279,15 +279,15 @@ Assert.Equal(3, results.Count);
 
 var first = results[0];
 Assert.Equal(French, first.Language);
-Assert.Equal("Parlez-vous français? ", sentence[first.StartIndex..first.EndIndex]);
+Assert.Equal("Parlez-vous français? ", sentence[first.Range]);
 
 var second = results[1];
 Assert.Equal(German, second.Language);
-Assert.Equal("Ich spreche Französisch nur ein bisschen. ", sentence[second.StartIndex..second.EndIndex]);
+Assert.Equal("Ich spreche Französisch nur ein bisschen. ", sentence[second.Range]);
 
 var third = results[2];
 Assert.Equal(English, third.Language);
-Assert.Equal("A little bit is better than nothing.", sentence[third.StartIndex..third.EndIndex]);
+Assert.Equal("A little bit is better than nothing.", sentence[third.Range]);
 ```
 
 ### Eager loading versus lazy loading
