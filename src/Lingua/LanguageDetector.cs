@@ -124,8 +124,8 @@ public sealed partial class LanguageDetector
 	/// <para />
 	/// A list of <see cref="DetectionResult"/> is returned containing an entry for each contiguous
 	/// single-language text section as identified by the library. Each entry consists of the identified
-	/// language, a start index and an end index. The indices denote the substring that has been
-	/// identified as a contiguous single-language text section.
+	/// language and a range. The range denotes the substring that has been identified as a contiguous
+	/// single-language text section, and can be used to slice the input text directly.
 	/// </summary>
 	/// <param name="text">The input text to detect multiple languages for.</param>
 	/// <returns>The list of detection results, in the order in which the sections appear in the text.</returns>
@@ -157,7 +157,7 @@ public sealed partial class LanguageDetector
 
 		if (languages.Count == 1)
 		{
-			results.Add(new DetectionResult(0, text.Length, tokensWithoutWhitespace.Count, languages.Single()));
+			results.Add(new DetectionResult(0..text.Length, tokensWithoutWhitespace.Count, languages.Single()));
 			return results;
 		}
 
@@ -180,7 +180,7 @@ public sealed partial class LanguageDetector
 
 			if (language != null && currentLanguage != null && language != currentLanguage)
 			{
-				results.Add(new DetectionResult(currentStartIndex, currentEndIndex, wordCount, currentLanguage.Value));
+				results.Add(new DetectionResult(currentStartIndex..currentEndIndex, wordCount, currentLanguage.Value));
 				currentStartIndex = currentEndIndex;
 				currentLanguage = language;
 				wordCount = 0;
@@ -190,7 +190,7 @@ public sealed partial class LanguageDetector
 			wordCount++;
 
 			if (i == lastIndex && currentLanguage != null)
-				results.Add(new DetectionResult(currentStartIndex, text.Length, wordCount, currentLanguage.Value));
+				results.Add(new DetectionResult(currentStartIndex..text.Length, wordCount, currentLanguage.Value));
 		}
 
 		if (results.Count > 1)
@@ -404,16 +404,14 @@ public sealed partial class LanguageDetector
 			if (i == 0)
 			{
 				results[i + 1] = new DetectionResult(
-					results[i].StartIndex,
-					results[i + 1].EndIndex,
+					results[i].Range.Start..results[i + 1].Range.End,
 					results[i].WordCount + results[i + 1].WordCount,
 					results[i + 1].Language);
 			}
 			else
 			{
 				results[i - 1] = new DetectionResult(
-					results[i - 1].StartIndex,
-					results[i].EndIndex,
+					results[i - 1].Range.Start..results[i].Range.End,
 					results[i - 1].WordCount + results[i].WordCount,
 					results[i - 1].Language);
 			}

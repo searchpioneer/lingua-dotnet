@@ -875,7 +875,7 @@ public class LanguageDetectorTests : IDisposable
 		results.Should().ContainSingle();
 
 		var result = results[0];
-		sentence[result.StartIndex..result.EndIndex].Should().Be(sentence);
+		sentence[result.Range].Should().Be(sentence);
 		result.WordCount.Should().Be(expectedWordCount);
 		result.Language.Should().Be(expectedLanguage);
 
@@ -906,12 +906,12 @@ public class LanguageDetectorTests : IDisposable
 		results.Should().HaveCount(2);
 
 		var firstResult = results[0];
-		sentence[firstResult.StartIndex..firstResult.EndIndex].Should().Be(expectedFirstSubstring);
+		sentence[firstResult.Range].Should().Be(expectedFirstSubstring);
 		firstResult.WordCount.Should().Be(expectedFirstWordCount);
 		firstResult.Language.Should().Be(expectedFirstLanguage);
 
 		var secondResult = results[1];
-		sentence[secondResult.StartIndex..secondResult.EndIndex].Should().Be(expectedSecondSubstring);
+		sentence[secondResult.Range].Should().Be(expectedSecondSubstring);
 		secondResult.WordCount.Should().Be(expectedSecondWordCount);
 		secondResult.Language.Should().Be(expectedSecondLanguage);
 
@@ -941,19 +941,47 @@ public class LanguageDetectorTests : IDisposable
 		results.Should().HaveCount(3);
 
 		var firstResult = results[0];
-		sentence[firstResult.StartIndex..firstResult.EndIndex].Should().Be(expectedFirstSubstring);
+		sentence[firstResult.Range].Should().Be(expectedFirstSubstring);
 		firstResult.WordCount.Should().Be(expectedFirstWordCount);
 		firstResult.Language.Should().Be(expectedFirstLanguage);
 
 		var secondResult = results[1];
-		sentence[secondResult.StartIndex..secondResult.EndIndex].Should().Be(expectedSecondSubstring);
+		sentence[secondResult.Range].Should().Be(expectedSecondSubstring);
 		secondResult.WordCount.Should().Be(expectedSecondWordCount);
 		secondResult.Language.Should().Be(expectedSecondLanguage);
 
 		var thirdResult = results[2];
-		sentence[thirdResult.StartIndex..thirdResult.EndIndex].Should().Be(expectedThirdSubstring);
+		sentence[thirdResult.Range].Should().Be(expectedThirdSubstring);
 		thirdResult.WordCount.Should().Be(expectedThirdWordCount);
 		thirdResult.Language.Should().Be(expectedThirdLanguage);
+
+		AddLanguageModelsToDetector();
+	}
+
+	[Theory]
+	[InlineData("I'm really not sure whether multi-language detection is a good idea.")]
+	[InlineData("上海大学是一个好大学. It is such a great university.")]
+	[InlineData("Parlez-vous français? Ich spreche Französisch nur ein bisschen. A little bit is better than nothing.")]
+	public void DetectMultipleLanguagesReturnsRangesTilingTheInput(string sentence)
+	{
+		RemoveLanguageModelsFromDetector();
+
+		var results = _detectorForAllLanguages.DetectMultipleLanguagesOf(sentence);
+		results.Should().NotBeEmpty();
+
+		// the sections cover the whole input with no gaps and no overlaps, and the ranges are always
+		// relative to the start of the text, so that Range.Start.Value and Range.End.Value are the
+		// actual offsets rather than distances from the end
+		var expectedStartIndex = 0;
+		foreach (var result in results)
+		{
+			result.Range.Start.IsFromEnd.Should().BeFalse();
+			result.Range.End.IsFromEnd.Should().BeFalse();
+			result.Range.Start.Value.Should().Be(expectedStartIndex);
+			expectedStartIndex = result.Range.End.Value;
+		}
+
+		expectedStartIndex.Should().Be(sentence.Length);
 
 		AddLanguageModelsToDetector();
 	}
