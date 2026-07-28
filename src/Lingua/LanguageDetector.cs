@@ -227,7 +227,7 @@ public sealed partial class LanguageDetector
 	/// input text. These values denote how likely it is that the given text has been written
 	/// in any of the languages supported by this detector.
 	/// <para />
-	/// The <see cref="IDictionary{TKey,TValue}"/> returned by this method contains all languages supported by
+	/// The <see cref="IReadOnlyDictionary{TKey,TValue}"/> returned by this method contains all languages supported by
 	/// this detector, together with their confidence values. The entries are sorted by confidence value descending.
 	/// Each confidence value is a probability between 0.0 and 1.0. The probabilities of all languages will
 	/// sum to 1.0. If the language is unambiguously identified by the rule engine, the value
@@ -236,7 +236,7 @@ public sealed partial class LanguageDetector
 	/// </summary>
 	/// <param name="text">The input text to detect the language for.</param>
 	/// <returns>A dictionary of all possible languages, sorted by their confidence value in descending order.</returns>
-	public IDictionary<Language, double> ComputeLanguageConfidenceValues(string text) =>
+	public IReadOnlyDictionary<Language, double> ComputeLanguageConfidenceValues(string text) =>
 		ComputeLanguageConfidenceValues(text, _languages);
 
 	private Language? DetectLanguageFromLanguages(string text, HashSet<Language> languages)
@@ -259,7 +259,7 @@ public sealed partial class LanguageDetector
 				: mostLikelyLanguage;
 	}
 
-	private IDictionary<Language, double> ComputeLanguageConfidenceValues(string text, HashSet<Language> languages)
+	private IReadOnlyDictionary<Language, double> ComputeLanguageConfidenceValues(string text, HashSet<Language> languages)
 	{
 		var values = new Dictionary<Language, double>(languages.Count);
 		foreach (var language in languages)
@@ -348,7 +348,7 @@ public sealed partial class LanguageDetector
 		}
 	}
 
-	private IDictionary<Language, double> ComputeConfidenceValues(
+	private IReadOnlyDictionary<Language, double> ComputeConfidenceValues(
 		Dictionary<Language, double> values,
 		Dictionary<Language, double>[] allProbabilities,
 		Dictionary<Language, double> summedUpProbabilities)
