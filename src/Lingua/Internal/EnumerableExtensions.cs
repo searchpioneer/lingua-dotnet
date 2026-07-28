@@ -10,7 +10,7 @@ internal static class EnumerableExtensions
 	/// constructed here is the adapted copy of the runtime implementation in this namespace,
 	/// rather than the built-in type.
 	/// </remarks>
-	public static IDictionary<TKey, TValue> ToOrderedDictionary<TKey, TValue>(
+	public static OrderedDictionary<TKey, TValue> ToOrderedDictionary<TKey, TValue>(
 		this IEnumerable<KeyValuePair<TKey, TValue>> enumerable) where TKey : notnull
 	{
 		var dictionary = new OrderedDictionary<TKey, TValue>();

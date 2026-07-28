@@ -607,14 +607,14 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		Debug.Assert(entries is not null, "expected entries to be is not null");
 
 		if (typeof(TKey)
-			    .IsValueType && // comparer can only be null for value types; enable JIT to eliminate entire if block for ref types
-		    comparer is null)
+				.IsValueType && // comparer can only be null for value types; enable JIT to eliminate entire if block for ref types
+			comparer is null)
 		{
 			// ValueType: Devirtualize with EqualityComparer<TKey>.Default intrinsic
 
 			hashCode = (uint)key.GetHashCode();
 			i = GetBucket(hashCode) -
-			    1; // Value in _buckets is 1-based; subtract 1 from i. We do it here so it fuses with the following conditional.
+				1; // Value in _buckets is 1-based; subtract 1 from i. We do it here so it fuses with the following conditional.
 			do
 			{
 				// Test in if to drop range check for following array access
@@ -643,7 +643,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 			Debug.Assert(comparer is not null);
 			hashCode = (uint)comparer.GetHashCode(key);
 			i = GetBucket(hashCode) -
-			    1; // Value in _buckets is 1-based; subtract 1 from i. We do it here so it fuses with the following conditional.
+				1; // Value in _buckets is 1-based; subtract 1 from i. We do it here so it fuses with the following conditional.
 			do
 			{
 				// Test in if to drop range check for following array access
@@ -668,18 +668,18 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 			goto ConcurrentOperation;
 		}
 
-		ReturnNotFound:
+	ReturnNotFound:
 		i = -1;
 		outCollisionCount = collisionCount;
 		goto Return;
 
-		ConcurrentOperation:
+	ConcurrentOperation:
 		// We examined more entries than are actually in the list, which means there's a cycle
 		// that's caused by erroneous concurrent use.
 		throw new InvalidOperationException(
 			"Operations that change non-concurrent collections must have exclusive access. A concurrent update was performed on this collection and corrupted its state. The collection's state is no longer correct.");
 
-		Return:
+	Return:
 		outHashCode = hashCode;
 		return i;
 	}
@@ -1146,7 +1146,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
 	{
 		if (TryGetValue(item.Key, out var value, out var index) &&
-		    EqualityComparer<TValue>.Default.Equals(value, item.Value))
+			EqualityComparer<TValue>.Default.Equals(value, item.Value))
 		{
 			RemoveAt(index);
 			return true;
@@ -1379,7 +1379,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 			if (_index < dictionary._count)
 			{
 				Debug.Assert(dictionary._entries is not null);
-				ref Entry entry = ref dictionary._entries[_index];
+				ref var entry = ref dictionary._entries[_index];
 				Current = new KeyValuePair<TKey, TValue>(entry.Key, entry.Value);
 				_index++;
 				return true;
@@ -1456,7 +1456,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 					nameof(array));
 			}
 
-			Entry[]? entries = dictionary._entries;
+			var entries = dictionary._entries;
 			for (var i = 0; i < count; i++)
 			{
 				Debug.Assert(entries is not null);
@@ -1651,7 +1651,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 					nameof(array));
 			}
 
-			Entry[]? entries = dictionary._entries;
+			var entries = dictionary._entries;
 			for (var i = 0; i < count; i++)
 			{
 				Debug.Assert(entries is not null);
@@ -1693,7 +1693,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		/// <inheritdoc/>
 		int IList<TValue>.IndexOf(TValue item)
 		{
-			Entry[]? entries = _dictionary._entries;
+			var entries = _dictionary._entries;
 			if (entries is not null)
 			{
 				var count = _dictionary._count;
@@ -1739,7 +1739,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		/// <inheritdoc/>
 		int IList.IndexOf(object? value)
 		{
-			Entry[]? entries = _dictionary._entries;
+			var entries = _dictionary._entries;
 			if (entries is not null)
 			{
 				var count = _dictionary._count;
