@@ -15,10 +15,8 @@ using System.Runtime.CompilerServices;
 
 namespace Lingua.Internal;
 
-internal static partial class HashHelpers
+internal static class HashHelpers
 {
-	public const uint HashCollisionThreshold = 100;
-
 	// This is the maximum prime smaller than Array.MaxLength.
 	public const int MaxPrimeArrayLength = 0x7FFFFFC3;
 

@@ -37,18 +37,23 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 {
 	/// <summary>The comparer used by the collection. May be null if the default comparer is used.</summary>
 	private readonly IEqualityComparer<TKey>? _comparer;
+
 	/// <summary>Indexes into <see cref="_entries"/> for the start of chains; indices are 1-based.</summary>
 	private int[]? _buckets;
+
 	/// <summary>Ordered entries in the dictionary.</summary>
 	/// <remarks>
 	/// Unlike <see cref="Dictionary{TKey, TValue}"/>, removed entries are actually removed rather than left as holes
 	/// that can be filled in by subsequent additions. This is done to retain ordering.
 	/// </remarks>
 	private Entry[]? _entries;
+
 	/// <summary>The number of items in the collection.</summary>
 	private int _count;
+
 	/// <summary>Version number used to invalidate an enumerator.</summary>
 	private int _version;
+
 	/// <summary>Multiplier used on 64-bit to enable faster % operations.</summary>
 	private ulong _fastModMultiplier;
 
@@ -97,9 +102,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		ThrowIfNegative(capacity);
 
 		if (capacity > 0)
-		{
 			EnsureBucketsAndEntriesInitialized(capacity);
-		}
 
 		// Initialize the comparer:
 		// - Strings: Special-case EqualityComparer<string>.Default, StringComparer.Ordinal, and
@@ -113,15 +116,11 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		//   EqualityComparer<TKey>.Default.Equals on every use, enabling the JIT to
 		//   devirtualize and possibly inline the operation.
 		if (!typeof(TKey).IsValueType)
-		{
 			_comparer = comparer ?? EqualityComparer<TKey>.Default;
-
-		}
-		else if (comparer is not null && // first check for null to avoid forcing default comparer instantiation unnecessarily
-				 comparer != EqualityComparer<TKey>.Default)
-		{
+		else if
+			(comparer is not null && // first check for null to avoid forcing default comparer instantiation unnecessarily
+			 comparer != EqualityComparer<TKey>.Default)
 			_comparer = comparer;
-		}
 	}
 
 	/// <summary>
@@ -206,8 +205,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	{
 		get
 		{
-			IEqualityComparer<TKey>? comparer = _comparer;
-
+			var comparer = _comparer;
 
 			// Otherwise, return whatever comparer we have, or the default if none was provided.
 			return comparer ?? EqualityComparer<TKey>.Default;
@@ -272,7 +270,9 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 			if (value is not KeyValuePair<TKey, TValue> tpair)
 			{
-				throw new ArgumentException($"The value '{value}' is not of type '{typeof(KeyValuePair<TKey, TValue>)}' and cannot be used in this generic collection.", nameof(value));
+				throw new ArgumentException(
+					$"The value '{value}' is not of type '{typeof(KeyValuePair<TKey, TValue>)}' and cannot be used in this generic collection.",
+					nameof(value));
 			}
 
 			SetAt(index, tpair.Key, tpair.Value);
@@ -286,7 +286,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		{
 			ArgumentNullException.ThrowIfNull(key);
 
-			if (key is TKey tkey && TryGetValue(tkey, out TValue? value))
+			if (key is TKey tkey && TryGetValue(tkey, out var value))
 			{
 				return value;
 			}
@@ -303,7 +303,9 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 			if (key is not TKey tkey)
 			{
-				throw new ArgumentException($"The value '{key}' is not of type '{typeof(TKey)}' and cannot be used in this generic collection.", nameof(key));
+				throw new ArgumentException(
+					$"The value '{key}' is not of type '{typeof(TKey)}' and cannot be used in this generic collection.",
+					nameof(key));
 			}
 
 			TValue tvalue = default!;
@@ -311,7 +313,9 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 			{
 				if (value is not TValue temp)
 				{
-					throw new ArgumentException($"The value '{value}' is not of type '{typeof(TValue)}' and cannot be used in this generic collection.", nameof(value));
+					throw new ArgumentException(
+						$"The value '{value}' is not of type '{typeof(TValue)}' and cannot be used in this generic collection.",
+						nameof(value));
 				}
 
 				tvalue = temp;
@@ -341,7 +345,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	{
 		get
 		{
-			if (!TryGetValue(key, out TValue? value))
+			if (!TryGetValue(key, out var value))
 			{
 				throw new KeyNotFoundException($"The given key '{key}' was not present in the dictionary.");
 			}
@@ -391,7 +395,8 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 					return true;
 
 				case InsertionBehavior.ThrowOnExisting:
-					throw new ArgumentException($"An item with the same key has already been added. Key: {key}", nameof(key));
+					throw new ArgumentException($"An item with the same key has already been added. Key: {key}",
+						nameof(key));
 
 				default:
 					Debug.Assert(behavior is InsertionBehavior.IgnoreInsertion, $"Unknown behavior: {behavior}");
@@ -406,6 +411,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		{
 			index = _count;
 		}
+
 		Debug.Assert(index <= _count);
 
 		// Ensure the collection has been initialized.
@@ -415,7 +421,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		}
 
 		// As we just initialized the collection, _entries must be non-null.
-		Entry[]? entries = _entries;
+		var entries = _entries;
 		Debug.Assert(entries is not null);
 
 		// Grow capacity if necessary to accommodate the extra entry.
@@ -435,7 +441,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		}
 
 		// Store the new key/value pair.
-		ref Entry entry = ref entries[index];
+		ref var entry = ref entries[index];
 		entry.HashCode = hashCode;
 		entry.Key = key;
 		entry.Value = value;
@@ -490,17 +496,13 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 		if (collection is KeyValuePair<TKey, TValue>[] array)
 		{
-			foreach (KeyValuePair<TKey, TValue> pair in array)
-			{
+			foreach (var pair in array)
 				Add(pair.Key, pair.Value);
-			}
 		}
 		else
 		{
-			foreach (KeyValuePair<TKey, TValue> pair in collection)
-			{
+			foreach (var pair in collection)
 				Add(pair.Key, pair.Value);
-			}
 		}
 	}
 
@@ -531,31 +533,25 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	{
 		var count = _count;
 
-		Entry[]? entries = _entries;
+		var entries = _entries;
 		if (entries is null)
-		{
 			return false;
-		}
 
 		if (typeof(TValue).IsValueType)
 		{
 			for (var i = 0; i < count; i++)
 			{
 				if (EqualityComparer<TValue>.Default.Equals(value, entries[i].Value))
-				{
 					return true;
-				}
 			}
 		}
 		else
 		{
-			EqualityComparer<TValue> comparer = EqualityComparer<TValue>.Default;
+			var comparer = EqualityComparer<TValue>.Default;
 			for (var i = 0; i < count; i++)
 			{
 				if (comparer.Equals(value, entries[i].Value))
-				{
 					return true;
-				}
 			}
 		}
 
@@ -569,13 +565,11 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	public KeyValuePair<TKey, TValue> GetAt(int index)
 	{
 		if ((uint)index >= (uint)_count)
-		{
-			throw new ArgumentOutOfRangeException("index");
-		}
+			throw new ArgumentOutOfRangeException(nameof(index));
 
 		Debug.Assert(_entries is not null, "count must be positive, which means we must have entries");
 
-		ref Entry e = ref _entries[index];
+		ref var e = ref _entries[index];
 		return new(e.Key, e.Value);
 	}
 
@@ -597,7 +591,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 		uint hashCode;
 		uint collisionCount = 0;
-		IEqualityComparer<TKey>? comparer = _comparer;
+		var comparer = _comparer;
 
 		if (_buckets is null)
 		{
@@ -607,18 +601,20 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		}
 
 		var i = -1;
-		ref Entry entry = ref Unsafe.NullRef<Entry>();
+		ref var entry = ref Unsafe.NullRef<Entry>();
 
-		Entry[]? entries = _entries;
+		var entries = _entries;
 		Debug.Assert(entries is not null, "expected entries to be is not null");
 
-		if (typeof(TKey).IsValueType && // comparer can only be null for value types; enable JIT to eliminate entire if block for ref types
-			comparer is null)
+		if (typeof(TKey)
+			    .IsValueType && // comparer can only be null for value types; enable JIT to eliminate entire if block for ref types
+		    comparer is null)
 		{
 			// ValueType: Devirtualize with EqualityComparer<TKey>.Default intrinsic
 
 			hashCode = (uint)key.GetHashCode();
-			i = GetBucket(hashCode) - 1; // Value in _buckets is 1-based; subtract 1 from i. We do it here so it fuses with the following conditional.
+			i = GetBucket(hashCode) -
+			    1; // Value in _buckets is 1-based; subtract 1 from i. We do it here so it fuses with the following conditional.
 			do
 			{
 				// Test in if to drop range check for following array access
@@ -636,8 +632,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 				i = entry.Next;
 
 				collisionCount++;
-			}
-			while (collisionCount <= (uint)entries.Length);
+			} while (collisionCount <= (uint)entries.Length);
 
 			// The chain of entries forms a loop; which means a concurrent update has happened.
 			// Break out of the loop and throw, rather than looping forever.
@@ -647,7 +642,8 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		{
 			Debug.Assert(comparer is not null);
 			hashCode = (uint)comparer.GetHashCode(key);
-			i = GetBucket(hashCode) - 1; // Value in _buckets is 1-based; subtract 1 from i. We do it here so it fuses with the following conditional.
+			i = GetBucket(hashCode) -
+			    1; // Value in _buckets is 1-based; subtract 1 from i. We do it here so it fuses with the following conditional.
 			do
 			{
 				// Test in if to drop range check for following array access
@@ -665,26 +661,25 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 				i = entry.Next;
 
 				collisionCount++;
-			}
-			while (collisionCount <= (uint)entries.Length);
+			} while (collisionCount <= (uint)entries.Length);
 
 			// The chain of entries forms a loop; which means a concurrent update has happened.
 			// Break out of the loop and throw, rather than looping forever.
 			goto ConcurrentOperation;
 		}
 
-	ReturnNotFound:
+		ReturnNotFound:
 		i = -1;
 		outCollisionCount = collisionCount;
 		goto Return;
 
-	ConcurrentOperation:
+		ConcurrentOperation:
 		// We examined more entries than are actually in the list, which means there's a cycle
 		// that's caused by erroneous concurrent use.
 		throw new InvalidOperationException(
 			"Operations that change non-concurrent collections must have exclusive access. A concurrent update was performed on this collection and corrupted its state. The collection's state is no longer correct.");
 
-	Return:
+		Return:
 		outHashCode = hashCode;
 		return i;
 	}
@@ -699,9 +694,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	public void Insert(int index, TKey key, TValue value)
 	{
 		if ((uint)index > (uint)_count)
-		{
-			throw new ArgumentOutOfRangeException("index");
-		}
+			throw new ArgumentOutOfRangeException(nameof(index));
 
 		ArgumentNullException.ThrowIfNull(key);
 
@@ -747,15 +740,13 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	{
 		var count = _count;
 		if ((uint)index >= (uint)count)
-		{
-			throw new ArgumentOutOfRangeException("index");
-		}
+			throw new ArgumentOutOfRangeException(nameof(index));
 
 		// Remove from the associated bucket chain the entry that lives at the specified index.
 		RemoveEntryFromBucket(index);
 
 		// Shift down all entries above this one, and fix up the bucket chains to reflect the new indices.
-		Entry[]? entries = _entries;
+		var entries = _entries;
 		Debug.Assert(entries is not null);
 		for (var i = index + 1; i < count; i++)
 		{
@@ -774,9 +765,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	public void SetAt(int index, TValue value)
 	{
 		if ((uint)index >= (uint)_count)
-		{
-			throw new ArgumentOutOfRangeException("index");
-		}
+			throw new ArgumentOutOfRangeException(nameof(index));
 
 		Debug.Assert(_entries is not null);
 
@@ -793,14 +782,12 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	public void SetAt(int index, TKey key, TValue value)
 	{
 		if ((uint)index >= (uint)_count)
-		{
-			throw new ArgumentOutOfRangeException("index");
-		}
+			throw new ArgumentOutOfRangeException(nameof(index));
 
 		ArgumentNullException.ThrowIfNull(key);
 
 		Debug.Assert(_entries is not null);
-		ref Entry e = ref _entries[index];
+		ref var e = ref _entries[index];
 
 		// If the key matches the one that's already in that slot, just update the value.
 		if (typeof(TKey).IsValueType && _comparer is null)
@@ -824,9 +811,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		// The key doesn't match that index. If it exists elsewhere in the collection, fail.
 		uint hashCode = 0, collisionCount = 0;
 		if (IndexOf(key, ref hashCode, ref collisionCount) >= 0)
-		{
 			throw new ArgumentException($"An item with the same key has already been added. Key: {key}", nameof(key));
-		}
 
 		// The key doesn't exist in the collection. Update the key and value, but also update
 		// the bucket chains, as the new key may not hash to the same bucket as the old key
@@ -854,13 +839,9 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		if (Capacity < capacity)
 		{
 			if (_buckets is null)
-			{
 				EnsureBucketsAndEntriesInitialized(capacity);
-			}
 			else
-			{
 				Resize(HashHelpers.GetPrime(capacity));
-			}
 
 			_version++;
 		}
@@ -881,9 +862,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		var currentCapacity = _entries?.Length ?? 0;
 		capacity = HashHelpers.GetPrime(capacity);
 		if (capacity < currentCapacity)
-		{
 			Resize(capacity);
-		}
 	}
 
 	/// <summary>Gets the value associated with the specified key.</summary>
@@ -941,11 +920,11 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	{
 		// We're only calling this method if there's an entry to be removed, in which case
 		// entries must have been initialized.
-		Entry[]? entries = _entries;
+		var entries = _entries;
 		Debug.Assert(entries is not null);
 
 		// Get the entry to be removed and the associated bucket.
-		Entry entry = entries[entryIndex];
+		var entry = entries[entryIndex];
 		ref var bucket = ref GetBucket(entry.HashCode);
 
 		if (bucket == entryIndex + 1)
@@ -962,7 +941,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 			var collisionCount = 0;
 			while (true)
 			{
-				ref Entry e = ref entries[i];
+				ref var e = ref entries[i];
 				if (e.Next == entryIndex)
 				{
 					e.Next = entry.Next;
@@ -995,10 +974,10 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	{
 		Debug.Assert(shiftAmount is 1 or -1);
 
-		Entry[]? entries = _entries;
+		var entries = _entries;
 		Debug.Assert(entries is not null);
 
-		Entry entry = entries[entryIndex];
+		var entry = entries[entryIndex];
 		ref var bucket = ref GetBucket(entry.HashCode);
 
 		if (bucket == entryIndex + 1)
@@ -1015,7 +994,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 			var collisionCount = 0;
 			while (true)
 			{
-				ref Entry e = ref entries[i];
+				ref var e = ref entries[i];
 				if (e.Next == entryIndex)
 				{
 					e.Next += shiftAmount;
@@ -1067,9 +1046,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		// Copy the existing entries to the new entries array.
 		var count = _count;
 		if (_entries is not null)
-		{
 			Array.Copy(_entries, newEntries, count);
-		}
 
 
 		// Now publish the buckets array. It's necessary to do this prior to the below loop,
@@ -1078,9 +1055,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 		// Populate the buckets.
 		for (var i = 0; i < count; i++)
-		{
 			PushEntryIntoBucket(ref newEntries[i], i);
-		}
 
 		_entries = newEntries;
 	}
@@ -1097,13 +1072,9 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		Debug.Assert(buckets is not null);
 
 		if (IntPtr.Size == 8)
-		{
 			return ref buckets[HashHelpers.FastMod(hashCode, (uint)buckets.Length, _fastModMultiplier)];
-		}
 		else
-		{
 			return ref buckets[(uint)hashCode % buckets.Length];
-		}
 	}
 
 	/// <summary>Returns an enumerator that iterates through the <see cref="OrderedDictionary{TKey, TValue}"/>.</summary>
@@ -1112,8 +1083,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 	/// <inheritdoc/>
 	IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() =>
-		Count == 0 ? EnumerableHelpers.GetEmptyEnumerator<KeyValuePair<TKey, TValue>>() :
-		GetEnumerator();
+		Count == 0 ? EnumerableHelpers.GetEmptyEnumerator<KeyValuePair<TKey, TValue>>() : GetEnumerator();
 
 	/// <inheritdoc/>
 	IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable<KeyValuePair<TKey, TValue>>)this).GetEnumerator();
@@ -1131,16 +1101,15 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		{
 			Debug.Assert(_entries is not null);
 			if (EqualityComparer<TValue>.Default.Equals(item.Value, _entries[index].Value))
-			{
 				return index;
-			}
 		}
 
 		return -1;
 	}
 
 	/// <inheritdoc/>
-	void IList<KeyValuePair<TKey, TValue>>.Insert(int index, KeyValuePair<TKey, TValue> item) => Insert(index, item.Key, item.Value);
+	void IList<KeyValuePair<TKey, TValue>>.Insert(int index, KeyValuePair<TKey, TValue> item) =>
+		Insert(index, item.Key, item.Value);
 
 	/// <inheritdoc/>
 	void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item) => Add(item.Key, item.Value);
@@ -1151,7 +1120,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		ArgumentNullException.ThrowIfNull(item.Key, nameof(item));
 
 		return
-			TryGetValue(item.Key, out TValue? value) &&
+			TryGetValue(item.Key, out var value) &&
 			EqualityComparer<TValue>.Default.Equals(value, item.Value);
 	}
 
@@ -1162,12 +1131,13 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		ThrowIfNegative(arrayIndex);
 		if (array.Length - arrayIndex < _count)
 		{
-			throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
+			throw new ArgumentException(
+				"Destination array is not long enough to copy all the items in the collection. Check array index and length.");
 		}
 
 		for (var i = 0; i < _count; i++)
 		{
-			ref Entry entry = ref _entries![i];
+			ref var entry = ref _entries![i];
 			array[arrayIndex++] = new(entry.Key, entry.Value);
 		}
 	}
@@ -1175,7 +1145,8 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	/// <inheritdoc/>
 	bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
 	{
-		if (TryGetValue(item.Key, out TValue? value, out var index) && EqualityComparer<TValue>.Default.Equals(value, item.Value))
+		if (TryGetValue(item.Key, out var value, out var index) &&
+		    EqualityComparer<TValue>.Default.Equals(value, item.Value))
 		{
 			RemoveAt(index);
 			return true;
@@ -1195,7 +1166,9 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 		if (key is not TKey tkey)
 		{
-			throw new ArgumentException($"The value '{key}' is not of type '{typeof(TKey)}' and cannot be used in this generic collection.", nameof(key));
+			throw new ArgumentException(
+				$"The value '{key}' is not of type '{typeof(TKey)}' and cannot be used in this generic collection.",
+				nameof(key));
 		}
 
 		TValue tvalue = default!;
@@ -1203,7 +1176,9 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		{
 			if (value is not TValue temp)
 			{
-				throw new ArgumentException($"The value '{value}' is not of type '{typeof(TValue)}' and cannot be used in this generic collection.", nameof(value));
+				throw new ArgumentException(
+					$"The value '{value}' is not of type '{typeof(TValue)}' and cannot be used in this generic collection.",
+					nameof(value));
 			}
 
 			tvalue = temp;
@@ -1238,7 +1213,8 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 		if (array.Rank != 1)
 		{
-			throw new ArgumentException("Only single dimensional arrays are supported for the requested action.", nameof(array));
+			throw new ArgumentException("Only single dimensional arrays are supported for the requested action.",
+				nameof(array));
 		}
 
 		if (array.GetLowerBound(0) != 0)
@@ -1250,7 +1226,8 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 		if (array.Length - index < _count)
 		{
-			throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
+			throw new ArgumentException(
+				"Destination array is not long enough to copy all the items in the collection. Check array index and length.");
 		}
 
 		if (array is KeyValuePair<TKey, TValue>[] tarray)
@@ -1263,17 +1240,19 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 			{
 				if (array is not object[] objects)
 				{
-					throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
+					throw new ArgumentException(
+						"Target array type is not compatible with the type of items in the collection.", nameof(array));
 				}
 
-				foreach (KeyValuePair<TKey, TValue> pair in this)
+				foreach (var pair in this)
 				{
 					objects[index++] = pair;
 				}
 			}
 			catch (ArrayTypeMismatchException)
 			{
-				throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
+				throw new ArgumentException(
+					"Target array type is not compatible with the type of items in the collection.", nameof(array));
 			}
 		}
 	}
@@ -1283,7 +1262,9 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	{
 		if (value is not KeyValuePair<TKey, TValue> pair)
 		{
-			throw new ArgumentException($"The value '{value}' is not of type '{typeof(KeyValuePair<TKey, TValue>)}' and cannot be used in this generic collection.", nameof(value));
+			throw new ArgumentException(
+				$"The value '{value}' is not of type '{typeof(KeyValuePair<TKey, TValue>)}' and cannot be used in this generic collection.",
+				nameof(value));
 		}
 
 		Add(pair.Key, pair.Value);
@@ -1293,7 +1274,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	/// <inheritdoc/>
 	bool IList.Contains(object? value) =>
 		value is KeyValuePair<TKey, TValue> pair &&
-		TryGetValue(pair.Key, out TValue? v) &&
+		TryGetValue(pair.Key, out var v) &&
 		EqualityComparer<TValue>.Default.Equals(v, pair.Value);
 
 	/// <inheritdoc/>
@@ -1312,7 +1293,9 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	{
 		if (value is not KeyValuePair<TKey, TValue> pair)
 		{
-			throw new ArgumentException($"The value '{value}' is not of type '{typeof(KeyValuePair<TKey, TValue>)}' and cannot be used in this generic collection.", nameof(value));
+			throw new ArgumentException(
+				$"The value '{value}' is not of type '{typeof(KeyValuePair<TKey, TValue>)}' and cannot be used in this generic collection.",
+				nameof(value));
 		}
 
 		Insert(index, pair.Key, pair.Value);
@@ -1332,10 +1315,13 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	{
 		/// <summary>The index of the next entry in the chain, or -1 if this is the last entry in the chain.</summary>
 		public int Next;
+
 		/// <summary>Cached hash code of <see cref="Key"/>.</summary>
 		public uint HashCode;
+
 		/// <summary>The key.</summary>
 		public TKey Key;
+
 		/// <summary>The value associated with <see cref="Key"/>.</summary>
 		public TValue Value;
 	}
@@ -1346,10 +1332,13 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 	{
 		/// <summary>The dictionary being enumerated.</summary>
 		private readonly OrderedDictionary<TKey, TValue> _dictionary;
+
 		/// <summary>A snapshot of the dictionary's version when enumeration began.</summary>
 		private readonly int _version;
+
 		/// <summary>Whether Current should be a DictionaryEntry.</summary>
 		private readonly bool _useDictionaryEntry;
+
 		/// <summary>The current index.</summary>
 		private int _index;
 
@@ -1365,9 +1354,8 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		public KeyValuePair<TKey, TValue> Current { get; private set; }
 
 		/// <inheritdoc/>
-		readonly object IEnumerator.Current => _useDictionaryEntry ?
-			new DictionaryEntry(Current.Key, Current.Value) :
-			Current;
+		readonly object IEnumerator.Current =>
+			_useDictionaryEntry ? new DictionaryEntry(Current.Key, Current.Value) : Current;
 
 		/// <inheritdoc/>
 		readonly DictionaryEntry IDictionaryEnumerator.Entry => new(Current.Key, Current.Value);
@@ -1381,7 +1369,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 		/// <inheritdoc/>
 		public bool MoveNext()
 		{
-			OrderedDictionary<TKey, TValue> dictionary = _dictionary;
+			var dictionary = _dictionary;
 
 			if (_version != dictionary._version)
 			{
@@ -1458,12 +1446,14 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 			ArgumentNullException.ThrowIfNull(array);
 			ThrowIfNegative(arrayIndex);
 
-			OrderedDictionary<TKey, TValue> dictionary = _dictionary;
+			var dictionary = _dictionary;
 			var count = dictionary._count;
 
 			if (array.Length - arrayIndex < count)
 			{
-				throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.", nameof(array));
+				throw new ArgumentException(
+					"Destination array is not long enough to copy all the items in the collection. Check array index and length.",
+					nameof(array));
 			}
 
 			Entry[]? entries = dictionary._entries;
@@ -1481,7 +1471,8 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 			if (array.Rank != 1)
 			{
-				throw new ArgumentException("Only single dimensional arrays are supported for the requested action.", nameof(array));
+				throw new ArgumentException("Only single dimensional arrays are supported for the requested action.",
+					nameof(array));
 			}
 
 			if (array.GetLowerBound(0) != 0)
@@ -1493,7 +1484,8 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 			if (array.Length - index < _dictionary.Count)
 			{
-				throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
+				throw new ArgumentException(
+					"Destination array is not long enough to copy all the items in the collection. Check array index and length.");
 			}
 
 			if (array is TKey[] keys)
@@ -1506,17 +1498,20 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 				{
 					if (array is not object?[] objects)
 					{
-						throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
+						throw new ArgumentException(
+							"Target array type is not compatible with the type of items in the collection.",
+							nameof(array));
 					}
 
-					foreach (TKey key in this)
+					foreach (var key in this)
 					{
 						objects[index++] = key;
 					}
 				}
 				catch (ArrayTypeMismatchException)
 				{
-					throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
+					throw new ArgumentException(
+						"Target array type is not compatible with the type of items in the collection.", nameof(array));
 				}
 			}
 		}
@@ -1544,8 +1539,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 		/// <inheritdoc/>
 		IEnumerator<TKey> IEnumerable<TKey>.GetEnumerator() =>
-			Count == 0 ? EnumerableHelpers.GetEmptyEnumerator<TKey>() :
-			GetEnumerator();
+			Count == 0 ? EnumerableHelpers.GetEmptyEnumerator<TKey>() : GetEnumerator();
 
 		/// <inheritdoc/>
 		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable<TKey>)this).GetEnumerator();
@@ -1647,12 +1641,14 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 			ArgumentNullException.ThrowIfNull(array);
 			ThrowIfNegative(arrayIndex);
 
-			OrderedDictionary<TKey, TValue> dictionary = _dictionary;
+			var dictionary = _dictionary;
 			var count = dictionary._count;
 
 			if (array.Length - arrayIndex < count)
 			{
-				throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.", nameof(array));
+				throw new ArgumentException(
+					"Destination array is not long enough to copy all the items in the collection. Check array index and length.",
+					nameof(array));
 			}
 
 			Entry[]? entries = dictionary._entries;
@@ -1689,8 +1685,7 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 		/// <inheritdoc/>
 		IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator() =>
-			Count == 0 ? EnumerableHelpers.GetEmptyEnumerator<TValue>() :
-			GetEnumerator();
+			Count == 0 ? EnumerableHelpers.GetEmptyEnumerator<TValue>() : GetEnumerator();
 
 		/// <inheritdoc/>
 		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable<TValue>)this).GetEnumerator();
@@ -1737,9 +1732,9 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 		/// <inheritdoc/>
 		bool IList.Contains(object? value) =>
-			value is null && default(TValue) is null ?
-				_dictionary.ContainsValue(default!) :
-				value is TValue tvalue && _dictionary.ContainsValue(tvalue);
+			value is null && default(TValue) is null
+				? _dictionary.ContainsValue(default!)
+				: value is TValue tvalue && _dictionary.ContainsValue(tvalue);
 
 		/// <inheritdoc/>
 		int IList.IndexOf(object? value)
@@ -1790,7 +1785,8 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 			if (array.Rank != 1)
 			{
-				throw new ArgumentException("Only single dimensional arrays are supported for the requested action.", nameof(array));
+				throw new ArgumentException("Only single dimensional arrays are supported for the requested action.",
+					nameof(array));
 			}
 
 			if (array.GetLowerBound(0) != 0)
@@ -1802,7 +1798,8 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 
 			if (array.Length - index < _dictionary.Count)
 			{
-				throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
+				throw new ArgumentException(
+					"Destination array is not long enough to copy all the items in the collection. Check array index and length.");
 			}
 
 			if (array is TValue[] values)
@@ -1815,17 +1812,20 @@ internal sealed class OrderedDictionary<TKey, TValue> :
 				{
 					if (array is not object?[] objects)
 					{
-						throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
+						throw new ArgumentException(
+							"Target array type is not compatible with the type of items in the collection.",
+							nameof(array));
 					}
 
-					foreach (TValue value in this)
+					foreach (var value in this)
 					{
 						objects[index++] = value;
 					}
 				}
 				catch (ArrayTypeMismatchException)
 				{
-					throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
+					throw new ArgumentException(
+						"Target array type is not compatible with the type of items in the collection.", nameof(array));
 				}
 			}
 		}
