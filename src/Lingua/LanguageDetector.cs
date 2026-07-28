@@ -273,7 +273,7 @@ public sealed partial class LanguageDetector
 		if (languageDetectedByRules != Unknown)
 		{
 			values[languageDetectedByRules] = 1;
-			return values.OrderByDescending(p => p.Value).ToIndexedDictionary();
+			return values.OrderByDescending(p => p.Value).ToOrderedDictionary();
 		}
 
 		var filteredLanguages = FilterLanguagesByRules(words, languages);
@@ -281,7 +281,7 @@ public sealed partial class LanguageDetector
 		{
 			var filteredLanguage = filteredLanguages.Single();
 			values[filteredLanguage] = 1.0;
-			return values.OrderByDescending(p => p.Value).ToIndexedDictionary();
+			return values.OrderByDescending(p => p.Value).ToOrderedDictionary();
 		}
 
 		if (_isLowAccuracyModeEnabled && cleanedUpText.Length < 3)
@@ -313,7 +313,7 @@ public sealed partial class LanguageDetector
 
 		var summedUpProbabilities = SumUpProbabilities(allProbabilities, unigramCounts, filteredLanguages);
 		return summedUpProbabilities.Count == 0
-			? values.OrderByDescending(c => c.Value).ToIndexedDictionary()
+			? values.OrderByDescending(c => c.Value).ToOrderedDictionary()
 			: ComputeConfidenceValues(values, allProbabilities, summedUpProbabilities);
 	}
 
@@ -379,7 +379,7 @@ public sealed partial class LanguageDetector
 			}
 		}
 
-		return values.OrderByDescending(p => p.Value).ToIndexedDictionary();
+		return values.OrderByDescending(p => p.Value).ToOrderedDictionary();
 	}
 
 	private static void UpdateConfidenceValues(Dictionary<Language, double> values, Language language, double probability)
