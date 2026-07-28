@@ -328,21 +328,15 @@ public sealed partial class LanguageDetector
 	public void UnloadLanguageModels()
 	{
 		foreach (var language in _languages)
-			TrigramLanguageModels.TryRemove(language, out _);
-
-		if (!_isLowAccuracyModeEnabled)
 		{
-			foreach (var language in _languages)
+			TrigramLanguageModels.TryRemove(language, out _);
+			if (!_isLowAccuracyModeEnabled)
+			{
 				UnigramLanguageModels.TryRemove(language, out _);
-
-			foreach (var language in _languages)
 				BigramLanguageModels.TryRemove(language, out _);
-
-			foreach (var language in _languages)
 				QuadrigramLanguageModels.TryRemove(language, out _);
-
-			foreach (var language in _languages)
 				FivegramLanguageModels.TryRemove(language, out _);
+			}
 		}
 	}
 
