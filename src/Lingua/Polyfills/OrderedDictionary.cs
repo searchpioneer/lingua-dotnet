@@ -1,7 +1,9 @@
-// Vendored from dotnet/runtime, MIT licensed. Do not edit.
+// Adapted from dotnet/runtime, MIT licensed.
 // Source: src/libraries/System.Collections/src/System/Collections/Generic/OrderedDictionary.cs
 // Taken at dotnet/runtime main @ 9f9485d11b6047bf9f9aefa0aa5e6c412a929a7c (2026-07-28).
-// See README.md in this directory before changing anything here.
+// Modified: the SR resource lookups and ThrowHelper calls it relies on are inlined here,
+// so this file does not need those types vendored alongside it. See README.md in this
+// directory before changing anything here.
 
 #if !NET9_0_OR_GREATER
 // Licensed to the .NET Foundation under one or more agreements.
@@ -297,7 +299,7 @@ namespace System.Collections.Generic
 
                 if (value is not KeyValuePair<TKey, TValue> tpair)
                 {
-                    throw new ArgumentException(SR.Format(SR.Arg_WrongType, value, typeof(KeyValuePair<TKey, TValue>)), nameof(value));
+                    throw new ArgumentException($"The value '{value}' is not of type '{typeof(KeyValuePair<TKey, TValue>)}' and cannot be used in this generic collection.", nameof(value));
                 }
 
                 SetAt(index, tpair.Key, tpair.Value);
@@ -328,7 +330,7 @@ namespace System.Collections.Generic
 
                 if (key is not TKey tkey)
                 {
-                    throw new ArgumentException(SR.Format(SR.Arg_WrongType, key, typeof(TKey)), nameof(key));
+                    throw new ArgumentException($"The value '{key}' is not of type '{typeof(TKey)}' and cannot be used in this generic collection.", nameof(key));
                 }
 
                 TValue tvalue = default!;
@@ -336,7 +338,7 @@ namespace System.Collections.Generic
                 {
                     if (value is not TValue temp)
                     {
-                        throw new ArgumentException(SR.Format(SR.Arg_WrongType, value, typeof(TValue)), nameof(value));
+                        throw new ArgumentException($"The value '{value}' is not of type '{typeof(TValue)}' and cannot be used in this generic collection.", nameof(value));
                     }
 
                     tvalue = temp;
@@ -368,7 +370,7 @@ namespace System.Collections.Generic
             {
                 if (!TryGetValue(key, out TValue? value))
                 {
-                    ThrowHelper.ThrowKeyNotFound(key);
+                    throw new KeyNotFoundException($"The given key '{key}' was not present in the dictionary.");
                 }
 
                 return value;
@@ -416,8 +418,7 @@ namespace System.Collections.Generic
                         return true;
 
                     case InsertionBehavior.ThrowOnExisting:
-                        ThrowHelper.ThrowDuplicateKey(key);
-                        break;
+                        throw new ArgumentException($"An item with the same key has already been added. Key: {key}", nameof(key));
 
                     default:
                         Debug.Assert(behavior is InsertionBehavior.IgnoreInsertion, $"Unknown behavior: {behavior}");
@@ -596,7 +597,7 @@ namespace System.Collections.Generic
         {
             if ((uint)index >= (uint)_count)
             {
-                ThrowHelper.ThrowIndexArgumentOutOfRange();
+                throw new ArgumentOutOfRangeException("index");
             }
 
             Debug.Assert(_entries is not null, "count must be positive, which means we must have entries");
@@ -707,7 +708,8 @@ namespace System.Collections.Generic
         ConcurrentOperation:
             // We examined more entries than are actually in the list, which means there's a cycle
             // that's caused by erroneous concurrent use.
-            ThrowHelper.ThrowConcurrentOperation();
+            throw new InvalidOperationException(
+                "Operations that change non-concurrent collections must have exclusive access. A concurrent update was performed on this collection and corrupted its state. The collection's state is no longer correct.");
 
         Return:
             outHashCode = hashCode;
@@ -725,7 +727,7 @@ namespace System.Collections.Generic
         {
             if ((uint)index > (uint)_count)
             {
-                ThrowHelper.ThrowIndexArgumentOutOfRange();
+                throw new ArgumentOutOfRangeException("index");
             }
 
             ArgumentNullException.ThrowIfNull(key);
@@ -773,7 +775,7 @@ namespace System.Collections.Generic
             int count = _count;
             if ((uint)index >= (uint)count)
             {
-                ThrowHelper.ThrowIndexArgumentOutOfRange();
+                throw new ArgumentOutOfRangeException("index");
             }
 
             // Remove from the associated bucket chain the entry that lives at the specified index.
@@ -800,7 +802,7 @@ namespace System.Collections.Generic
         {
             if ((uint)index >= (uint)_count)
             {
-                ThrowHelper.ThrowIndexArgumentOutOfRange();
+                throw new ArgumentOutOfRangeException("index");
             }
 
             Debug.Assert(_entries is not null);
@@ -819,7 +821,7 @@ namespace System.Collections.Generic
         {
             if ((uint)index >= (uint)_count)
             {
-                ThrowHelper.ThrowIndexArgumentOutOfRange();
+                throw new ArgumentOutOfRangeException("index");
             }
 
             ArgumentNullException.ThrowIfNull(key);
@@ -850,7 +852,7 @@ namespace System.Collections.Generic
             uint hashCode = 0, collisionCount = 0;
             if (IndexOf(key, ref hashCode, ref collisionCount) >= 0)
             {
-                ThrowHelper.ThrowDuplicateKey(key);
+                throw new ArgumentException($"An item with the same key has already been added. Key: {key}", nameof(key));
             }
 
             // The key doesn't exist in the collection. Update the key and value, but also update
@@ -1000,7 +1002,8 @@ namespace System.Collections.Generic
                     {
                         // We examined more entries than are actually in the list, which means there's a cycle
                         // that's caused by erroneous concurrent use.
-                        ThrowHelper.ThrowConcurrentOperation();
+                        throw new InvalidOperationException(
+                            "Operations that change non-concurrent collections must have exclusive access. A concurrent update was performed on this collection and corrupted its state. The collection's state is no longer correct.");
                     }
                 }
             }
@@ -1052,7 +1055,8 @@ namespace System.Collections.Generic
                     {
                         // We examined more entries than are actually in the list, which means there's a cycle
                         // that's caused by erroneous concurrent use.
-                        ThrowHelper.ThrowConcurrentOperation();
+                        throw new InvalidOperationException(
+                            "Operations that change non-concurrent collections must have exclusive access. A concurrent update was performed on this collection and corrupted its state. The collection's state is no longer correct.");
                     }
                 }
             }
@@ -1213,7 +1217,7 @@ namespace System.Collections.Generic
             ThrowIfNegative(arrayIndex);
             if (array.Length - arrayIndex < _count)
             {
-                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+                throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
             }
 
             for (int i = 0; i < _count; i++)
@@ -1246,7 +1250,7 @@ namespace System.Collections.Generic
 
             if (key is not TKey tkey)
             {
-                throw new ArgumentException(SR.Format(SR.Arg_WrongType, key, typeof(TKey)), nameof(key));
+                throw new ArgumentException($"The value '{key}' is not of type '{typeof(TKey)}' and cannot be used in this generic collection.", nameof(key));
             }
 
             TValue tvalue = default!;
@@ -1254,7 +1258,7 @@ namespace System.Collections.Generic
             {
                 if (value is not TValue temp)
                 {
-                    throw new ArgumentException(SR.Format(SR.Arg_WrongType, value, typeof(TValue)), nameof(value));
+                    throw new ArgumentException($"The value '{value}' is not of type '{typeof(TValue)}' and cannot be used in this generic collection.", nameof(value));
                 }
 
                 tvalue = temp;
@@ -1289,19 +1293,19 @@ namespace System.Collections.Generic
 
             if (array.Rank != 1)
             {
-                throw new ArgumentException(SR.Arg_RankMultiDimNotSupported, nameof(array));
+                throw new ArgumentException("Only single dimensional arrays are supported for the requested action.", nameof(array));
             }
 
             if (array.GetLowerBound(0) != 0)
             {
-                throw new ArgumentException(SR.Arg_NonZeroLowerBound, nameof(array));
+                throw new ArgumentException("The lower bound of target array must be zero.", nameof(array));
             }
 
             ThrowIfNegative(index);
 
             if (array.Length - index < _count)
             {
-                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+                throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
             }
 
             if (array is KeyValuePair<TKey, TValue>[] tarray)
@@ -1314,7 +1318,7 @@ namespace System.Collections.Generic
                 {
                     if (array is not object[] objects)
                     {
-                        throw new ArgumentException(SR.Argument_IncompatibleArrayType, nameof(array));
+                        throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
                     }
 
                     foreach (KeyValuePair<TKey, TValue> pair in this)
@@ -1324,7 +1328,7 @@ namespace System.Collections.Generic
                 }
                 catch (ArrayTypeMismatchException)
                 {
-                    throw new ArgumentException(SR.Argument_IncompatibleArrayType, nameof(array));
+                    throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
                 }
             }
         }
@@ -1334,7 +1338,7 @@ namespace System.Collections.Generic
         {
             if (value is not KeyValuePair<TKey, TValue> pair)
             {
-                throw new ArgumentException(SR.Format(SR.Arg_WrongType, value, typeof(KeyValuePair<TKey, TValue>)), nameof(value));
+                throw new ArgumentException($"The value '{value}' is not of type '{typeof(KeyValuePair<TKey, TValue>)}' and cannot be used in this generic collection.", nameof(value));
             }
 
             Add(pair.Key, pair.Value);
@@ -1363,7 +1367,7 @@ namespace System.Collections.Generic
         {
             if (value is not KeyValuePair<TKey, TValue> pair)
             {
-                throw new ArgumentException(SR.Format(SR.Arg_WrongType, value, typeof(KeyValuePair<TKey, TValue>)), nameof(value));
+                throw new ArgumentException($"The value '{value}' is not of type '{typeof(KeyValuePair<TKey, TValue>)}' and cannot be used in this generic collection.", nameof(value));
             }
 
             Insert(index, pair.Key, pair.Value);
@@ -1436,7 +1440,7 @@ namespace System.Collections.Generic
 
                 if (_version != dictionary._version)
                 {
-                    ThrowHelper.ThrowVersionCheckFailed();
+                    throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
                 }
 
                 if (_index < dictionary._count)
@@ -1457,7 +1461,7 @@ namespace System.Collections.Generic
             {
                 if (_version != _dictionary._version)
                 {
-                    ThrowHelper.ThrowVersionCheckFailed();
+                    throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
                 }
 
                 _index = 0;
@@ -1514,7 +1518,7 @@ namespace System.Collections.Generic
 
                 if (array.Length - arrayIndex < count)
                 {
-                    throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall, nameof(array));
+                    throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.", nameof(array));
                 }
 
                 Entry[]? entries = dictionary._entries;
@@ -1532,19 +1536,19 @@ namespace System.Collections.Generic
 
                 if (array.Rank != 1)
                 {
-                    throw new ArgumentException(SR.Arg_RankMultiDimNotSupported, nameof(array));
+                    throw new ArgumentException("Only single dimensional arrays are supported for the requested action.", nameof(array));
                 }
 
                 if (array.GetLowerBound(0) != 0)
                 {
-                    throw new ArgumentException(SR.Arg_NonZeroLowerBound, nameof(array));
+                    throw new ArgumentException("The lower bound of target array must be zero.", nameof(array));
                 }
 
                 ThrowIfNegative(index);
 
                 if (array.Length - index < _dictionary.Count)
                 {
-                    throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+                    throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
                 }
 
                 if (array is TKey[] keys)
@@ -1557,7 +1561,7 @@ namespace System.Collections.Generic
                     {
                         if (array is not object?[] objects)
                         {
-                            throw new ArgumentException(SR.Argument_IncompatibleArrayType, nameof(array));
+                            throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
                         }
 
                         foreach (TKey key in this)
@@ -1567,7 +1571,7 @@ namespace System.Collections.Generic
                     }
                     catch (ArrayTypeMismatchException)
                     {
-                        throw new ArgumentException(SR.Argument_IncompatibleArrayType, nameof(array));
+                        throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
                     }
                 }
             }
@@ -1703,7 +1707,7 @@ namespace System.Collections.Generic
 
                 if (array.Length - arrayIndex < count)
                 {
-                    throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall, nameof(array));
+                    throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.", nameof(array));
                 }
 
                 Entry[]? entries = dictionary._entries;
@@ -1841,19 +1845,19 @@ namespace System.Collections.Generic
 
                 if (array.Rank != 1)
                 {
-                    throw new ArgumentException(SR.Arg_RankMultiDimNotSupported, nameof(array));
+                    throw new ArgumentException("Only single dimensional arrays are supported for the requested action.", nameof(array));
                 }
 
                 if (array.GetLowerBound(0) != 0)
                 {
-                    throw new ArgumentException(SR.Arg_NonZeroLowerBound, nameof(array));
+                    throw new ArgumentException("The lower bound of target array must be zero.", nameof(array));
                 }
 
                 ThrowIfNegative(index);
 
                 if (array.Length - index < _dictionary.Count)
                 {
-                    throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+                    throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
                 }
 
                 if (array is TValue[] values)
@@ -1866,7 +1870,7 @@ namespace System.Collections.Generic
                     {
                         if (array is not object?[] objects)
                         {
-                            throw new ArgumentException(SR.Argument_IncompatibleArrayType, nameof(array));
+                            throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
                         }
 
                         foreach (TValue value in this)
@@ -1876,7 +1880,7 @@ namespace System.Collections.Generic
                     }
                     catch (ArrayTypeMismatchException)
                     {
-                        throw new ArgumentException(SR.Argument_IncompatibleArrayType, nameof(array));
+                        throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
                     }
                 }
             }

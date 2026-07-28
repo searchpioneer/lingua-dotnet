@@ -1,7 +1,9 @@
-// Vendored from dotnet/runtime, MIT licensed. Do not edit.
+// Adapted from dotnet/runtime, MIT licensed.
 // Source: src/libraries/System.Private.CoreLib/src/System/Collections/HashHelpers.cs
 // Taken at dotnet/runtime main @ 9f9485d11b6047bf9f9aefa0aa5e6c412a929a7c (2026-07-28).
-// See README.md in this directory before changing anything here.
+// Modified: the SR resource lookups and ThrowHelper calls it relies on are inlined here,
+// so this file does not need those types vendored alongside it. See README.md in this
+// directory before changing anything here.
 
 #if !NET9_0_OR_GREATER
 // Licensed to the .NET Foundation under one or more agreements.
@@ -61,7 +63,7 @@ namespace System.Collections
         public static int GetPrime(int min)
         {
             if (min < 0)
-                throw new ArgumentException(SR.Arg_HTCapacityOverflow);
+                throw new ArgumentException("Hashtable's capacity overflowed and went negative. Check load factor, capacity and the current size of the table.");
 
             foreach (int prime in Primes)
             {
