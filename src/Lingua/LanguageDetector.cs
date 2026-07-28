@@ -2,6 +2,8 @@ using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Frozen;
 using System.IO.Compression;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using Lingua.Internal;
@@ -367,31 +369,23 @@ public sealed partial class LanguageDetector
 		{
 			foreach (var (language, probability) in summedUpProbabilities)
 			{
-				foreach (var value in values)
-				{
-					if (value.Key == language)
-					{
-						// apply softmax function
-						var normalizedProbability = probability / denominator;
-						values[language] = normalizedProbability;
-					}
-				}
+				// apply softmax function
+				UpdateConfidenceValues(values, language, probability / denominator);
 			}
 		}
 
 		return values.OrderByDescending(p => p.Value).ToOrderedDictionary();
 	}
 
+	/// <summary>
+	/// Assigns <paramref name="probability"/> to <paramref name="language"/> if, and only if, it is already
+	/// present in <paramref name="values"/>. A language that is absent is not added.
+	/// </summary>
 	private static void UpdateConfidenceValues(Dictionary<Language, double> values, Language language, double probability)
 	{
-		foreach (var value in values)
-		{
-			if (value.Key == language)
-			{
-				values[language] = probability;
-				break;
-			}
-		}
+		ref var value = ref CollectionsMarshal.GetValueRefOrNullRef(values, language);
+		if (!Unsafe.IsNullRef(ref value))
+			value = probability;
 	}
 
 	private static void MergeAdjacentResults(List<DetectionResult> results, List<int> mergeableResultIndices)
