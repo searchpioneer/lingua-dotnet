@@ -3,7 +3,7 @@
         <PackageId>SearchPioneer.Lingua</PackageId>
         <Title>Lingua</Title>
         <Description>Natural language detection library for .NET, suitable for long and short text alike</Description>
-        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+        <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     </PropertyGroup>
   
     <ItemGroup>
