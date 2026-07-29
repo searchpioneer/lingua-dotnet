@@ -18,22 +18,23 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v6
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
 
     - name: Pack
       run: ./build.sh pack
       shell: bash
 
-    - name: Sign Nuget package
-      env:
-        NUGET_SIGNING_PFX: ${{ secrets.NUGET_SIGNING_PFX }}
-        NUGET_ROOT_SIGNING_CERT: ${{ secrets.NUGET_ROOT_SIGNING_CERT }}
-      run: |
-        sudo mkdir -p /etc/pki/ca-trust/extracted/pem/
-        echo "$NUGET_ROOT_SIGNING_CERT" | sudo tee -a /etc/pki/ca-trust/extracted/pem/objsign-ca-bundle.pem  > /dev/null
-        echo "$NUGET_SIGNING_PFX" | openssl base64 -d -out private.pfx
-        dotnet nuget sign nuget/*.nupkg --certificate-path private.pfx --timestamper http://timestamp.sectigo.com
-      shell: bash  
+## Code signing is disabled for now
+#    - name: Sign Nuget package
+#      env:
+#        NUGET_SIGNING_PFX: ${{ secrets.NUGET_SIGNING_PFX }}
+#        NUGET_ROOT_SIGNING_CERT: ${{ secrets.NUGET_ROOT_SIGNING_CERT }}
+#      run: |
+#        sudo mkdir -p /etc/pki/ca-trust/extracted/pem/
+#        echo "$NUGET_ROOT_SIGNING_CERT" | sudo tee -a /etc/pki/ca-trust/extracted/pem/objsign-ca-bundle.pem  > /dev/null
+#        echo "$NUGET_SIGNING_PFX" | openssl base64 -d -out private.pfx
+#        dotnet nuget sign nuget/*.nupkg --certificate-path private.pfx --timestamper http://timestamp.sectigo.com
+#      shell: bash  
 
     - name: Publish NuGet package
       env:
