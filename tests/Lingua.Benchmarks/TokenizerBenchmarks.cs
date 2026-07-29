@@ -39,7 +39,7 @@ public class DetectMultipleLanguagesBenchmarks
 	private const string Sentence =
 		"Parlez-vous français? Ich spreche Französisch nur ein bisschen. A little bit is better than nothing.";
 
-	private LanguageDetector _detector;
+	private LanguageDetector _detector = null!;
 
 	[GlobalSetup]
 	public void Setup() => _detector = LanguageDetectorBuilder
